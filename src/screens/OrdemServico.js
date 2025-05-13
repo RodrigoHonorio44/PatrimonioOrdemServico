@@ -9,7 +9,7 @@ import GerarPDF from '../components/GerarPDF'; // Importando o componente de PDF
 import Signature from 'react-native-signature-canvas'; // Certifique-se de que está importado corretamente
 
 // 🚀 Importando Firestore
-import { db } from '../config/firebase';
+import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function OrdemServico() {
@@ -107,7 +107,9 @@ export default function OrdemServico() {
 
     return (
         <View style={{ flex: 1 }}>
+            <Navbar />
             <ScrollView contentContainerStyle={styles.container}>
+
                 <Text style={styles.date}>Data: {dataAtual}</Text>
 
                 <TextInput
@@ -205,7 +207,7 @@ export default function OrdemServico() {
                 />
             </Modal>
 
-            <Navbar />
+
         </View>
     );
 }

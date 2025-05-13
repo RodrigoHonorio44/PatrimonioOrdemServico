@@ -1,4 +1,3 @@
-// src/navigation/AppNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,6 +6,7 @@ import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import CadastroScreen from '../screens/CadastroScreen'; // ⬅️ Adicionado aqui
 import HomeScreen from '../screens/HomeScreen';
+import OrdemServico from '../screens/OrdemServico'; // ⬅️ Importando a tela de Ordem de Serviço
 
 const Stack = createStackNavigator();
 
@@ -34,6 +34,12 @@ export default function AppNavigator() {
                         name="Home"
                         component={HomeScreen}
                         options={{ headerShown: false }}
+                    />
+                    {/* Adicionando a navegação para a tela OrdemServico */}
+                    <Stack.Screen
+                        name="OrdemServico"
+                        component={OrdemServico}
+                        options={{ headerShown: false }} // ou true se quiser exibir o header
                     />
                 </Stack.Navigator>
             </NavigationContainer>
