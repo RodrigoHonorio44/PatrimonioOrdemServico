@@ -1,4 +1,3 @@
-// src/screens/LoginScreen.js
 import React, { useState } from 'react';
 import {
     View,
@@ -9,7 +8,6 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
-    Alert,
 } from 'react-native';
 import styles from '../styles/LoginScreenStyles';
 import { login } from '../services/authService';
@@ -84,6 +82,17 @@ export default function LoginScreen({ navigation }) {
                         ) : (
                             <Text style={styles.buttonText}>Entrar</Text>
                         )}
+                    </TouchableOpacity>
+
+                    {/* Botões adicionais */}
+                    <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                        <Text style={styles.extraText}>
+                            Não tem uma conta? <Text style={styles.linkText}>Cadastre-se aqui</Text>
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('EsqueceuSenha')}>
+                        <Text style={styles.extraText}>Esqueceu sua senha?</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

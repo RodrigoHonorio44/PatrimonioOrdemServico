@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from '../context/AuthContext';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import LoginScreen from '../screens/LoginScreen';
+import CadastroScreen from '../screens/CadastroScreen'; // ⬅️ Adicionado aqui
 import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
@@ -23,6 +24,11 @@ export default function AppNavigator() {
                         name="Login"
                         component={LoginScreen}
                         options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Cadastro"
+                        component={CadastroScreen}
+                        options={{ headerShown: false }} // ou true se quiser exibir o header
                     />
                     <Stack.Screen
                         name="Home"

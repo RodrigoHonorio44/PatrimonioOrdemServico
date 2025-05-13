@@ -1,4 +1,3 @@
-// src/styles/LoginScreenStyles.js
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -57,5 +56,15 @@ export default StyleSheet.create({
         color: 'red',
         marginBottom: 10,
         textAlign: 'center',
+    },
+    extraText: {
+        textAlign: 'center',
+        color: '#555',
+        marginTop: 10,
+        fontSize: 14,
+    },
+    linkText: {
+        fontWeight: 'bold',
+        color: '#007BFF',
     },
 });
