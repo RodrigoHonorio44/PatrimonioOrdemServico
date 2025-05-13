@@ -11,8 +11,16 @@ export default function AppNavigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Login">
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen
+                    name="Login"
+                    component={LoginScreen}
+                    options={{ headerShown: false }} // ← remove o topo
+                />
+                <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{ title: 'Home' }} // título visível na Home
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

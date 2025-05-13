@@ -1,8 +1,7 @@
-// src/screens/LoginScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import { TextInput, View, Text, ImageBackground, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../styles/LoginScreenStyles';  // Importando os estilos
+import styles from '../styles/LoginScreenStyles';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -10,29 +9,34 @@ export default function LoginScreen() {
     const navigation = useNavigation();
 
     const handleLogin = () => {
-        // Aqui você pode adicionar a lógica de autenticação com Firebase
-        console.log('Email:', email);
-        console.log('Password:', password);
-        navigation.navigate('Home'); // Navegar para a tela Home após login
+        navigation.navigate('Home');
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-            <Button title="Login" onPress={handleLogin} />
-        </View>
+        <ImageBackground source={require('../../assets/fundoLogin.png')} style={styles.container}>
+            <View style={styles.card}>
+                {/* TÍTULO DENTRO DO CARD */}
+                <Text style={styles.title}>Login</Text>
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholderTextColor="#aaa"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Senha"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholderTextColor="#aaa"
+                />
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>Entrar</Text>
+                </TouchableOpacity>
+            </View>
+        </ImageBackground>
     );
 }
