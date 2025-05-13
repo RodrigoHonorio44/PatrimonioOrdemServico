@@ -1,4 +1,3 @@
-// src/styles/NavbarStyles.js
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -6,8 +5,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 15,
-        backgroundColor: '#6200EE',
+        backgroundColor: '#000367',
         alignItems: 'center',
+        width: '100%',
     },
     title: {
         color: 'white',
