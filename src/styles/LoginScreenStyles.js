@@ -1,54 +1,61 @@
 // src/styles/LoginScreenStyles.js
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
+    background: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
         padding: 20,
     },
     card: {
-        width: '80%',
-        padding: 30,
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backgroundColor: 'rgba(255,255,255,0.95)',
         borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
+        padding: 20,
         elevation: 5,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        shadowOffset: { width: 0, height: 3 },
+        width: width * 0.9,
+        alignSelf: 'center',
     },
     title: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 25,
+        marginBottom: 20,
         textAlign: 'center',
-        color: '#333',
     },
     input: {
-        width: '100%',
-        height: 45,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 25,
-        marginBottom: 20,
-        paddingLeft: 15,
         backgroundColor: '#fff',
-        color: '#333',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 15,
+        paddingHorizontal: 10,
+        height: 45,
     },
     button: {
-        width: '100%',
-        height: 45,
-        backgroundColor: '#00b5ec',
-        borderRadius: 25,
-        justifyContent: 'center',
+        backgroundColor: '#007BFF',
+        paddingVertical: 12,
+        borderRadius: 8,
         alignItems: 'center',
         marginTop: 10,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
         fontWeight: 'bold',
+        fontSize: 16,
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+        textAlign: 'center',
     },
 });

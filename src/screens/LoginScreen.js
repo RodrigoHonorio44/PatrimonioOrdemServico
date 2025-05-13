@@ -1,42 +1,92 @@
+// src/screens/LoginScreen.js
 import React, { useState } from 'react';
-import { TextInput, View, Text, ImageBackground, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ImageBackground,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    Alert,
+} from 'react-native';
 import styles from '../styles/LoginScreenStyles';
+import { login } from '../services/authService';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigation = useNavigation();
+    const [senha, setSenha] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
-        navigation.navigate('Home');
+    const handleLogin = async () => {
+        setError('');
+
+        if (!email || !senha) {
+            setError('Preencha todos os campos.');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            await login(email, senha);
+            navigation.replace('Home');
+        } catch (err) {
+            if (err.code === 'auth/user-not-found') {
+                setError('Usuário não encontrado.');
+            } else if (err.code === 'auth/wrong-password') {
+                setError('Senha incorreta.');
+            } else if (err.code === 'auth/invalid-email') {
+                setError('Email inválido.');
+            } else {
+                setError('Erro ao fazer login.');
+            }
+        }
+
+        setLoading(false);
     };
 
     return (
-        <ImageBackground source={require('../../assets/fundoLogin.png')} style={styles.container}>
-            <View style={styles.card}>
-                {/* TÍTULO DENTRO DO CARD */}
-                <Text style={styles.title}>Login</Text>
+        <ImageBackground
+            source={require('../../assets/fundoLogin.png')}
+            style={styles.background}
+        >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.container}
+            >
+                <View style={styles.card}>
+                    <Text style={styles.title}>Login</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholderTextColor="#aaa"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Senha"
-                    secureTextEntry
-                    value={password}
-                    onChangeText={setPassword}
-                    placeholderTextColor="#aaa"
-                />
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Entrar</Text>
-                </TouchableOpacity>
-            </View>
+                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+                    <TextInput
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        placeholder="Senha"
+                        value={senha}
+                        onChangeText={setSenha}
+                        style={styles.input}
+                        secureTextEntry
+                    />
+
+                    <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.buttonText}>Entrar</Text>
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </ImageBackground>
     );
 }
