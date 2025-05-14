@@ -3,15 +3,19 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     backgroundImage: {
         width: '100%',
-        height: 300, // A imagem ocupa o topo da tela
+        height: 300,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    navbarContainer: {
+        width: '100%',
+        marginTop: -15,
+        paddingHorizontal: 0,
+    },
     content: {
-        flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20, // Espaço entre a imagem e o texto
+        paddingTop: 20,
+        marginBottom: 10,
     },
     text: {
         color: 'white',
@@ -19,26 +23,47 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     pageContent: {
-        flexGrow: 1, // Permite que o conteúdo abaixo da imagem ocupe o restante do espaço
+        flexGrow: 1,
         padding: 10,
     },
-    navbarContainer: {
-        width: '100%', // Garantindo que a Navbar ocupe toda a largura
-        marginTop: -15, // Ajuste de espaçamento entre a imagem e a Navbar
-        paddingHorizontal: 0, // Garantindo que a Navbar tenha largura total
-    },
-    // Estilos do botão
+
+    // Estilos do botão antigo (pode ser removido se não for mais usado)
     button: {
-        backgroundColor: '#007bff', // Cor azul para o botão
+        backgroundColor: '#007bff',
         padding: 15,
         margin: 20,
         borderRadius: 5,
         alignItems: 'center',
     },
     buttonText: {
-        color: '#fff', // Texto branco no botão
+        color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+
+    // Novos estilos para os cards com ícones
+    cardContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    card: {
+        width: '48%',
+        padding: 20,
+        borderRadius: 10,
+        marginBottom: 15,
+        alignItems: 'center',
+        elevation: 4, // sombra para Android
+        shadowColor: '#000', // sombra para iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+    },
+    cardText: {
+        color: '#fff',
+        marginTop: 10,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 

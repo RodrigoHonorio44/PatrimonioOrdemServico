@@ -1,44 +1,47 @@
 import React from 'react';
 import { View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
-import Navbar from '../components/Navbar'; // Importando a Navbar
-import styles from '../styles/HomeScreenStyles'; // Estilos da tela
+import Navbar from '../components/Navbar';
+import styles from '../styles/HomeScreenStyles';
+import { MaterialIcons } from '@expo/vector-icons';
+
+const cards = [
+    { title: 'Ordens de Serviço', icon: 'assignment', color: '#4A90E2', screen: 'OrdemServico' },
+    { title: 'Vendas de Produtos', icon: 'shopping-cart', color: '#50E3C2', screen: 'Vendas' },
+    { title: 'Auto-Agendamento', icon: 'event-available', color: '#F5A623', screen: 'Agendamento' },
+    { title: 'Orçamentos', icon: 'attach-money', color: '#9013FE', screen: 'Orcamentos' },
+    { title: 'Recibos', icon: 'receipt', color: '#D0021B', screen: 'Recibos' },
+    { title: 'Controle de Caixa', icon: 'account-balance-wallet', color: '#7ED321', screen: 'Caixa' },
+];
 
 export default function HomeScreen({ navigation }) {
-    // Função para navegar para a tela de Ordem de Serviço
-    const navegarParaOrdemServico = () => {
-        navigation.navigate('OrdemServico'); // Navega para a tela OrdemServico
-    };
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {/* Imagem no topo da tela */}
             <ImageBackground
-                source={require('../../assets/imgPatrimonio.png')} // Caminho da imagem
+                source={require('../../assets/imgPatrimonio.png')}
                 style={styles.backgroundImage}
-            >
-            </ImageBackground>
+            />
 
-            {/* Navbar logo abaixo da imagem */}
             <View style={styles.navbarContainer}>
                 <Navbar />
             </View>
 
-            {/* Conteúdo principal */}
             <View style={styles.content}>
                 <Text style={styles.text}>Bem-vindo à Home!</Text>
             </View>
 
-            {/* Botão para navegar para a tela de Ordem de Serviço */}
-            <TouchableOpacity
-                style={styles.button}
-                onPress={navegarParaOrdemServico}
-            >
-                <Text style={styles.buttonText}>Ir para Ordem de Serviço</Text>
-            </TouchableOpacity>
-
-            {/* Conteúdo rolável abaixo da imagem */}
             <ScrollView contentContainerStyle={styles.pageContent}>
-                {/* Outros conteúdos podem ser adicionados aqui */}
+                <View style={styles.cardContainer}>
+                    {cards.map((card, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={[styles.card, { backgroundColor: card.color }]}
+                            onPress={() => navigation.navigate(card.screen)}
+                        >
+                            <MaterialIcons name={card.icon} size={32} color="#fff" />
+                            <Text style={styles.cardText}>{card.title}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
