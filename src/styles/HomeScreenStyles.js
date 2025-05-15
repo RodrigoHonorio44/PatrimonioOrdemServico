@@ -22,12 +22,21 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
     },
+    welcomeText: {
+        color: '#000367',
+        fontSize: 28,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        textShadowColor: '#000',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+        marginTop: 20,
+        marginBottom: 10,
+    },
     pageContent: {
         flexGrow: 1,
         padding: 10,
     },
-
-    // Estilos do botão antigo (pode ser removido se não for mais usado)
     button: {
         backgroundColor: '#007bff',
         padding: 15,
@@ -40,8 +49,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-
-    // Novos estilos para os cards com ícones
     cardContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -53,8 +60,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 15,
         alignItems: 'center',
-        elevation: 4, // sombra para Android
-        shadowColor: '#000', // sombra para iOS
+        elevation: 4,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,

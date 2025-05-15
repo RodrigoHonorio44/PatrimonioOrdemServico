@@ -1,18 +1,28 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Alert,
+    Modal,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import * as Print from 'expo-print'; // Utilizado para gerar o PDF
-import * as Sharing from 'expo-sharing'; // Utilizado para compartilhar o PDF
-import styles from '../styles/OrdemServicosStyles';
-import Navbar from '../components/Navbar'; // Importando Navbar
-import GerarPDF from '../components/GerarPDF'; // Importando o componente de PDF
-import Signature from 'react-native-signature-canvas'; // Certifique-se de que está importado corretamente
+import * as Sharing from 'expo-sharing';
+import Signature from 'react-native-signature-canvas';
+import { useNavigation } from '@react-navigation/native'; // <- Importa useNavigation
 
-// 🚀 Importando Firestore
+import styles from '../styles/OrdemServicosStyles';
+import GerarPDF from '../components/GerarPDF';
+import NavbarBottom from '../components/NavbarBottom';
+
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function OrdemServico() {
+    const navigation = useNavigation(); // <- Instancia o navigation
+
     const [dataAtual] = useState(new Date().toLocaleDateString());
     const [nomeResponsavel, setNomeResponsavel] = useState('');
     const [setor, setSetor] = useState('');
@@ -51,9 +61,16 @@ export default function OrdemServico() {
         return true;
     };
 
-    const isButtonEnabled = nomeResponsavel && setor && descricao && patrimonio && servico && nomeTecnico && assinaturaTecnico && assinaturaCliente;
+    const isButtonEnabled =
+        nomeResponsavel &&
+        setor &&
+        descricao &&
+        patrimonio &&
+        servico &&
+        nomeTecnico &&
+        assinaturaTecnico &&
+        assinaturaCliente;
 
-    // ✅ Enviar dados para Firestore
     const enviarParaFirestore = async () => {
         try {
             await addDoc(collection(db, 'ordensServico'), {
@@ -67,7 +84,7 @@ export default function OrdemServico() {
                 tecnico: nomeTecnico,
                 assinaturaTecnico,
                 assinaturaCliente,
-                createdAt: new Date()
+                createdAt: new Date(),
             });
             Alert.alert('Sucesso', 'Dados enviados para o Firestore!');
         } catch (error) {
@@ -95,7 +112,7 @@ export default function OrdemServico() {
 
             if (file) {
                 await Sharing.shareAsync(file.uri);
-                await enviarParaFirestore(); // ⬅️ Envia para o Firestore após PDF
+                await enviarParaFirestore();
             } else {
                 Alert.alert('Erro', 'Não foi possível gerar o PDF.');
             }
@@ -105,11 +122,19 @@ export default function OrdemServico() {
         }
     };
 
+    const navItems = [
+        { label: 'Home', route: 'Home', icon: 'home' },
+        { label: 'Ordem Serviço', route: 'OrdemServico', icon: 'assignment' },
+    ];
+
+    // Função que chama a navegação
+    const handleNavigate = (route) => {
+        navigation.navigate(route);
+    };
+
     return (
         <View style={{ flex: 1 }}>
-            <Navbar />
             <ScrollView contentContainerStyle={styles.container}>
-
                 <Text style={styles.date}>Data: {dataAtual}</Text>
 
                 <TextInput
@@ -164,20 +189,29 @@ export default function OrdemServico() {
                     </Picker>
                 </View>
 
-                <TouchableOpacity style={[styles.button, styles.signatureButton]} onPress={() => setShowAssinaturaTecnico(true)}>
+                <TouchableOpacity
+                    style={[styles.button, styles.signatureButton]}
+                    onPress={() => setShowAssinaturaTecnico(true)}
+                >
                     <Text style={styles.buttonText}>
                         {assinaturaTecnico ? 'Assinatura do Técnico Salva' : 'Assinar Técnico'}
                     </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, styles.signatureButton]} onPress={() => setShowAssinaturaCliente(true)}>
+                <TouchableOpacity
+                    style={[styles.button, styles.signatureButton]}
+                    onPress={() => setShowAssinaturaCliente(true)}
+                >
                     <Text style={styles.buttonText}>
                         {assinaturaCliente ? 'Assinatura do Cliente Salva' : 'Assinar Cliente'}
                     </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.button, isButtonEnabled ? styles.buttonEnabled : styles.buttonDisabled]}
+                    style={[
+                        styles.button,
+                        isButtonEnabled ? styles.buttonEnabled : styles.buttonDisabled,
+                    ]}
                     onPress={handleGerarPDF}
                     disabled={!isButtonEnabled}
                 >
@@ -189,7 +223,9 @@ export default function OrdemServico() {
                 <Signature
                     ref={signatureRefTecnico}
                     onOK={handleOKTecnico}
-                    onEmpty={() => Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Técnico')}
+                    onEmpty={() =>
+                        Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Técnico')
+                    }
                     descriptionText="Assine aqui"
                     clearText="Limpar"
                     confirmText="Confirmar"
@@ -200,14 +236,16 @@ export default function OrdemServico() {
                 <Signature
                     ref={signatureRefCliente}
                     onOK={handleOKCliente}
-                    onEmpty={() => Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Cliente')}
+                    onEmpty={() =>
+                        Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Cliente')
+                    }
                     descriptionText="Assine aqui"
                     clearText="Limpar"
                     confirmText="Confirmar"
                 />
             </Modal>
 
-
+            <NavbarBottom items={navItems} onNavigate={handleNavigate} />
         </View>
     );
 }

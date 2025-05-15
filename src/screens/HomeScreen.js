@@ -1,8 +1,17 @@
-import React from 'react';
-import { View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
+    TouchableOpacity,
+} from 'react-native';
 import Navbar from '../components/Navbar';
 import styles from '../styles/HomeScreenStyles';
 import { MaterialIcons } from '@expo/vector-icons';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 const cards = [
     { title: 'Ordens de Serviço', icon: 'assignment', color: '#4A90E2', screen: 'OrdemServico' },
@@ -14,6 +23,32 @@ const cards = [
 ];
 
 export default function HomeScreen({ navigation }) {
+    const [userName, setUserName] = useState('');
+    const auth = getAuth();
+    const db = getFirestore();
+
+    useEffect(() => {
+        const fetchUserName = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const fullName = data.name || 'Usuário';
+                    const firstName = fullName.trim().split(' ')[0];
+                    setUserName(firstName);
+                } else {
+                    setUserName('Usuário');
+                }
+            } else {
+                setUserName('Usuário');
+            }
+        };
+
+        fetchUserName();
+    }, []);
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ImageBackground
@@ -26,7 +61,7 @@ export default function HomeScreen({ navigation }) {
             </View>
 
             <View style={styles.content}>
-                <Text style={styles.text}>Bem-vindo à Home!</Text>
+                <Text style={styles.welcomeText}>Bem-vindo, {userName}!</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.pageContent}>
