@@ -125,6 +125,7 @@ export default function OrdemServico() {
     const navItems = [
         { label: 'Home', route: 'Home', icon: 'home' },
         { label: 'Ordem Serviço', route: 'OrdemServico', icon: 'assignment' },
+        { icon: 'inventory', label: 'Entrega', screen: 'EntregaDeEquipamento' },
     ];
 
     // Função que chama a navegação

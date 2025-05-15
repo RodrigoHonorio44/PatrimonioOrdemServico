@@ -7,7 +7,9 @@ import LoginScreen from '../screens/LoginScreen';
 import CadastroScreen from '../screens/CadastroScreen'; // ⬅️ Adicionado aqui
 import HomeScreen from '../screens/HomeScreen';
 import OrdemServico from '../screens/OrdemServico'; // ⬅️ Importando a tela de Ordem de Serviço
-
+import EntregaDeEquipamento from '../screens/EntregaDeEquipamento'; // ⬅️ Importando EntregaDeEquipamento
+import ListaDeTarefas from '../screens/ListaDeTarefa'; // importação
+import TarefasTecnico from '../screens/TarefasTecnico';
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -35,11 +37,26 @@ export default function AppNavigator() {
                         component={HomeScreen}
                         options={{ headerShown: false }}
                     />
-                    {/* Adicionando a navegação para a tela OrdemServico */}
                     <Stack.Screen
                         name="OrdemServico"
                         component={OrdemServico}
                         options={{ headerShown: false }} // ou true se quiser exibir o header
+                    />
+                    {/* Aqui adicionamos a tela EntregaDeEquipamento */}
+                    <Stack.Screen
+                        name="EntregaDeEquipamento"
+                        component={EntregaDeEquipamento}
+                        options={{ headerShown: false }} // ou true se quiser exibir o header
+                    />
+                    <Stack.Screen
+                        name="ListaDeTarefas"
+                        component={ListaDeTarefas}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="TarefasTecnico"
+                        component={TarefasTecnico}
+                        options={{ headerShown: false }}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

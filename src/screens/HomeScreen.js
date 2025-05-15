@@ -13,11 +13,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
+// Lista de cards disponíveis no dashboard
 const cards = [
     { title: 'Ordens de Serviço', icon: 'assignment', color: '#4A90E2', screen: 'OrdemServico' },
-    { title: 'Vendas de Produtos', icon: 'shopping-cart', color: '#50E3C2', screen: 'Vendas' },
-    { title: 'Auto-Agendamento', icon: 'event-available', color: '#F5A623', screen: 'Agendamento' },
-    { title: 'Orçamentos', icon: 'attach-money', color: '#9013FE', screen: 'Orcamentos' },
+    { title: 'Entrega de Equipamento', icon: 'inventory', color: '#F5A623', screen: 'EntregaDeEquipamento' },
+    { title: 'Lista de Tarefas', icon: 'list', color: '#357ABD', screen: 'ListaDeTarefas' },  // NOVO ITEM
+    { title: 'Tarefas Técnico', icon: 'list', color: '#9013FE', screen: 'TarefasTecnico' },
     { title: 'Recibos', icon: 'receipt', color: '#D0021B', screen: 'Recibos' },
     { title: 'Controle de Caixa', icon: 'account-balance-wallet', color: '#7ED321', screen: 'Caixa' },
 ];
@@ -31,14 +32,19 @@ export default function HomeScreen({ navigation }) {
         const fetchUserName = async () => {
             const user = auth.currentUser;
             if (user) {
-                const userRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(userRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const fullName = data.name || 'Usuário';
-                    const firstName = fullName.trim().split(' ')[0];
-                    setUserName(firstName);
-                } else {
+                try {
+                    const userRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(userRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        const fullName = data.name || 'Usuário';
+                        const firstName = fullName.trim().split(' ')[0];
+                        setUserName(firstName);
+                    } else {
+                        setUserName('Usuário');
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar dados do usuário:', error);
                     setUserName('Usuário');
                 }
             } else {
@@ -70,7 +76,13 @@ export default function HomeScreen({ navigation }) {
                         <TouchableOpacity
                             key={index}
                             style={[styles.card, { backgroundColor: card.color }]}
-                            onPress={() => navigation.navigate(card.screen)}
+                            onPress={() => {
+                                try {
+                                    navigation.navigate(card.screen);
+                                } catch (err) {
+                                    console.error(`Tela ${card.screen} não encontrada.`, err);
+                                }
+                            }}
                         >
                             <MaterialIcons name={card.icon} size={32} color="#fff" />
                             <Text style={styles.cardText}>{card.title}</Text>
