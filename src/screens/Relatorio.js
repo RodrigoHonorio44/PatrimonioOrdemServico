@@ -8,6 +8,7 @@ import {
     ScrollView,
     Platform,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';  // Importa hook navigation
 import { db } from '../config/firebaseConfig';
 import {
     collection,
@@ -17,7 +18,7 @@ import {
     Timestamp,
 } from 'firebase/firestore';
 import { format, parse } from 'date-fns';
-import Navbar from '../components/Navbar';
+import NavbarBottom from '../components/NavbarBottom';
 import { styles } from '../styles/RelatorioStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as FileSystem from 'expo-file-system';
@@ -25,6 +26,8 @@ import * as XLSX from 'xlsx';
 import * as Sharing from 'expo-sharing';
 
 const Relatorio = () => {
+    const navigation = useNavigation();
+
     const [dataInicio, setDataInicio] = useState('');
     const [dataFim, setDataFim] = useState('');
     const [relatorio, setRelatorio] = useState([]);
@@ -32,7 +35,7 @@ const Relatorio = () => {
     const [totalAtendimentos, setTotalAtendimentos] = useState(0);
     const [showDatePickerInicio, setShowDatePickerInicio] = useState(false);
     const [showDatePickerFim, setShowDatePickerFim] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Adicionando estado de carregamento
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleFetchRelatorio = async () => {
         try {
@@ -41,7 +44,7 @@ const Relatorio = () => {
                 return;
             }
 
-            setIsLoading(true); // Inicia o carregamento
+            setIsLoading(true);
 
             const dataInicioObj = parse(dataInicio, 'dd/MM/yyyy', new Date());
             const dataFimObj = parse(dataFim, 'dd/MM/yyyy', new Date());
@@ -70,12 +73,12 @@ const Relatorio = () => {
 
             setRelatorio(Object.entries(agrupadoPorUnidade));
             setTotalAtendimentos(ordens.length);
-            setOrdensCompleta(ordens); // guardar para exportar Excel
+            setOrdensCompleta(ordens);
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao buscar os dados.');
         } finally {
-            setIsLoading(false); // Finaliza o carregamento
+            setIsLoading(false);
         }
     };
 
@@ -105,8 +108,8 @@ const Relatorio = () => {
                     Data: ordem.criadoEm?.toDate
                         ? format(ordem.criadoEm.toDate(), 'dd/MM/yyyy')
                         : 'Sem data',
-                    Descricao: ordem.descricao || '', // Novo campo adicionado
-                    NomeResponsavel: ordem.nomeResponsavel || '', // Novo campo adicionado
+                    Descricao: ordem.descricao || '',
+                    NomeResponsavel: ordem.nomeResponsavel || '',
                     Patrimonio: ordem.patrimonio || '',
                     Servico: ordem.servico || '',
                     Setor: ordem.setor || '',
@@ -130,13 +133,11 @@ const Relatorio = () => {
             Alert.alert('Sucesso', 'Relatório exportado com sucesso!');
             console.log('📁 Arquivo salvo em:', fileUri);
 
-            // Compartilhar o arquivo
             if (await Sharing.isAvailableAsync()) {
                 await Sharing.shareAsync(fileUri);
             } else {
                 Alert.alert('Erro', 'O compartilhamento não está disponível no seu dispositivo.');
             }
-
         } catch (error) {
             console.error('Erro ao exportar e compartilhar Excel:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao exportar o relatório.');
@@ -213,7 +214,7 @@ const Relatorio = () => {
             </ScrollView>
 
             <View style={styles.navbarContainer}>
-                <Navbar />
+                <NavbarBottom navigation={navigation} />
             </View>
         </View>
     );

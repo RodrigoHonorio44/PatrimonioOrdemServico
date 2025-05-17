@@ -13,7 +13,9 @@ import ListaDeTarefas from '../screens/ListaDeTarefa';
 import TarefasTecnico from '../screens/TarefasTecnico';
 import EsqueceuSenha from '../screens/EsqueceuSenha';
 import Assinatura from '../screens/Assinatura'; // ✅ Importação da nova tela
-
+import Relatorio from '../screens/Relatorio'
+import Relatorios from '../screens/Relatorios'
+import Estoque from '../screens/Estoque'
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -59,6 +61,21 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="TarefasTecnico"
                         component={TarefasTecnico}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Relatorio"
+                        component={Relatorio}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Relatorios"
+                        component={Relatorios}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Estoque"
+                        component={Estoque}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

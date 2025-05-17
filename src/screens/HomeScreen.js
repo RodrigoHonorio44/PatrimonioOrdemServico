@@ -16,11 +16,13 @@ import { getFirestore, doc, getDoc } from 'firebase/firestore';
 // Lista de cards disponíveis no dashboard
 const cards = [
     { title: 'Ordens de Serviço', icon: 'assignment', color: '#4A90E2', screen: 'OrdemServico' },
-    { title: 'Entrega de Equipamento', icon: 'inventory', color: '#F5A623', screen: 'EntregaDeEquipamento' },
+    { title: 'Entrega de Equipamento', icon: 'local-shipping', color: '#F5A623', screen: 'EntregaDeEquipamento' },
     { title: 'Lista de Tarefas', icon: 'list', color: '#357ABD', screen: 'ListaDeTarefas' },  // NOVO ITEM
-    { title: 'Tarefas Técnico', icon: 'list', color: '#9013FE', screen: 'TarefasTecnico' },
-    { title: 'Recibos', icon: 'receipt', color: '#D0021B', screen: 'Recibos' },
-    { title: 'Controle de Caixa', icon: 'account-balance-wallet', color: '#7ED321', screen: 'Caixa' },
+    { title: 'Tarefas Técnico', icon: 'engineering', color: '#9013FE', screen: 'TarefasTecnico' },
+    {
+        title: 'Estoque', icon: 'inventory', color: '#D0021B', screen: 'Estoque'
+    },
+    { title: 'Relatórios', icon: 'bar-chart', color: '#7ED321', screen: 'Relatorios' },
 ];
 
 export default function HomeScreen({ navigation }) {
