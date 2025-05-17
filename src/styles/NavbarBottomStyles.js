@@ -1,22 +1,24 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
     navbarSafeArea: {
         backgroundColor: '#fff',
         borderTopWidth: 1,
         borderTopColor: '#ccc',
-        paddingVertical: 8,
-        paddingHorizontal: 10,
+        paddingVertical: width * 0.02, // responsivo
+        paddingHorizontal: width * 0.025,
     },
     navItem: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: 12,
+        marginHorizontal: width * 0.03,
     },
     navText: {
-        fontSize: 12,
+        fontSize: width * 0.03, // responsivo
         color: '#333',
-        marginTop: 4,
+        marginTop: width * 0.01,
         textAlign: 'center',
     },
 });

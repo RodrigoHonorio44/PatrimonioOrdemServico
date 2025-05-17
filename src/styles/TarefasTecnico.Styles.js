@@ -1,23 +1,25 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 20,
+        padding: width * 0.05, // 5% da largura da tela
     },
     titulo: {
-        fontSize: 24,
+        fontSize: width * 0.06, // 6% da largura
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: width * 0.05,
         textAlign: 'center',
         color: '#333',
     },
     item: {
         backgroundColor: '#f0f0f0',
-        padding: 15,
+        padding: width * 0.04,
         borderRadius: 10,
-        marginBottom: 15,
+        marginBottom: width * 0.04,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
@@ -25,28 +27,28 @@ export default StyleSheet.create({
         elevation: 3,
     },
     nome: {
-        fontSize: 18,
+        fontSize: width * 0.045,
         fontWeight: 'bold',
         color: '#222',
-        marginBottom: 5,
+        marginBottom: width * 0.015,
     },
     botao: {
-        marginTop: 10,
+        marginTop: width * 0.03,
         backgroundColor: '#007bff',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
+        paddingVertical: width * 0.025,
+        paddingHorizontal: width * 0.04,
         borderRadius: 6,
         alignSelf: 'flex-start',
     },
     botaoTexto: {
         color: '#fff',
-        fontSize: 14,
+        fontSize: width * 0.035,
         fontWeight: '600',
     },
     vazio: {
         textAlign: 'center',
-        marginTop: 30,
-        fontSize: 16,
+        marginTop: width * 0.07,
+        fontSize: width * 0.04,
         color: '#888',
     },
 });

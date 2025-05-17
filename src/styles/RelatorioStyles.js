@@ -5,12 +5,12 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#eef',
         padding: 20,
-        paddingBottom: 80, // <- Isso resolve o espaço abaixo
+        paddingBottom: 80, // espaço para navbar
     },
     scrollContainer: {
         flexGrow: 1,
-        paddingBottom: 70, // Garantindo espaço para a navbar
-        minHeight: '100%', // Garantir que o conteúdo ocupe a tela inteira
+        paddingBottom: 70, // garantir espaço para navbar
+        minHeight: '100%',
     },
     title: {
         fontSize: 24,
@@ -88,13 +88,14 @@ export const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: '#fff',
         paddingVertical: 10,
+        paddingHorizontal: 15,
         borderTopWidth: 1,
         borderTopColor: '#ddd',
-        paddingTop: -5,
+        // Removi paddingTop negativo
     },
 
     // Estilos para os botões
     buttonContainer: {
-        marginBottom: 15, // Espaçamento entre os botões
+        marginBottom: 15, // espaçamento entre botões
     },
 });

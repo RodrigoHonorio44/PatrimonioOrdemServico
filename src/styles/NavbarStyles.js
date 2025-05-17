@@ -1,28 +1,31 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 15,
+        paddingVertical: width * 0.035,  // responsivo
+        paddingHorizontal: width * 0.04,
         backgroundColor: '#000367',
         alignItems: 'center',
         width: '100%',
     },
     title: {
         color: 'white',
-        fontSize: 18,
+        fontSize: width * 0.045,  // responsivo
         fontWeight: 'bold',
     },
     logoutButton: {
         backgroundColor: '#FF3B30',
-        paddingVertical: 5,
-        paddingHorizontal: 10,
+        paddingVertical: width * 0.015,
+        paddingHorizontal: width * 0.03,
         borderRadius: 5,
     },
     logoutText: {
         color: 'white',
-        fontSize: 14,
+        fontSize: width * 0.035,
     },
 });
 

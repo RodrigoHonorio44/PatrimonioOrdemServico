@@ -1,4 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+// Função para escalar tamanhos proporcionalmente à largura da tela
+const scale = (size) => (width / 375) * size; // 375 é a largura base (iPhone 8)
 
 export default StyleSheet.create({
     container: {
@@ -7,22 +12,22 @@ export default StyleSheet.create({
         backgroundColor: '#fff',
     },
     content: {
-        padding: 20,
-        paddingBottom: 100, // deixa espaço para a navbar
+        padding: scale(20),
+        paddingBottom: scale(100), // deixa espaço para a navbar
     },
     title: {
-        fontSize: 24,
+        fontSize: scale(24),
         fontWeight: 'bold',
-        marginBottom: 20,
-        marginTop: 30,
+        marginBottom: scale(20),
+        marginTop: scale(30),
         textAlign: 'center',
     },
     cardsContainer: {
-        gap: 20,
+        gap: scale(20),
     },
     card: {
-        padding: 20,
-        borderRadius: 16,
+        padding: scale(20),
+        borderRadius: scale(16),
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -32,10 +37,10 @@ export default StyleSheet.create({
         justifyContent: 'center',
     },
     icon: {
-        marginBottom: 12,
+        marginBottom: scale(12),
     },
     cardText: {
-        fontSize: 18,
+        fontSize: scale(18),
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',

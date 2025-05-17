@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
@@ -7,55 +9,66 @@ export default StyleSheet.create({
         backgroundColor: '#fff',
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        fontSize: width * 0.065, // ex: 26px para ~400px largura
+        fontWeight: '700',
+        marginBottom: 24,
         textAlign: 'center',
+        color: '#222',
+        marginTop: 45,
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
+        borderColor: '#bbb',
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+        marginBottom: 15,
+        fontSize: width * 0.04, // ex: 16px para ~400px largura
+        backgroundColor: '#fafafa',
     },
     button: {
         backgroundColor: '#4CAF50',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 20,
+        paddingVertical: 14,
+        borderRadius: 8,
+        marginBottom: 25,
+        alignItems: 'center',
+        elevation: 2,
     },
     buttonText: {
         color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
+        fontWeight: '700',
+        fontSize: width * 0.04, // ex: 16px
     },
     filterLabel: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
-        marginTop: 10,
+        fontSize: width * 0.043, // ex: 17px
+        fontWeight: '600',
+        marginBottom: 8,
+        marginTop: 15,
+        color: '#333',
     },
     item: {
         backgroundColor: '#f9f9f9',
-        padding: 15,
-        borderRadius: 5,
-        marginBottom: 10,
+        padding: 18,
+        borderRadius: 8,
+        marginBottom: 12,
         borderColor: '#ddd',
         borderWidth: 1,
     },
     itemText: {
-        fontSize: 18,
-        marginBottom: 5,
+        fontSize: width * 0.045, // ex: 18px
+        marginBottom: 8,
+        color: '#111',
     },
     removeButton: {
         backgroundColor: '#e74c3c',
-        padding: 5,
-        borderRadius: 5,
+        paddingVertical: 8,
+        borderRadius: 8,
         marginTop: 10,
+        alignItems: 'center',
     },
     removeButtonText: {
         color: '#fff',
-        textAlign: 'center',
+        fontWeight: '600',
+        fontSize: width * 0.035, // ex: 14px
     },
 });

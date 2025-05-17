@@ -3,17 +3,21 @@ import {
     View,
     Text,
     TextInput,
-    Button,
+    TouchableOpacity, // substituído Button por TouchableOpacity
     ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
     Platform,
+    ImageBackground,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebaseConfig';
 import styles from '../styles/CadastroScreenStyles';
+
+// Importa a imagem de fundo
+import fundoLogin from '../../assets/fundoLogin.png';  // ajuste o caminho conforme sua pasta
 
 export default function CadastroScreen() {
     const [nome, setNome] = useState('');
@@ -35,11 +39,10 @@ export default function CadastroScreen() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
             const userId = userCredential.user.uid;
 
-            // ✅ Salva na coleção "users" com os campos corretos
             await setDoc(doc(db, 'users', userId), {
                 email: email,
                 name: nome,
-                role: 'user', // todos são cadastrados como 'user'
+                role: 'user',
                 criadoEm: new Date()
             });
 
@@ -61,41 +64,54 @@ export default function CadastroScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
-        >
-            <View style={styles.form}>
-                <Text style={styles.title}>Cadastro</Text>
+        <ImageBackground source={fundoLogin} style={styles.backgroundImage} resizeMode="cover">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
+                <View style={styles.overlay}>
+                    <View style={styles.card}>
+                        <Text style={styles.title}>Cadastro</Text>
 
-                <TextInput
-                    placeholder="Nome"
-                    value={nome}
-                    onChangeText={setNome}
-                    style={styles.input}
-                />
-                <TextInput
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    style={styles.input}
-                />
-                <TextInput
-                    placeholder="Senha"
-                    value={senha}
-                    onChangeText={setSenha}
-                    secureTextEntry
-                    style={styles.input}
-                />
+                        <TextInput
+                            placeholder="Nome"
+                            value={nome}
+                            onChangeText={setNome}
+                            style={styles.input}
+                            placeholderTextColor="#666"
+                        />
+                        <TextInput
+                            placeholder="Email"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            style={styles.input}
+                            placeholderTextColor="#666"
+                        />
+                        <TextInput
+                            placeholder="Senha"
+                            value={senha}
+                            onChangeText={setSenha}
+                            secureTextEntry
+                            style={styles.input}
+                            placeholderTextColor="#666"
+                        />
 
-                {carregando ? (
-                    <ActivityIndicator size="large" color="#007bff" />
-                ) : (
-                    <Button title="Cadastrar" onPress={handleCadastro} />
-                )}
-            </View>
-        </KeyboardAvoidingView>
+                        {carregando ? (
+                            <ActivityIndicator size="large" color="#007bff" />
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={handleCadastro}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={styles.buttonText}>Cadastrar</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </ImageBackground>
     );
 }

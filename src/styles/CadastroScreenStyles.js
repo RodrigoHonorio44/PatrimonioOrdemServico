@@ -1,41 +1,87 @@
-// src/styles/CadastroScreenStyles.js
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+import colors from '../styles/colors';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
-    container: {
+    backgroundImage: {
         flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-        backgroundColor: '#f8f9fa',
+        width: '100%',
+        height: '100%',
     },
-    form: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 10,
-        width: width * 0.9,
-        alignSelf: 'center',
-        elevation: 4,
+    overlay: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: width * 0.05,
+        paddingVertical: height * 0.03,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    },
+    card: {
+        backgroundColor: colors.cardBackground,
+        width: '100%',
+        maxWidth: 400,
+        padding: width * 0.06,
+        borderRadius: 16,
         shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 6,
+        alignItems: 'center',
     },
     title: {
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: height * 0.025,
         textAlign: 'center',
-        color: '#333',
+        color: colors.textPrimary,
     },
     input: {
+        width: '100%',
         borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        height: 45,
-        marginBottom: 15,
-        backgroundColor: '#fff',
+        borderColor: colors.border,
+        borderRadius: 10,
+        paddingHorizontal: width * 0.04,
+        height: height * 0.06,
+        marginBottom: height * 0.02,
+        backgroundColor: colors.inputBackground,
+        fontSize: width * 0.045,
+        color: colors.textPrimary,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOpacity: 0.05,
+                shadowOffset: { width: 0, height: 1 },
+                shadowRadius: 2,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
+    },
+    button: {
+        width: '100%',
+        backgroundColor: colors.primary,
+        paddingVertical: height * 0.018,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginTop: height * 0.015,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOpacity: 0.15,
+                shadowOffset: { width: 0, height: 3 },
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
+    },
+    buttonText: {
+        color: colors.white,
+        fontSize: width * 0.045,
+        fontWeight: 'bold',
     },
 });

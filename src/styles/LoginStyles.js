@@ -1,7 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
-    // Container principal
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -10,7 +11,6 @@ export default StyleSheet.create({
         backgroundColor: 'transparent',
     },
 
-    // Card de login
     card: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         padding: 28,
@@ -23,16 +23,14 @@ export default StyleSheet.create({
         shadowRadius: 6,
     },
 
-    // Título
     title: {
-        fontSize: 28,
+        fontSize: width * 0.07, // responsivo
         fontWeight: 'bold',
         marginBottom: 24,
         textAlign: 'center',
         color: '#222',
     },
 
-    // Wrapper dos inputs (email e senha)
     inputWrapper: {
         position: 'relative',
         width: '100%',
@@ -47,11 +45,10 @@ export default StyleSheet.create({
         paddingHorizontal: 16,
         paddingRight: 48,
         backgroundColor: '#f9f9f9',
-        fontSize: 16,
+        fontSize: width * 0.04,
         color: '#111',
     },
 
-    // Ícone de email
     iconRight: {
         position: 'absolute',
         right: 16,
@@ -59,7 +56,6 @@ export default StyleSheet.create({
         transform: [{ translateY: -11 }],
     },
 
-    // Ícone de mostrar/ocultar senha
     eyeIcon: {
         position: 'absolute',
         right: 16,
@@ -71,7 +67,6 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
 
-    // Botão de login
     button: {
         backgroundColor: '#0066cc',
         paddingVertical: 14,
@@ -83,23 +78,21 @@ export default StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 17,
+        fontSize: width * 0.045,
     },
 
-    // Texto de erro
     errorText: {
         color: '#d32f2f',
         marginBottom: 10,
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: width * 0.035,
     },
 
-    // Textos de links (cadastro, esqueceu senha)
     extraText: {
         marginTop: 16,
         textAlign: 'center',
         color: '#444',
-        fontSize: 15,
+        fontSize: width * 0.04,
     },
 
     linkText: {
@@ -116,12 +109,10 @@ export default StyleSheet.create({
         textDecorationLine: 'underline',
     },
 
-    // Fundo da tela com imagem
     background: {
         flex: 1,
     },
 
-    // Camada escura sobre a imagem
     overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 0, 0, 0.35)',

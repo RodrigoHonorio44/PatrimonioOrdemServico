@@ -1,4 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+import colors from '../styles/colors'; // Certifique-se de ter este arquivo com suas cores definidas
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,56 +14,65 @@ const EsqueceuSenhaStyles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        paddingHorizontal: width * 0.05,
+        paddingVertical: height * 0.03,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     card: {
-        backgroundColor: 'rgba(255,255,255,0.95)',
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
         width: '100%',
         maxWidth: 400,
         padding: width * 0.06,
         borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 8,
         alignItems: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 8,
+            },
+        }),
     },
     title: {
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#333',
+        marginBottom: height * 0.015,
+        color: colors.textPrimary || '#333',
+        textAlign: 'center',
     },
     subtitle: {
-        fontSize: 15,
-        marginBottom: 20,
-        color: '#666',
+        fontSize: width * 0.04,
+        marginBottom: height * 0.025,
+        color: colors.textSecondary || '#666',
         textAlign: 'center',
     },
     input: {
-        height: 48,
+        height: height * 0.065,
         width: '100%',
-        borderColor: '#ccc',
+        borderColor: colors.border || '#ccc',
         borderWidth: 1,
-        paddingHorizontal: 14,
+        paddingHorizontal: width * 0.04,
         borderRadius: 8,
-        backgroundColor: '#fff',
-        marginBottom: 16,
+        backgroundColor: colors.inputBackground || '#fff',
+        marginBottom: height * 0.02,
+        color: colors.textPrimary || '#333',
     },
     button: {
-        height: 48,
+        height: height * 0.065,
         width: '100%',
-        backgroundColor: '#4a90e2',
+        backgroundColor: colors.primary || '#4a90e2',
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
     },
     buttonText: {
-        color: '#fff',
+        color: colors.white || '#fff',
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: width * 0.045,
     },
 });
 
