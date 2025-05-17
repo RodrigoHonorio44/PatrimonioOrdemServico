@@ -1,15 +1,17 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-// Obter largura da tela
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
-        padding: 20,
-        backgroundColor: '#eef',
         flexGrow: 1,
+        backgroundColor: '#eef',
+        padding: 20,
+        paddingBottom: 80, // espaço para navbar fixa (mais seguro que 70)
+        minHeight: height,
     },
     date: {
+        marginTop: 30,
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 20,
@@ -23,7 +25,7 @@ export default StyleSheet.create({
         fontSize: 16,
         borderWidth: 1,
         borderColor: '#ccc',
-        width: width - 40, // Para ajustar de forma responsiva
+        width: '100%', // para ocupar toda largura do container
     },
     label: {
         fontSize: 16,
@@ -37,7 +39,7 @@ export default StyleSheet.create({
         marginBottom: 15,
         borderWidth: 1,
         borderColor: '#ccc',
-        width: width - 40, // Responsivo
+        width: '100%',
     },
     picker: {
         height: 50,
@@ -48,35 +50,37 @@ export default StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         marginTop: 10,
-        width: width - 40, // Ajusta a largura do botão
+        width: '100%',
     },
     buttonEnabled: {
-        backgroundColor: '#007AFF', // Cor azul para o botão habilitado
+        backgroundColor: '#007AFF',
     },
     buttonDisabled: {
-        backgroundColor: '#ccc', // Cor cinza para o botão desabilitado
+        backgroundColor: '#ccc',
     },
     signatureButton: {
-        backgroundColor: '#4ade80', // Cor verde para o botão de assinatura
+        backgroundColor: '#4ade80',
     },
     pdfButton: {
-        backgroundColor: '#007AFF', // Cor azul para o botão de gerar PDF
+        backgroundColor: '#007AFF',
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
     },
-    // Estilos para a Navbar
     navbar: {
-        width: '100%', // Garantir que a navbar ocupe a largura total
-        paddingTop: -100, // Ajuste o valor para definir o espaço no topo
-        backgroundColor: '#fff', // Cor de fundo da Navbar
-        elevation: 5, // Sombra para dispositivos Android
-        position: 'absolute', // Para que a navbar seja fixa ou ajustável
-        top: 0, // Posiciona a navbar no topo
+        width: '100%',
+        paddingVertical: 10,
+        backgroundColor: '#fff',
+        elevation: 5,
+        position: 'absolute',
+        bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 1, // Garante que a navbar fique acima de outros componentes
+        zIndex: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
     },
 });

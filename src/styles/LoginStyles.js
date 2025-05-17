@@ -6,10 +6,10 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 24,
-        backgroundColor: 'transparent', // Fundo 100% transparente para destacar a imagem
+        backgroundColor: 'transparent',
     },
     card: {
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', // Branco translúcido
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         padding: 24,
         borderRadius: 12,
         width: '90%',
@@ -26,18 +26,40 @@ export default StyleSheet.create({
         textAlign: 'center',
         color: '#333',
     },
+    inputWrapper: {
+        position: 'relative',
+        width: '100%',
+        marginBottom: 16,
+    },
     input: {
         height: 50,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
         paddingHorizontal: 16,
-        marginBottom: 16,
+        paddingRight: 50, // espaço para ícone à direita
         backgroundColor: '#f2f2f2',
+        fontSize: 16,
         color: '#000',
     },
+    iconRight: {
+        position: 'absolute',
+        right: 15,
+        top: 25,
+        marginTop: -11, // metade do ícone (22px)
+    },
+    eyeIcon: {
+        position: 'absolute',
+        right: 15,
+        top: 25,
+        marginTop: -11,
+        height: 22,
+        width: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     button: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#007bff',
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: 'center',
@@ -48,10 +70,30 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
-    forgotPasswordText: {
+    errorText: {
+        color: 'red',
+        marginBottom: 12,
+        textAlign: 'center',
+    },
+    extraText: {
+        marginTop: 16,
+        textAlign: 'center',
+        color: '#333',
+        fontWeight: 'bold',
+    },
+    linkText: {
+        color: '#007bff',
+        textDecorationLine: 'underline',
+    },
+    esqueceuSenhaText: {
         marginTop: 16,
         color: '#007bff',
         textAlign: 'center',
         textDecorationLine: 'underline',
+        fontWeight: 'bold',
+    },
+    background: {
+        flex: 1,
+        resizeMode: 'cover',
     },
 });

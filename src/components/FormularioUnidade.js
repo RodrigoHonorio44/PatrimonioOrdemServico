@@ -22,11 +22,8 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             motivo,
             nomeTecnico,
             nomeResponsavel,
-            assinaturaTecnico,
-            assinaturaCliente,
         } = dadosFormulario;
 
-        // Verifica se todos os campos estão preenchidos, incluindo as assinaturas
         if (
             setor &&
             numeroPatrimonio &&
@@ -35,8 +32,8 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             nomeTecnico &&
             nomeResponsavel &&
             tipoLocal &&
-            assinaturaTecnico &&
-            assinaturaCliente
+            dadosFormulario.assinaturaTecnico &&
+            dadosFormulario.assinaturaCliente
         ) {
             setFormularioValido(true);
         } else {
@@ -76,9 +73,9 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             console.log("Documento salvo com ID:", docRef.id);
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            gerarPdfUnidade(dadosFormulario); // Gera PDF com os dados e assinaturas
+            gerarPdfUnidade(dadosFormulario); // Gera PDF com as assinaturas
 
-            // Limpa o formulário e as assinaturas
+            // Limpa o formulário
             setDadosFormulario({
                 setor: '',
                 numeroPatrimonio: '',
@@ -110,17 +107,18 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 onChangeText={(text) => handleChange('setor', text)}
                 value={dadosFormulario.setor || ''}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Número do Patrimônio"
-                onChangeText={(text) => handleChange('numeroPatrimonio', text)}
-                value={dadosFormulario.numeroPatrimonio || ''}
-            />
+
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
                 onChangeText={(text) => handleChange('descricaoEquipamento', text)}
                 value={dadosFormulario.descricaoEquipamento || ''}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Número do Patrimônio"
+                onChangeText={(text) => handleChange('numeroPatrimonio', text)}
+                value={dadosFormulario.numeroPatrimonio || ''}
             />
             <TextInput
                 style={styles.input}

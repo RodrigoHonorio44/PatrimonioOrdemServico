@@ -7,11 +7,14 @@ import {
     ScrollView,
     Alert,
     Modal,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as Sharing from 'expo-sharing';
 import Signature from 'react-native-signature-canvas';
-import { useNavigation } from '@react-navigation/native'; // <- Importa useNavigation
+import { useNavigation } from '@react-navigation/native';
 
 import styles from '../styles/OrdemServicosStyles';
 import GerarPDF from '../components/GerarPDF';
@@ -21,7 +24,7 @@ import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function OrdemServico() {
-    const navigation = useNavigation(); // <- Instancia o navigation
+    const navigation = useNavigation();
 
     const [dataAtual] = useState(new Date().toLocaleDateString());
     const [nomeResponsavel, setNomeResponsavel] = useState('');
@@ -37,6 +40,9 @@ export default function OrdemServico() {
 
     const [assinaturaTecnico, setAssinaturaTecnico] = useState(null);
     const [assinaturaCliente, setAssinaturaCliente] = useState(null);
+
+    // NOVO estado de loading:
+    const [loading, setLoading] = useState(false);
 
     const signatureRefTecnico = useRef();
     const signatureRefCliente = useRef();
@@ -58,6 +64,10 @@ export default function OrdemServico() {
             Alert.alert('Erro', 'Todos os campos devem ser preenchidos');
             return false;
         }
+        if (!assinaturaTecnico || !assinaturaCliente) {
+            Alert.alert('Erro', 'Ambas as assinaturas devem ser feitas');
+            return false;
+        }
         return true;
     };
 
@@ -69,7 +79,8 @@ export default function OrdemServico() {
         servico &&
         nomeTecnico &&
         assinaturaTecnico &&
-        assinaturaCliente;
+        assinaturaCliente &&
+        !loading;  // desabilita botão se loading estiver true
 
     const enviarParaFirestore = async () => {
         try {
@@ -93,10 +104,32 @@ export default function OrdemServico() {
         }
     };
 
+    const resetarFormulario = () => {
+        setNomeResponsavel('');
+        setSetor('');
+        setDescricao('');
+        setPatrimonio('');
+        setServico('');
+        setNomeTecnico('');
+        setAssinaturaTecnico(null);
+        setAssinaturaCliente(null);
+        setUnidade('Hospital Conde');
+
+        if (signatureRefTecnico.current) {
+            signatureRefTecnico.current.clearSignature();
+        }
+        if (signatureRefCliente.current) {
+            signatureRefCliente.current.clearSignature();
+        }
+    };
+
     const handleGerarPDF = async () => {
         if (!validarCampos()) return;
 
+        setLoading(true);  // ativa loading
+
         try {
+            // 1. Gerar o PDF
             const file = await GerarPDF({
                 dataAtual,
                 nomeResponsavel,
@@ -110,15 +143,24 @@ export default function OrdemServico() {
                 assinaturaCliente,
             });
 
-            if (file) {
-                await Sharing.shareAsync(file.uri);
-                await enviarParaFirestore();
-            } else {
+            if (!file) {
                 Alert.alert('Erro', 'Não foi possível gerar o PDF.');
+                setLoading(false);
+                return;
             }
+
+            // 2. Enviar para Firestore
+            await enviarParaFirestore();
+
+            // 3. Compartilhar PDF
+            await Sharing.shareAsync(file.uri);
+
         } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
-            Alert.alert('Erro', 'Ocorreu um erro ao gerar o PDF.');
+            console.error('Erro ao processar:', error);
+            Alert.alert('Erro', 'Ocorreu um erro durante o processo.');
+        } finally {
+            resetarFormulario();
+            setLoading(false);  // desativa loading
         }
     };
 
@@ -128,97 +170,108 @@ export default function OrdemServico() {
         { icon: 'inventory', label: 'Entrega', screen: 'EntregaDeEquipamento' },
     ];
 
-    // Função que chama a navegação
     const handleNavigate = (route) => {
         navigation.navigate(route);
     };
 
     return (
         <View style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.date}>Data: {dataAtual}</Text>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={80}
+            >
+                <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                    <Text style={styles.date}>Data: {dataAtual}</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nome do Responsável (Cliente)"
-                    value={nomeResponsavel}
-                    onChangeText={setNomeResponsavel}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Setor"
-                    value={setor}
-                    onChangeText={setSetor}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Descrição do Equipamento"
-                    value={descricao}
-                    onChangeText={setDescricao}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Número do Patrimônio"
-                    value={patrimonio}
-                    onChangeText={setPatrimonio}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Serviço Realizado"
-                    value={servico}
-                    onChangeText={setServico}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nome do Técnico"
-                    value={nomeTecnico}
-                    onChangeText={setNomeTecnico}
-                />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nome do Responsável (Cliente)"
+                        value={nomeResponsavel}
+                        onChangeText={setNomeResponsavel}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Setor"
+                        value={setor}
+                        onChangeText={setSetor}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Descrição do Equipamento"
+                        value={descricao}
+                        onChangeText={setDescricao}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Número do Patrimônio"
+                        value={patrimonio}
+                        onChangeText={setPatrimonio}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Serviço Realizado"
+                        value={servico}
+                        onChangeText={setServico}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nome do Técnico"
+                        value={nomeTecnico}
+                        onChangeText={setNomeTecnico}
+                    />
 
-                <Text style={styles.label}>Hospital / Unidade:</Text>
-                <View style={styles.pickerContainer}>
-                    <Picker
-                        selectedValue={unidade}
-                        onValueChange={(itemValue) => setUnidade(itemValue)}
-                        style={styles.picker}
+                    <Text style={styles.label}>Hospital / Unidade:</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={unidade}
+                            onValueChange={(itemValue) => setUnidade(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                            <Picker.Item label="UPA Inoã" value="UPA Inoã" />
+                            <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                            <Picker.Item label="SAMU Barroco" value="SAMU Barroco" />
+                            <Picker.Item label="SAMU Ponta Negra" value="SAMU Ponta Negra" />
+                        </Picker>
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.button, styles.signatureButton]}
+                        onPress={() => setShowAssinaturaTecnico(true)}
+                        disabled={loading}
                     >
-                        <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                        <Picker.Item label="UPA Inoã" value="UPA Inoã" />
-                        <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                        <Picker.Item label="SAMU Barroco" value="SAMU Barroco" />
-                        <Picker.Item label="SAMU Ponta Negra" value="SAMU Ponta Negra" />
-                    </Picker>
-                </View>
+                        <Text style={styles.buttonText}>
+                            {assinaturaTecnico ? 'Assinatura do Técnico Salva' : 'Assinar Técnico'}
+                        </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.button, styles.signatureButton]}
-                    onPress={() => setShowAssinaturaTecnico(true)}
-                >
-                    <Text style={styles.buttonText}>
-                        {assinaturaTecnico ? 'Assinatura do Técnico Salva' : 'Assinar Técnico'}
-                    </Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.button, styles.signatureButton]}
+                        onPress={() => setShowAssinaturaCliente(true)}
+                        disabled={loading}
+                    >
+                        <Text style={styles.buttonText}>
+                            {assinaturaCliente ? 'Assinatura do Cliente Salva' : 'Assinar Cliente'}
+                        </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.button, styles.signatureButton]}
-                    onPress={() => setShowAssinaturaCliente(true)}
-                >
-                    <Text style={styles.buttonText}>
-                        {assinaturaCliente ? 'Assinatura do Cliente Salva' : 'Assinar Cliente'}
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[
-                        styles.button,
-                        isButtonEnabled ? styles.buttonEnabled : styles.buttonDisabled,
-                    ]}
-                    onPress={handleGerarPDF}
-                    disabled={!isButtonEnabled}
-                >
-                    <Text style={styles.buttonText}>Gerar PDF e Enviar por WhatsApp</Text>
-                </TouchableOpacity>
-            </ScrollView>
+                    <TouchableOpacity
+                        style={[
+                            styles.button,
+                            isButtonEnabled ? styles.buttonEnabled : styles.buttonDisabled,
+                        ]}
+                        onPress={handleGerarPDF}
+                        disabled={!isButtonEnabled}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.buttonText}>Gerar PDF e Enviar por WhatsApp</Text>
+                        )}
+                    </TouchableOpacity>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             <Modal visible={showAssinaturaTecnico} animationType="slide">
                 <Signature
@@ -227,10 +280,17 @@ export default function OrdemServico() {
                     onEmpty={() =>
                         Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Técnico')
                     }
-                    descriptionText="Assine aqui"
+                    descriptionText="Assine aqui (Técnico)"
                     clearText="Limpar"
-                    confirmText="Confirmar"
+                    confirmText="Salvar"
+                    webStyle={styles.signatureWebStyle}
                 />
+                <TouchableOpacity
+                    onPress={() => setShowAssinaturaTecnico(false)}
+                    style={styles.closeButton}
+                >
+                    <Text style={styles.closeButtonText}>Fechar</Text>
+                </TouchableOpacity>
             </Modal>
 
             <Modal visible={showAssinaturaCliente} animationType="slide">
@@ -240,13 +300,20 @@ export default function OrdemServico() {
                     onEmpty={() =>
                         Alert.alert('Assinatura em branco', 'Por favor, faça a assinatura do Cliente')
                     }
-                    descriptionText="Assine aqui"
+                    descriptionText="Assine aqui (Cliente)"
                     clearText="Limpar"
-                    confirmText="Confirmar"
+                    confirmText="Salvar"
+                    webStyle={styles.signatureWebStyle}
                 />
+                <TouchableOpacity
+                    onPress={() => setShowAssinaturaCliente(false)}
+                    style={styles.closeButton}
+                >
+                    <Text style={styles.closeButtonText}>Fechar</Text>
+                </TouchableOpacity>
             </Modal>
 
-            <NavbarBottom items={navItems} onNavigate={handleNavigate} />
+            <NavbarBottom navItems={navItems} onNavigate={handleNavigate} />
         </View>
     );
 }

@@ -1,4 +1,3 @@
-// src/screens/CadastroScreen.js
 import React, { useState } from 'react';
 import {
     View,
@@ -36,9 +35,11 @@ export default function CadastroScreen() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
             const userId = userCredential.user.uid;
 
-            await setDoc(doc(db, 'usuarios', userId), {
-                nome: nome,
+            // ✅ Salva na coleção "users" com os campos corretos
+            await setDoc(doc(db, 'users', userId), {
                 email: email,
+                name: nome,
+                role: 'user', // todos são cadastrados como 'user'
                 criadoEm: new Date()
             });
 

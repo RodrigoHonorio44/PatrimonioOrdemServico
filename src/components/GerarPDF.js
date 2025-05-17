@@ -1,10 +1,25 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { Asset } from 'expo-asset';
 
-import { db, auth } from '../config/firebaseConfig'; // Importa o auth também
+import { db, auth } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
+
+const verificarAssinatura = (assinatura) => {
+  if (!assinatura) return '';
+  return assinatura.startsWith('data:image') ? assinatura : '';
+};
+
+const loadLogoBase64 = async () => {
+  const asset = Asset.fromModule(require('../../assets/HospitalMG.png'));
+  await asset.downloadAsync();
+  const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return `data:image/png;base64,${base64}`;
+};
 
 const GerarPDF = async ({
   dataAtual,
@@ -19,10 +34,7 @@ const GerarPDF = async ({
   assinaturaCliente,
 }) => {
   try {
-    const logo = Asset.fromModule(require('../../assets/HospitalMG.png')).uri;
-
-    const assinaturaTecnicoBase64 = assinaturaTecnico || '';
-    const assinaturaClienteBase64 = assinaturaCliente || '';
+    const logo = await loadLogoBase64();
 
     const htmlContent = `
       <html>
@@ -84,11 +96,11 @@ const GerarPDF = async ({
 
           <div class="assinaturas">
             <div class="assinatura">
-              <img src="${assinaturaTecnicoBase64}" />
+              <img src="${verificarAssinatura(assinaturaTecnico)}" />
               <p>${nomeTecnico}</p>
             </div>
             <div class="assinatura">
-              <img src="${assinaturaClienteBase64}" />
+              <img src="${verificarAssinatura(assinaturaCliente)}" />
               <p>${nomeResponsavel}</p>
             </div>
           </div>
@@ -96,18 +108,15 @@ const GerarPDF = async ({
       </html>
     `;
 
-    // Geração do PDF
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
-    await Sharing.shareAsync(uri); // Compartilhar o PDF gerado
+    await Sharing.shareAsync(uri);
 
-    // Verifica se o usuário está logado no Firebase antes de salvar os dados
     const user = auth.currentUser;
     if (!user) {
       console.log('Usuário não está logado. Dados não serão enviados.');
       return;
     }
 
-    // Salva os dados da Ordem de Serviço no Firestore
     await addDoc(collection(db, 'ordensServico'), {
       data: dataAtual,
       unidade,

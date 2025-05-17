@@ -9,7 +9,8 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-import styles from '../styles/LoginScreenStyles';
+import { Ionicons } from '@expo/vector-icons';
+import styles from '../styles/LoginStyles';
 import { login } from '../services/authService';
 
 export default function LoginScreen({ navigation }) {
@@ -17,10 +18,10 @@ export default function LoginScreen({ navigation }) {
     const [senha, setSenha] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
         setError('');
-
         if (!email || !senha) {
             setError('Preencha todos os campos.');
             return;
@@ -60,23 +61,54 @@ export default function LoginScreen({ navigation }) {
 
                     {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                    <TextInput
-                        placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        style={styles.input}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
-                    <TextInput
-                        placeholder="Senha"
-                        value={senha}
-                        onChangeText={setSenha}
-                        style={styles.input}
-                        secureTextEntry
-                    />
+                    {/* Campo de email com ícone da cartinha à direita */}
+                    <View style={styles.inputWrapper}>
+                        <TextInput
+                            placeholder="Email"
+                            value={email}
+                            onChangeText={setEmail}
+                            style={styles.input}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            placeholderTextColor="#666"
+                        />
+                        <Ionicons
+                            name="mail-outline"
+                            size={22}
+                            color="gray"
+                            style={styles.iconRight}
+                        />
+                    </View>
 
-                    <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+                    {/* Campo senha com olho */}
+                    <View style={styles.inputWrapper}>
+                        <TextInput
+                            placeholder="Senha"
+                            value={senha}
+                            onChangeText={setSenha}
+                            style={styles.input}
+                            secureTextEntry={!showPassword}
+                            autoCapitalize="none"
+                            placeholderTextColor="#666"
+                        />
+                        <TouchableOpacity
+                            onPress={() => setShowPassword(!showPassword)}
+                            style={styles.eyeIcon}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons
+                                name={showPassword ? 'eye' : 'eye-off'}
+                                size={22}
+                                color="gray"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleLogin}
+                        disabled={loading}
+                    >
                         {loading ? (
                             <ActivityIndicator color="#fff" />
                         ) : (
@@ -84,15 +116,17 @@ export default function LoginScreen({ navigation }) {
                         )}
                     </TouchableOpacity>
 
-                    {/* Botões adicionais */}
                     <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
                         <Text style={styles.extraText}>
-                            Não tem uma conta? <Text style={styles.linkText}>Cadastre-se aqui</Text>
+                            Não tem uma conta?{' '}
+                            <Text style={styles.linkText}>Cadastre-se aqui</Text>
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => navigation.navigate('EsqueceuSenha')}>
-                        <Text style={styles.extraText}>Esqueceu sua senha?</Text>
+                        <Text style={[styles.extraText, { fontWeight: 'bold' }]}>
+                            Esqueceu sua senha?
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

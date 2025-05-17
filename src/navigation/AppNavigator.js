@@ -2,14 +2,18 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from '../context/AuthContext';
+
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import LoginScreen from '../screens/LoginScreen';
-import CadastroScreen from '../screens/CadastroScreen'; // ⬅️ Adicionado aqui
+import CadastroScreen from '../screens/CadastroScreen';
 import HomeScreen from '../screens/HomeScreen';
-import OrdemServico from '../screens/OrdemServico'; // ⬅️ Importando a tela de Ordem de Serviço
-import EntregaDeEquipamento from '../screens/EntregaDeEquipamento'; // ⬅️ Importando EntregaDeEquipamento
-import ListaDeTarefas from '../screens/ListaDeTarefa'; // importação
+import OrdemServico from '../screens/OrdemServico';
+import EntregaDeEquipamento from '../screens/EntregaDeEquipamento';
+import ListaDeTarefas from '../screens/ListaDeTarefa';
 import TarefasTecnico from '../screens/TarefasTecnico';
+import EsqueceuSenha from '../screens/EsqueceuSenha';
+import Assinatura from '../screens/Assinatura'; // ✅ Importação da nova tela
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -30,7 +34,7 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="Cadastro"
                         component={CadastroScreen}
-                        options={{ headerShown: false }} // ou true se quiser exibir o header
+                        options={{ headerShown: false }}
                     />
                     <Stack.Screen
                         name="Home"
@@ -40,13 +44,12 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="OrdemServico"
                         component={OrdemServico}
-                        options={{ headerShown: false }} // ou true se quiser exibir o header
+                        options={{ headerShown: false }}
                     />
-                    {/* Aqui adicionamos a tela EntregaDeEquipamento */}
                     <Stack.Screen
                         name="EntregaDeEquipamento"
                         component={EntregaDeEquipamento}
-                        options={{ headerShown: false }} // ou true se quiser exibir o header
+                        options={{ headerShown: false }}
                     />
                     <Stack.Screen
                         name="ListaDeTarefas"
@@ -57,6 +60,16 @@ export default function AppNavigator() {
                         name="TarefasTecnico"
                         component={TarefasTecnico}
                         options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="EsqueceuSenha"
+                        component={EsqueceuSenha}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Assinatura"
+                        component={Assinatura}
+                        options={{ headerShown: false }} // ✅ Tela adicionada
                     />
                 </Stack.Navigator>
             </NavigationContainer>

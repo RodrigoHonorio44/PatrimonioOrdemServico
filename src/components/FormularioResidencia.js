@@ -4,12 +4,13 @@ import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
-import { TextInputMask } from 'react-native-masked-text'; // Importando a máscara
+import { TextInputMask } from 'react-native-masked-text';
 import gerarPdfResidencia from '../components/GerarPdfResidencia';
 
 export default function FormularioResidencia({ dadosFormulario, setDadosFormulario }) {
     const navigation = useNavigation();
     const [formularioValido, setFormularioValido] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (campo, valor) => {
         setDadosFormulario(prev => ({ ...prev, [campo]: valor }));
@@ -28,7 +29,7 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             assinaturaCliente
         } = dadosFormulario;
 
-        if (
+        setFormularioValido(
             nomePaciente &&
             endereco &&
             telefone &&
@@ -38,11 +39,7 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             nomeResponsavel &&
             assinaturaTecnico &&
             assinaturaCliente
-        ) {
-            setFormularioValido(true);
-        } else {
-            setFormularioValido(false);
-        }
+        );
     }, [dadosFormulario]);
 
     const handleAssinaturaTecnico = () => {
@@ -62,6 +59,9 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
     };
 
     const salvarDadosNoFirestore = async () => {
+        if (!formularioValido || isSaving) return;
+
+        setIsSaving(true);
         try {
             const docRef = await addDoc(collection(db, "entregasResidencia"), {
                 data: new Date().toLocaleDateString(),
@@ -74,11 +74,17 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 nomeResponsavel: dadosFormulario.nomeResponsavel
             });
 
-            console.log("Documento salvo com ID:", docRef.id);
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            gerarPdfResidencia(dadosFormulario);
+            // Gerar PDF com os dados antes de resetar
+            try {
+                await gerarPdfResidencia(dadosFormulario);
+            } catch (pdfError) {
+                Alert.alert("Erro", "Falha ao gerar PDF.");
+                console.error(pdfError);
+            }
 
+            // Resetar formulário
             setDadosFormulario({
                 nomePaciente: '',
                 endereco: '',
@@ -93,7 +99,9 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
 
         } catch (e) {
             console.error("Erro ao salvar:", e);
-            Alert.alert("Erro ao salvar os dados!");
+            Alert.alert("Erro", "Falha ao salvar os dados.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -114,9 +122,8 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             <TextInputMask
                 type={'cel-phone'}
                 options={{
-                    maskType: 'BRL',
                     withDDD: true,
-                    dddMask: '(99)'
+                    dddMask: '(99) '
                 }}
                 style={styles.input}
                 placeholder="(XX) XXXXX-XXXX"
@@ -163,9 +170,11 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             <TouchableOpacity
                 style={[styles.saveButton, { backgroundColor: formularioValido ? '#2196F3' : '#ccc' }]}
                 onPress={salvarDadosNoFirestore}
-                disabled={!formularioValido}
+                disabled={!formularioValido || isSaving}
             >
-                <Text style={styles.saveButtonText}>Salvar e Gerar PDF</Text>
+                <Text style={styles.saveButtonText}>
+                    {isSaving ? 'Salvando...' : 'Salvar e Gerar PDF'}
+                </Text>
             </TouchableOpacity>
         </View>
     );

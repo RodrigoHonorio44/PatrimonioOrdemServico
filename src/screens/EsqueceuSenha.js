@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ImageBackground,
+} from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth } from '../config/firebaseConfig';
 import styles from '../styles/EsqueceuSenhaStyles';
 
 const EsqueceuSenha = () => {
@@ -64,29 +70,32 @@ const EsqueceuSenha = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Image source={require('../../assets/fundoLogin.png')} style={styles.backgroundImage} />
+        <ImageBackground
+            source={require('../../assets/fundoLogin.png')}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+        >
+            <View style={styles.overlay}>
+                <View style={styles.card}>
+                    <Text style={styles.title}>Recuperar Senha</Text>
+                    <Text style={styles.subtitle}>Informe o e-mail cadastrado para receber instruções:</Text>
 
-            <View style={styles.card}>
-                <Text style={styles.title}>Recuperar Senha</Text>
-                <Text style={styles.subtitle}>Informe o e-mail cadastrado para receber instruções:</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Digite seu e-mail"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Digite seu e-mail"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={email}
-                    onChangeText={setEmail}
-                />
-
-                <TouchableOpacity style={styles.button} onPress={handleEnviar}>
-                    <Text style={styles.buttonText}>Enviar</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleEnviar}>
+                        <Text style={styles.buttonText}>Enviar</Text>
+                    </TouchableOpacity>
+                </View>
+                <Toast />
             </View>
-
-            <Toast />
-        </View>
+        </ImageBackground>
     );
 };
 
