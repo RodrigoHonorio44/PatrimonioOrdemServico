@@ -1,60 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 
-export default function ListaMovimentacoes() {
-    const [entradas, setEntradas] = useState([]);
-    const [saidas, setSaidas] = useState([]);
+export default function ListaEstoqueAtual() {
+    const [estoqueAtual, setEstoqueAtual] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const entradasSnapshot = await getDocs(collection(db, 'entradas'));
-            const saidasSnapshot = await getDocs(collection(db, 'saidas'));
+        const unsubscribe = onSnapshot(collection(db, 'movimentacoes'), (snapshot) => {
+            const dados = {};
 
-            const entradasData = entradasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const saidasData = saidasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            snapshot.forEach((doc) => {
+                const mov = doc.data();
+                const key = `${mov.equipamento}_${mov.localArmazenamento}`;
+                const quantidade = parseInt(mov.quantidade);
 
-            setEntradas(entradasData);
-            setSaidas(saidasData);
-        };
+                if (!dados[key]) {
+                    dados[key] = {
+                        equipamento: mov.equipamento,
+                        local: mov.localArmazenamento,
+                        quantidade: 0,
+                    };
+                }
 
-        fetchData();
+                if (mov.tipo === 'entrada') {
+                    dados[key].quantidade += quantidade;
+                } else if (mov.tipo === 'saida') {
+                    dados[key].quantidade -= quantidade;
+                }
+            });
+
+            const resultado = Object.values(dados).filter((item) => item.quantidade > 0);
+            setEstoqueAtual(resultado);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>Entradas</Text>
-            {entradas.map(item => (
-                <View key={item.id} style={styles.card}>
-                    <Text>Equipamento: {item.equipamento}</Text>
-                    <Text>Quantidade: {item.quantidade}</Text>
-                    <Text>Patrimônio: {item.patrimonio}</Text>
-                    <Text>Local: {item.localArmazenamento}</Text>
-                    <Text>Data/Hora: {new Date(item.dataHora).toLocaleString()}</Text>
-                </View>
-            ))}
-
-            <Text style={styles.title}>Saídas</Text>
-            {saidas.map(item => (
-                <View key={item.id} style={styles.card}>
-                    <Text>Equipamento: {item.equipamento}</Text>
-                    <Text>Quantidade: {item.quantidade}</Text>
-                    <Text>Patrimônio: {item.patrimonio}</Text>
-                    <Text>Data/Hora: {new Date(item.dataHora).toLocaleString()}</Text>
-                </View>
-            ))}
-        </ScrollView>
+        <View>
+            {estoqueAtual.length === 0 ? (
+                <Text style={styles.empty}>Estoque vazio</Text>
+            ) : (
+                <FlatList
+                    data={estoqueAtual}
+                    keyExtractor={(item, index) => `${item.equipamento}_${index}`}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <Text style={styles.title}>{item.equipamento}</Text>
+                            <Text>Quantidade: {item.quantidade}</Text>
+                            <Text>Local: {item.local}</Text>
+                        </View>
+                    )}
+                />
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16 },
-    title: { fontSize: 20, fontWeight: 'bold', marginVertical: 16 },
-    card: {
-        backgroundColor: '#f0f0f0',
+    item: {
+        backgroundColor: '#f1f1f1',
         padding: 12,
+        marginBottom: 10,
         borderRadius: 8,
-        marginBottom: 12,
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    empty: {
+        textAlign: 'center',
+        marginTop: 20,
+        fontStyle: 'italic',
     },
 });

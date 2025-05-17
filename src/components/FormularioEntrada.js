@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, Alert, Text } from 'react-native';
 import styles from '../styles/stylesEntrada';
-import { db } from '../config/firebaseConfig'; // ajuste o caminho se necessário
+import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function FormularioEntrada({ equipamento, setEquipamento, quantidade, setQuantidade }) {
@@ -18,9 +18,10 @@ export default function FormularioEntrada({ equipamento, setEquipamento, quantid
 
     const handleRegistrar = async () => {
         try {
-            await addDoc(collection(db, 'entradas'), {
+            await addDoc(collection(db, 'movimentacoes'), {
+                tipo: 'entrada',
                 equipamento,
-                quantidade,
+                quantidade: parseInt(quantidade),
                 patrimonio,
                 localArmazenamento,
                 dataHora: new Date().toISOString(),

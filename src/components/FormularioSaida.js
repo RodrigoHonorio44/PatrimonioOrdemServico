@@ -6,6 +6,7 @@ import { collection, addDoc } from 'firebase/firestore';
 
 export default function FormularioSaida({ equipamento, setEquipamento, quantidade, setQuantidade }) {
     const [patrimonio, setPatrimonio] = useState('');
+    const [localArmazenamento, setLocalArmazenamento] = useState('');
     const [dataHora, setDataHora] = useState('');
 
     useEffect(() => {
@@ -17,10 +18,12 @@ export default function FormularioSaida({ equipamento, setEquipamento, quantidad
 
     const handleRegistrar = async () => {
         try {
-            await addDoc(collection(db, 'saidas'), {
+            await addDoc(collection(db, 'movimentacoes'), {
+                tipo: 'saida',
                 equipamento,
-                quantidade,
+                quantidade: parseInt(quantidade),
                 patrimonio,
+                localArmazenamento,
                 dataHora: new Date().toISOString(),
             });
 
@@ -28,6 +31,7 @@ export default function FormularioSaida({ equipamento, setEquipamento, quantidad
             setEquipamento('');
             setQuantidade('');
             setPatrimonio('');
+            setLocalArmazenamento('');
         } catch (error) {
             Alert.alert('Erro ao registrar saída', error.message);
         }
@@ -53,6 +57,12 @@ export default function FormularioSaida({ equipamento, setEquipamento, quantidad
                 placeholder="Nº do Patrimônio"
                 value={patrimonio}
                 onChangeText={setPatrimonio}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Local de Armazenamento"
+                value={localArmazenamento}
+                onChangeText={setLocalArmazenamento}
             />
             <Text style={styles.dataHora}>Data e Hora: {dataHora}</Text>
             <Button title="Registrar Saída" onPress={handleRegistrar} />

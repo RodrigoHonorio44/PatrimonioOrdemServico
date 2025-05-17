@@ -4,7 +4,7 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        paddingBottom: 70, // espaço para a navbar
+        paddingBottom: 80, // espaço para não sobrepor a navbar
     },
     selector: {
         flexDirection: 'row',
@@ -15,7 +15,13 @@ export default StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 12,
+        marginBottom: 15,
         textAlign: 'center',
+    },
+    navbar: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
     },
 });
