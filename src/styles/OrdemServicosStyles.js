@@ -1,78 +1,81 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { height } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
         flexGrow: 1,
-        backgroundColor: '#eef',
-        padding: 20,
-        paddingBottom: 80, // espaço para navbar fixa (mais seguro que 70)
+        backgroundColor: '#f0f4ff',
+        paddingHorizontal: width * 0.05, // 5% da largura da tela
+        paddingTop: height * 0.02,
+        paddingBottom: height * 0.1, // espaço para navbar fixa
         minHeight: height,
     },
     date: {
-        marginTop: 30,
-        fontSize: 16,
+        marginTop: height * 0.03,
+        fontSize: width * 0.045,
         fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#333',
+        marginBottom: height * 0.02,
+        color: '#000367',
     },
     input: {
         backgroundColor: '#fff',
-        padding: 14,
+        padding: width * 0.035,
         borderRadius: 10,
-        marginBottom: 15,
-        fontSize: 16,
+        marginBottom: height * 0.02,
+        fontSize: width * 0.045,
         borderWidth: 1,
-        borderColor: '#ccc',
-        width: '100%', // para ocupar toda largura do container
+        borderColor: '#ccd',
+        width: '100%',
+        color: '#111',
     },
     label: {
-        fontSize: 16,
+        fontSize: width * 0.045,
         marginBottom: 5,
-        color: '#333',
-        fontWeight: '500',
+        color: '#000367',
+        fontWeight: '600',
     },
     pickerContainer: {
         backgroundColor: '#fff',
         borderRadius: 10,
-        marginBottom: 15,
+        marginBottom: height * 0.02,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#ccd',
         width: '100%',
     },
     picker: {
         height: 50,
         width: '100%',
+        color: '#111',
     },
     button: {
-        paddingVertical: 14,
+        paddingVertical: height * 0.018,
         borderRadius: 10,
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: height * 0.02,
         width: '100%',
     },
     buttonEnabled: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#000367',
     },
     buttonDisabled: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#aaa',
     },
     signatureButton: {
         backgroundColor: '#4ade80',
     },
     pdfButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#0033cc',
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: width * 0.045,
         fontWeight: '600',
     },
     navbar: {
         width: '100%',
-        paddingVertical: 10,
-        backgroundColor: '#fff',
+        paddingVertical: height * 0.015,
+        backgroundColor: '#000367',
         elevation: 5,
         position: 'absolute',
         bottom: 0,

@@ -18,16 +18,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     text: {
-        color: 'white',
+        color: '#ffffff',
         fontSize: 24,
         fontWeight: 'bold',
     },
     welcomeText: {
-        color: '#000367',
+        color: '#000367', // azul principal
         fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
-        textShadowColor: '#000',
+        textShadowColor: '#000000',
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 2,
         marginTop: 20,
@@ -36,16 +36,18 @@ const styles = StyleSheet.create({
     pageContent: {
         flexGrow: 1,
         padding: 10,
+        backgroundColor: '#f0f4ff', // fundo claro com toque azulado
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#0033cc', // azul mais vivo para contraste
         padding: 15,
         margin: 20,
-        borderRadius: 5,
+        borderRadius: 8,
         alignItems: 'center',
+        elevation: 3,
     },
     buttonText: {
-        color: '#fff',
+        color: '#ffffff',
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -57,17 +59,18 @@ const styles = StyleSheet.create({
     card: {
         width: '48%',
         padding: 20,
-        borderRadius: 10,
+        borderRadius: 12,
         marginBottom: 15,
         alignItems: 'center',
+        backgroundColor: '#000367', // usa a cor principal
         elevation: 4,
-        shadowColor: '#000',
+        shadowColor: '#000000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
     },
     cardText: {
-        color: '#fff',
+        color: '#ffffff',
         marginTop: 10,
         fontWeight: 'bold',
         textAlign: 'center',

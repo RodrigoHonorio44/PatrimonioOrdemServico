@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
+    Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../styles/LoginStyles';
@@ -19,6 +20,16 @@ export default function LoginScreen({ navigation }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: true,
+        }).start();
+    }, []);
 
     const handleLogin = async () => {
         setError('');
@@ -52,16 +63,17 @@ export default function LoginScreen({ navigation }) {
             source={require('../../assets/fundoLogin.png')}
             style={styles.background}
         >
+            <View style={styles.overlay} />
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.container}
             >
-                <View style={styles.card}>
-                    <Text style={styles.title}>Login</Text>
+                <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
+                    <Text style={styles.title}>Bem-vindo!</Text>
 
                     {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                    {/* Campo de email com ícone da cartinha à direita */}
                     <View style={styles.inputWrapper}>
                         <TextInput
                             placeholder="Email"
@@ -70,7 +82,7 @@ export default function LoginScreen({ navigation }) {
                             style={styles.input}
                             keyboardType="email-address"
                             autoCapitalize="none"
-                            placeholderTextColor="#666"
+                            placeholderTextColor="#aaa"
                         />
                         <Ionicons
                             name="mail-outline"
@@ -80,7 +92,6 @@ export default function LoginScreen({ navigation }) {
                         />
                     </View>
 
-                    {/* Campo senha com olho */}
                     <View style={styles.inputWrapper}>
                         <TextInput
                             placeholder="Senha"
@@ -89,7 +100,7 @@ export default function LoginScreen({ navigation }) {
                             style={styles.input}
                             secureTextEntry={!showPassword}
                             autoCapitalize="none"
-                            placeholderTextColor="#666"
+                            placeholderTextColor="#aaa"
                         />
                         <TouchableOpacity
                             onPress={() => setShowPassword(!showPassword)}
@@ -116,19 +127,21 @@ export default function LoginScreen({ navigation }) {
                         )}
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                    <View style={{ marginTop: 20, alignItems: 'center' }}>
                         <Text style={styles.extraText}>
-                            Não tem uma conta?{' '}
-                            <Text style={styles.linkText}>Cadastre-se aqui</Text>
+                            Não tem uma conta?
                         </Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                            <Text style={styles.linkText}>Cadastre-se aqui</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <TouchableOpacity onPress={() => navigation.navigate('EsqueceuSenha')}>
-                        <Text style={[styles.extraText, { fontWeight: 'bold' }]}>
+                        <Text style={styles.esqueceuSenhaText}>
                             Esqueceu sua senha?
                         </Text>
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
             </KeyboardAvoidingView>
         </ImageBackground>
     );
