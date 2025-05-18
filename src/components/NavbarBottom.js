@@ -16,6 +16,7 @@ export default function NavbarBottom() {
         { label: 'Tarefas Técnico', route: 'TarefasTecnico', icon: 'engineering' },
         { label: 'Relatório', route: 'Relatorio', icon: 'bar-chart' },
         { label: 'Estoque', route: 'Estoque', icon: 'inventory' },
+        { label: 'Baixa Patrimonio', route: 'BaixaPatrimonio', icon: 'archive' },
     ];
 
     return (

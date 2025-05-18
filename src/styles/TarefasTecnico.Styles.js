@@ -40,6 +40,14 @@ export default StyleSheet.create({
         borderRadius: 6,
         alignSelf: 'flex-start',
     },
+    botaoExcluir: {
+        marginTop: width * 0.03,
+        backgroundColor: '#cc0000', // vermelho para excluir
+        paddingVertical: width * 0.025,
+        paddingHorizontal: width * 0.04,
+        borderRadius: 6,
+        alignSelf: 'flex-start',
+    },
     botaoTexto: {
         color: '#fff',
         fontSize: width * 0.035,

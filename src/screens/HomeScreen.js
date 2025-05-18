@@ -23,6 +23,7 @@ const cards = [
         title: 'Estoque', icon: 'inventory', color: '#D0021B', screen: 'Estoque'
     },
     { title: 'Relatórios', icon: 'bar-chart', color: '#7ED321', screen: 'Relatorios' },
+    { title: 'Baixa Patrimonio', icon: 'archive', color: '#7ED321', screen: 'BaixaPatrimonio' },
 ];
 
 export default function HomeScreen({ navigation }) {

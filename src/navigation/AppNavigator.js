@@ -17,6 +17,7 @@ import Assinatura from '../screens/Assinatura';
 import Relatorio from '../screens/Relatorio';
 import Relatorios from '../screens/Relatorios';
 import Estoque from '../screens/Estoque';
+import BaixaPatrimonio from '../screens/BaixaPatrimonio';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +89,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="EsqueceuSenha"
                         component={EsqueceuSenha}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="BaixaPatrimonio"
+                        component={BaixaPatrimonio}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

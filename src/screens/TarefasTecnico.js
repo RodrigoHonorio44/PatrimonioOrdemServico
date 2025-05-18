@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import styles from '../styles/TarefasTecnico.Styles';
 import NavbarBottom from '../components/NavbarBottom';
@@ -44,6 +44,28 @@ export default function TarefasTecnico() {
         }
     };
 
+    const excluirTarefa = async (tarefaId) => {
+        Alert.alert(
+            'Confirmar exclusão',
+            'Deseja realmente excluir essa tarefa?',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Excluir',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await deleteDoc(doc(db, 'tarefas', tarefaId));
+                            Alert.alert('Sucesso', 'Tarefa excluída.');
+                        } catch (error) {
+                            Alert.alert('Erro', 'Não foi possível excluir a tarefa.');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.titulo}>Tarefas do Técnico</Text>
@@ -65,6 +87,15 @@ export default function TarefasTecnico() {
                         >
                             <Text style={styles.botaoTexto}>Mudar Status</Text>
                         </TouchableOpacity>
+
+                        {item.status === 'concluída' && (
+                            <TouchableOpacity
+                                style={styles.botaoExcluir}
+                                onPress={() => excluirTarefa(item.id)}
+                            >
+                                <Text style={styles.botaoTexto}>Excluir Tarefa</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
             />
