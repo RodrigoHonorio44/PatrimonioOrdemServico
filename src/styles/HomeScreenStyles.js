@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     },
     welcomeText: {
         color: '#000367',
-        fontSize: 28,
+        fontSize: 23,
         fontWeight: 'bold',
         textAlign: 'center',
         textShadowColor: '#000',
