@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
-export default function ListaEstoqueAtual() {
+export default function ListaEstoqueAtual({ onSelecionarParaSaida }) {
     const [estoqueAtual, setEstoqueAtual] = useState([]);
 
     useEffect(() => {
@@ -50,6 +50,11 @@ export default function ListaEstoqueAtual() {
                             <Text style={styles.title}>{item.equipamento}</Text>
                             <Text>Quantidade: {item.quantidade}</Text>
                             <Text>Local: {item.local}</Text>
+                            <Button
+                                title="Saída"
+                                color="red"
+                                onPress={() => onSelecionarParaSaida({ equipamento: item.equipamento, local: item.local })}
+                            />
                         </View>
                     )}
                 />

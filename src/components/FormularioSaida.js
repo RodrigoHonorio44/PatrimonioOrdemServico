@@ -4,9 +4,16 @@ import styles from '../styles/stylesSaida';
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
-export default function FormularioSaida({ equipamento, setEquipamento, quantidade, setQuantidade }) {
+export default function FormularioSaida({
+    equipamento,
+    setEquipamento,
+    local,
+    quantidade,
+    setQuantidade,
+}) {
     const [patrimonio, setPatrimonio] = useState('');
-    const [localArmazenamento, setLocalArmazenamento] = useState('');
+    const [localArmazenamento, setLocalArmazenamento] = useState(local || '');
+    const [localDestino, setLocalDestino] = useState('');
     const [dataHora, setDataHora] = useState('');
 
     useEffect(() => {
@@ -17,40 +24,49 @@ export default function FormularioSaida({ equipamento, setEquipamento, quantidad
     }, []);
 
     const handleRegistrar = async () => {
+        if (!equipamento || !quantidade || !patrimonio || !localArmazenamento || !localDestino) {
+            Alert.alert('Atenção', 'Preencha todos os campos.');
+            return;
+        }
+
         try {
             await addDoc(collection(db, 'movimentacoes'), {
                 tipo: 'saida',
                 equipamento,
                 quantidade: parseInt(quantidade),
                 patrimonio,
-                localArmazenamento,
-                dataHora: new Date().toISOString(),
+                local: localArmazenamento,
+                localDestino,
+                dataHora,
             });
 
-            Alert.alert('Saída registrada com sucesso!');
+            Alert.alert('Sucesso', 'Saída registrada com sucesso!');
+
+            // Limpa campos após registrar
             setEquipamento('');
             setQuantidade('');
             setPatrimonio('');
             setLocalArmazenamento('');
+            setLocalDestino('');
         } catch (error) {
-            Alert.alert('Erro ao registrar saída', error.message);
+            Alert.alert('Erro', 'Erro ao registrar a saída: ' + error.message);
         }
     };
 
     return (
-        <View>
+        <View style={styles.container}>
+            <TextInput
+                style={styles.input}
+                placeholder="Nome do Equipamento"
+                value={equipamento}
+                onChangeText={setEquipamento}
+            />
             <TextInput
                 style={styles.input}
                 placeholder="Quantidade"
                 keyboardType="numeric"
                 value={quantidade}
                 onChangeText={setQuantidade}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Descrição do Equipamento"
-                value={equipamento}
-                onChangeText={setEquipamento}
             />
             <TextInput
                 style={styles.input}
@@ -63,6 +79,12 @@ export default function FormularioSaida({ equipamento, setEquipamento, quantidad
                 placeholder="Local de Armazenamento"
                 value={localArmazenamento}
                 onChangeText={setLocalArmazenamento}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Local de Destino"
+                value={localDestino}
+                onChangeText={setLocalDestino}
             />
             <Text style={styles.dataHora}>Data e Hora: {dataHora}</Text>
             <Button title="Registrar Saída" onPress={handleRegistrar} />

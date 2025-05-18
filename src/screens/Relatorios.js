@@ -19,8 +19,8 @@ export default function Relatorios({ navigation }) {
             bgColor: '#50e3c2',
         },
         {
-            label: 'Relatório de Tarefas',
-            route: 'RelatorioTarefas',
+            label: 'Relatorio Baixa Patrimonio',
+            route: 'RelatorioBaixaPatrimonio',
             icon: <FontAwesome5 name="tasks" size={26} color="#fff" />,
             bgColor: '#f5a623',
         },

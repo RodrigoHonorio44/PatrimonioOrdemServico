@@ -12,11 +12,12 @@ export default function NavbarBottom() {
         { label: 'Home', route: 'Home', icon: 'home' },
         { label: 'Ordem Serviço', route: 'OrdemServico', icon: 'assignment' },
         { label: 'Entrega', route: 'EntregaDeEquipamento', icon: 'local-shipping' },
-        { label: 'Lista de Tarefas', route: 'ListaDeTarefas', icon: 'list' },
+        { label: 'Criar Tarefas', route: 'ListaDeTarefas', icon: 'list' },
         { label: 'Tarefas Técnico', route: 'TarefasTecnico', icon: 'engineering' },
         { label: 'Relatório', route: 'Relatorio', icon: 'bar-chart' },
         { label: 'Estoque', route: 'Estoque', icon: 'inventory' },
         { label: 'Baixa Patrimonio', route: 'BaixaPatrimonio', icon: 'archive' },
+        { label: 'Relatório Patrimonio', route: 'RelatorioBaixaPatrimonio', icon: 'archive' },
     ];
 
     return (

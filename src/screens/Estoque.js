@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Button, Text } from 'react-native';
 import FormularioEntrada from '../components/FormularioEntrada';
 import FormularioSaida from '../components/FormularioSaida';
-import ListaEstoqueAtual from '../components/ListaMovimentacoes'; // baseado no seu código
+import ListaEstoqueAtual from '../components/ListaMovimentacoes';
 import NavbarBottom from '../components/NavbarBottom';
 import styles from '../styles/EstoqueStyles';
 
@@ -10,7 +10,26 @@ export default function Estoque() {
     const [tipoMovimentacao, setTipoMovimentacao] = useState('entrada');
     const [mostrarEstoque, setMostrarEstoque] = useState(false);
     const [equipamento, setEquipamento] = useState('');
+    const [local, setLocal] = useState('');
     const [quantidade, setQuantidade] = useState('');
+    const [modoSaidaViaLista, setModoSaidaViaLista] = useState(false);
+
+    const abrirFormularioSaidaComEquipamento = ({ equipamento, local }) => {
+        setEquipamento(equipamento);
+        setLocal(local);
+        setQuantidade('');
+        setTipoMovimentacao('saida');
+        setMostrarEstoque(false);
+        setModoSaidaViaLista(true);
+    };
+
+    const voltarAoEstoque = () => {
+        setEquipamento('');
+        setLocal('');
+        setQuantidade('');
+        setMostrarEstoque(true);
+        setModoSaidaViaLista(false);
+    };
 
     return (
         <View style={{ flex: 1 }}>
@@ -22,6 +41,10 @@ export default function Estoque() {
                         onPress={() => {
                             setTipoMovimentacao('entrada');
                             setMostrarEstoque(false);
+                            setModoSaidaViaLista(false);
+                            setEquipamento('');
+                            setLocal('');
+                            setQuantidade('');
                         }}
                         color={tipoMovimentacao === 'entrada' ? 'green' : 'gray'}
                     />
@@ -30,22 +53,38 @@ export default function Estoque() {
                         onPress={() => {
                             setTipoMovimentacao('saida');
                             setMostrarEstoque(false);
+                            setModoSaidaViaLista(false);
+                            setEquipamento('');
+                            setLocal('');
+                            setQuantidade('');
                         }}
                         color={tipoMovimentacao === 'saida' ? 'red' : 'gray'}
                     />
                     <Button
                         title="Estoque Atual"
-                        onPress={() => setMostrarEstoque(true)}
+                        onPress={() => {
+                            setMostrarEstoque(true);
+                            setModoSaidaViaLista(false);
+                            setEquipamento('');
+                            setLocal('');
+                            setQuantidade('');
+                        }}
                         color={mostrarEstoque ? 'blue' : 'gray'}
                     />
                 </View>
 
                 {/* Conteúdo principal */}
                 {!mostrarEstoque ? (
-                    // Usa ScrollView só para os formulários
                     <View style={{ flex: 1 }}>
+                        {/* Se estiver vindo do botão Saída na lista, mostra botão voltar */}
+                        {modoSaidaViaLista && (
+                            <Button title="Voltar ao Estoque Atual" onPress={voltarAoEstoque} />
+                        )}
+
                         <Text style={styles.title}>
-                            {tipoMovimentacao === 'entrada' ? 'Formulário de Entrada' : 'Formulário de Saída'}
+                            {tipoMovimentacao === 'entrada'
+                                ? 'Formulário de Entrada'
+                                : 'Formulário de Saída'}
                         </Text>
 
                         {tipoMovimentacao === 'entrada' ? (
@@ -58,16 +97,15 @@ export default function Estoque() {
                         ) : (
                             <FormularioSaida
                                 equipamento={equipamento}
-                                setEquipamento={setEquipamento}
+                                local={local}
                                 quantidade={quantidade}
                                 setQuantidade={setQuantidade}
                             />
                         )}
                     </View>
                 ) : (
-                    // Para mostrar a lista, SEM ScrollView externo (pois a lista já deve usar FlatList)
                     <View style={{ flex: 1 }}>
-                        <ListaEstoqueAtual />
+                        <ListaEstoqueAtual onSelecionarParaSaida={abrirFormularioSaidaComEquipamento} />
                     </View>
                 )}
             </View>

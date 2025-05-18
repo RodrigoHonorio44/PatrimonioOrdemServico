@@ -18,7 +18,7 @@ import Relatorio from '../screens/Relatorio';
 import Relatorios from '../screens/Relatorios';
 import Estoque from '../screens/Estoque';
 import BaixaPatrimonio from '../screens/BaixaPatrimonio';
-
+import RelatorioBaixaPatrimonio from '../screens/RelatorioBaixaPatrimonio'
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -94,6 +94,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="BaixaPatrimonio"
                         component={BaixaPatrimonio}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="RelatorioBaixaPatrimonio"
+                        component={RelatorioBaixaPatrimonio}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

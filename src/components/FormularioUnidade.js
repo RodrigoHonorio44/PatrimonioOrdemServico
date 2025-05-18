@@ -22,6 +22,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             motivo,
             nomeTecnico,
             nomeResponsavel,
+            unidade,  // novo campo
         } = dadosFormulario;
 
         if (
@@ -31,7 +32,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             motivo &&
             nomeTecnico &&
             nomeResponsavel &&
-            tipoLocal &&
+            unidade &&           // valida unidade
             dadosFormulario.assinaturaTecnico &&
             dadosFormulario.assinaturaCliente
         ) {
@@ -39,7 +40,14 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
         } else {
             setFormularioValido(false);
         }
-    }, [dadosFormulario, tipoLocal]);
+    }, [dadosFormulario]);
+
+    // Atualiza o tipoLocal para o campo unidade no estado
+    useEffect(() => {
+        if (tipoLocal) {
+            setDadosFormulario(prev => ({ ...prev, unidade: tipoLocal }));
+        }
+    }, [tipoLocal]);
 
     const handleAssinaturaTecnico = () => {
         navigation.navigate('Assinatura', {
@@ -67,15 +75,15 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 motivo: dadosFormulario.motivo,
                 nomeTecnico: dadosFormulario.nomeTecnico,
                 nomeResponsavel: dadosFormulario.nomeResponsavel,
-                tipoLocal: tipoLocal,
+                unidade: dadosFormulario.unidade,  // salva a unidade
             });
 
             console.log("Documento salvo com ID:", docRef.id);
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            gerarPdfUnidade(dadosFormulario); // Gera PDF com as assinaturas
+            gerarPdfUnidade(dadosFormulario); // Gera PDF com as assinaturas e unidade
 
-            // Limpa o formulário
+            // Limpa o formulário (inclui unidade para resetar)
             setDadosFormulario({
                 setor: '',
                 numeroPatrimonio: '',
@@ -85,6 +93,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 nomeResponsavel: '',
                 assinaturaTecnico: '',
                 assinaturaCliente: '',
+                unidade: '',
             });
 
         } catch (e) {
@@ -132,6 +141,11 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 onChangeText={(text) => handleChange('nomeTecnico', text)}
                 value={dadosFormulario.nomeTecnico || ''}
             />
+
+            {/* Exibindo unidade como campo somente leitura */}
+            <Text style={{ marginVertical: 10, fontWeight: 'bold' }}>
+                Unidade: {dadosFormulario.unidade || tipoLocal || 'Não selecionada'}
+            </Text>
 
             <TouchableOpacity style={styles.signatureButton} onPress={handleAssinaturaTecnico}>
                 <Text style={styles.signatureButtonText}>

@@ -35,78 +35,113 @@ const GerarPDF = async ({
 }) => {
   try {
     const logo = await loadLogoBase64();
-
     const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 24px;
-              font-size: 14px;
-              color: #333;
-            }
-            h1 {
-              text-align: center;
-              font-size: 22px;
-              margin-top: 10px;
-              margin-bottom: 20px;
-            }
-            .info {
-              margin: 10px 0;
-            }
-            .label {
-              font-weight: bold;
-            }
-            .logo {
-              display: block;
-              margin: 0 auto 20px auto;
-              max-width: 200px;
-            }
-            .assinaturas {
-              display: flex;
-              justify-content: space-around;
-              margin-top: 40px;
-              text-align: center;
-            }
-            .assinatura img {
-              height: 80px;
-              margin-bottom: 5px;
-            }
-            .assinatura p {
-              margin: 0;
-              font-size: 12px;
-              border-top: 1px solid #000;
-              padding-top: 4px;
-            }
-          </style>
-        </head>
-        <body>
-          <img src="${logo}" class="logo" />
-          <h1>Ordem de Serviço</h1>
-          
-          <div class="info"><span class="label">Data:</span> ${dataAtual}</div>
-          <div class="info"><span class="label">Unidade:</span> ${unidade}</div>
-          <div class="info"><span class="label">Nome do Responsável:</span> ${nomeResponsavel}</div>
-          <div class="info"><span class="label">Setor:</span> ${setor}</div>
-          <div class="info"><span class="label">Descrição do Equipamento:</span> ${descricao}</div>
-          <div class="info"><span class="label">N° do Patrimônio:</span> ${patrimonio}</div>
-          <div class="info"><span class="label">Serviço Realizado:</span> ${servico}</div>
-          <div class="info"><span class="label">Técnico Responsável:</span> ${nomeTecnico}</div>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 32px;
+        font-size: 14px;
+        color: #000;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .logo {
+        max-width: 140px;
+        margin: 0 auto 10px;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: #444;
+        margin-bottom: 20px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 22px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+      h1::after {
+        content: "";
+        display: block;
+        margin: 8px auto 0;
+        width: 60%;
+      }
+      .campo {
+        margin-bottom: 20px;
+      }
+      .assinaturas {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+      }
+      .assinatura img {
+        height: 80px;
+        margin-bottom: 5px;
+      }
+      .assinatura p {
+        margin: 0;
+        font-size: 12px;
+        border-top: 1px solid #000;
+        padding-top: 4px;
+      }
+      .footer {
+        text-align: right;
+        font-size: 11px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="header">
+        <img src="${logo}" class="logo" />
+        <div class="subtitle">Uma nova visão é possível!</div>
+        <div class="subtitle">
+          MUNICIPAL: Lei nº 961 de 28/08/68 | ESTADUAL: Lei nº 10314 de 13/09/77<br />
+          FEDERAL: Decreto de 11/09/92 – Proc. M nº 14555/90-441
+        </div>
+      </div>
 
-          <div class="assinaturas">
-            <div class="assinatura">
-              <img src="${verificarAssinatura(assinaturaTecnico)}" />
-              <p>${nomeTecnico}</p>
-            </div>
-            <div class="assinatura">
-              <img src="${verificarAssinatura(assinaturaCliente)}" />
-              <p>${nomeResponsavel}</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
+      <h1>Ordem de Serviço</h1>
+
+      <div class="campo">Data: ${dataAtual}</div>
+      <div class="campo">Unidade: ${unidade}</div>
+      <div class="campo">Nome do Responsável: ${nomeResponsavel}</div>
+      <div class="campo">Setor: ${setor}</div>
+      <div class="campo">Descrição do Equipamento: ${descricao}</div>
+      <div class="campo">N° do Patrimônio: ${patrimonio}</div>
+      <div class="campo">Serviço Realizado: ${servico}</div>
+      <div class="campo">Técnico Responsável: ${nomeTecnico}</div>
+
+      <div class="assinaturas">
+        <div class="assinatura">
+          <img src="${verificarAssinatura(assinaturaTecnico)}" />
+          <p>${nomeTecnico}</p>
+        </div>
+        <div class="assinatura">
+          <img src="${verificarAssinatura(assinaturaCliente)}" />
+          <p>${nomeResponsavel}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Hospital Mahatma Gandhi - Ordem de Serviço | Página 1
+    </div>
+  </body>
+</html>
+`;
+
+
+
 
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
     await Sharing.shareAsync(uri);

@@ -16,7 +16,7 @@ import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase/firesto
 const cards = [
     { title: 'Ordens de Serviço', icon: 'assignment', color: '#4A90E2', screen: 'OrdemServico' },
     { title: 'Entrega de Equipamento', icon: 'local-shipping', color: '#F5A623', screen: 'EntregaDeEquipamento' },
-    { title: 'Lista de Tarefas', icon: 'list', color: '#357ABD', screen: 'ListaDeTarefas' },
+    { title: 'Criar Tarefas', icon: 'list', color: '#357ABD', screen: 'ListaDeTarefas' },
     { title: 'Tarefas Técnico', icon: 'engineering', color: '#9013FE', screen: 'TarefasTecnico' },
     { title: 'Estoque', icon: 'inventory', color: '#a7a844', screen: 'Estoque' },
     { title: 'Relatórios', icon: 'bar-chart', color: '#7ED321', screen: 'Relatorios' },

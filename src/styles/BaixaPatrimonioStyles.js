@@ -27,6 +27,16 @@ export const styles = StyleSheet.create({
         marginBottom: height * 0.02,
         color: '#000',
     },
+    pickerContainer: {
+        height: height * 0.07,
+        backgroundColor: '#fff',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 10,
+        marginBottom: height * 0.02,
+        justifyContent: 'center',
+        paddingHorizontal: width * 0.02,
+    },
     saveButton: {
         backgroundColor: '#007bff',
         paddingVertical: height * 0.018,
