@@ -8,7 +8,7 @@ import {
     ScrollView,
     Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';  // Importa hook navigation
+import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
 import {
     collection,
@@ -28,14 +28,17 @@ import * as Sharing from 'expo-sharing';
 const Relatorio = () => {
     const navigation = useNavigation();
 
-    const [dataInicio, setDataInicio] = useState('');
-    const [dataFim, setDataFim] = useState('');
+    const [dataInicio, setDataInicio] = useState(null);
+    const [dataFim, setDataFim] = useState(null);
     const [relatorio, setRelatorio] = useState([]);
     const [ordensCompleta, setOrdensCompleta] = useState([]);
     const [totalAtendimentos, setTotalAtendimentos] = useState(0);
     const [showDatePickerInicio, setShowDatePickerInicio] = useState(false);
     const [showDatePickerFim, setShowDatePickerFim] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Formatar data para input
+    const formatDate = (date) => (date ? format(date, 'dd/MM/yyyy') : '');
 
     const handleFetchRelatorio = async () => {
         try {
@@ -44,16 +47,18 @@ const Relatorio = () => {
                 return;
             }
 
+            if (dataInicio > dataFim) {
+                Alert.alert('Erro', 'Data início deve ser menor ou igual à data fim.');
+                return;
+            }
+
             setIsLoading(true);
 
-            const dataInicioObj = parse(dataInicio, 'dd/MM/yyyy', new Date());
-            const dataFimObj = parse(dataFim, 'dd/MM/yyyy', new Date());
-
             const dataInicioTimestamp = Timestamp.fromDate(
-                new Date(dataInicioObj.setHours(0, 0, 0, 0))
+                new Date(dataInicio.setHours(0, 0, 0, 0))
             );
             const dataFimTimestamp = Timestamp.fromDate(
-                new Date(dataFimObj.setHours(23, 59, 59, 999))
+                new Date(dataFim.setHours(23, 59, 59, 999))
             );
 
             const q = query(
@@ -63,7 +68,7 @@ const Relatorio = () => {
             );
 
             const querySnapshot = await getDocs(q);
-            const ordens = querySnapshot.docs.map(doc => doc.data());
+            const ordens = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             const agrupadoPorUnidade = ordens.reduce((acc, ordem) => {
                 const unidade = ordem.unidade || 'Não Informado';
@@ -85,14 +90,14 @@ const Relatorio = () => {
     const onChangeInicio = (event, selectedDate) => {
         setShowDatePickerInicio(Platform.OS === 'ios');
         if (selectedDate) {
-            setDataInicio(format(selectedDate, 'dd/MM/yyyy'));
+            setDataInicio(selectedDate);
         }
     };
 
     const onChangeFim = (event, selectedDate) => {
         setShowDatePickerFim(Platform.OS === 'ios');
         if (selectedDate) {
-            setDataFim(format(selectedDate, 'dd/MM/yyyy'));
+            setDataFim(selectedDate);
         }
     };
 
@@ -123,7 +128,7 @@ const Relatorio = () => {
 
             const excelData = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
 
-            const nomeArquivoSeguro = `Relatorio_${dataInicio.replace(/\//g, '-')}_a_${dataFim.replace(/\//g, '-')}.xlsx`;
+            const nomeArquivoSeguro = `Relatorio_${formatDate(dataInicio).replace(/\//g, '-')}_a_${formatDate(dataFim).replace(/\//g, '-')}.xlsx`;
             const fileUri = FileSystem.documentDirectory + nomeArquivoSeguro;
 
             await FileSystem.writeAsStringAsync(fileUri, excelData, {
@@ -152,30 +157,32 @@ const Relatorio = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Data Início (dd/MM/yyyy)"
-                    value={dataInicio}
+                    value={formatDate(dataInicio)}
                     onFocus={() => setShowDatePickerInicio(true)}
                 />
                 {showDatePickerInicio && (
                     <DateTimePicker
-                        value={new Date()}
+                        value={dataInicio || new Date()}
                         mode="date"
                         display="default"
                         onChange={onChangeInicio}
+                        maximumDate={dataFim || undefined}
                     />
                 )}
 
                 <TextInput
                     style={styles.input}
                     placeholder="Data Fim (dd/MM/yyyy)"
-                    value={dataFim}
+                    value={formatDate(dataFim)}
                     onFocus={() => setShowDatePickerFim(true)}
                 />
                 {showDatePickerFim && (
                     <DateTimePicker
-                        value={new Date()}
+                        value={dataFim || new Date()}
                         mode="date"
                         display="default"
                         onChange={onChangeFim}
+                        minimumDate={dataInicio || undefined}
                     />
                 )}
 

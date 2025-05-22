@@ -19,6 +19,8 @@ import Relatorios from '../screens/Relatorios';
 import Estoque from '../screens/Estoque';
 import BaixaPatrimonio from '../screens/BaixaPatrimonio';
 import RelatorioBaixaPatrimonio from '../screens/RelatorioBaixaPatrimonio'
+import RelatorioEntregasEquipamentos from '../screens/RelatorioEntregasEquipamentos'
+import RelatorioEstoque from '../screens/RelatorioEstoque'
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -82,6 +84,11 @@ export default function AppNavigator() {
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen
+                        name="RelatorioEstoque"
+                        component={RelatorioEstoque}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
                         name="Estoque"
                         component={Estoque}
                         options={{ headerShown: false }}
@@ -99,6 +106,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="RelatorioBaixaPatrimonio"
                         component={RelatorioBaixaPatrimonio}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="RelatorioEntregasEquipamentos"
+                        component={RelatorioEntregasEquipamentos}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

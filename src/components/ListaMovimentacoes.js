@@ -13,13 +13,15 @@ export default function ListaEstoqueAtual({ onSelecionarParaSaida }) {
             snapshot.forEach((doc) => {
                 const mov = doc.data();
                 const key = `${mov.equipamento}_${mov.localArmazenamento}`;
-                const quantidade = parseInt(mov.quantidade);
+                const quantidade = parseInt(mov.quantidade) || 0;
 
                 if (!dados[key]) {
                     dados[key] = {
                         equipamento: mov.equipamento,
                         local: mov.localArmazenamento,
                         quantidade: 0,
+                        patrimonio: mov.patrimonio || 'Sem Patrimônio',
+                        unidade: mov.unidade || 'Sem Unidade',
                     };
                 }
 
@@ -28,6 +30,10 @@ export default function ListaEstoqueAtual({ onSelecionarParaSaida }) {
                 } else if (mov.tipo === 'saida') {
                     dados[key].quantidade -= quantidade;
                 }
+
+                // Atualiza info da última movimentação
+                dados[key].patrimonio = mov.patrimonio || 'Sem Patrimônio';
+                dados[key].unidade = mov.unidade || 'Sem Unidade';
             });
 
             const resultado = Object.values(dados).filter((item) => item.quantidade > 0);
@@ -50,10 +56,19 @@ export default function ListaEstoqueAtual({ onSelecionarParaSaida }) {
                             <Text style={styles.title}>{item.equipamento}</Text>
                             <Text>Quantidade: {item.quantidade}</Text>
                             <Text>Local: {item.local}</Text>
+                            <Text>Patrimônio: {item.patrimonio}</Text>
+                            <Text>Unidade: {item.unidade}</Text>
                             <Button
                                 title="Saída"
                                 color="red"
-                                onPress={() => onSelecionarParaSaida({ equipamento: item.equipamento, local: item.local })}
+                                onPress={() =>
+                                    onSelecionarParaSaida({
+                                        equipamento: item.equipamento,
+                                        local: item.local,
+                                        patrimonio: item.patrimonio,
+                                        unidade: item.unidade,
+                                    })
+                                }
                             />
                         </View>
                     )}

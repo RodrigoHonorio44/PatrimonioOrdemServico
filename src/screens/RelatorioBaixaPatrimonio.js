@@ -7,8 +7,9 @@ import * as XLSX from 'xlsx';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import styles from '../styles/RelatorioBaixaPatrimonioStyles';
+import NavbarBottom from '../components/NavbarBottom'; // 👈 importação
 
-export default function RelatorioBaixaPatrimonio() {
+export default function RelatorioBaixaPatrimonio({ navigation }) { // 👈 importante receber navigation
     const [dataInicio, setDataInicio] = useState(new Date());
     const [dataFim, setDataFim] = useState(new Date());
     const [mostrarInicio, setMostrarInicio] = useState(false);
@@ -82,64 +83,68 @@ export default function RelatorioBaixaPatrimonio() {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.titulo}>Relatório de Baixa de Patrimônio</Text>
+        <View style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <Text style={styles.titulo}>Relatório de Baixa de Patrimônio</Text>
 
-            <Text style={styles.label}>Data Início:</Text>
-            <Pressable onPress={() => setMostrarInicio(true)}>
-                <Text style={styles.input}>{dataInicio.toLocaleDateString()}</Text>
-            </Pressable>
-            {mostrarInicio && (
-                <DateTimePicker
-                    value={dataInicio}
-                    mode="date"
-                    display="default"
-                    onChange={(event, date) => {
-                        setMostrarInicio(false);
-                        if (date) setDataInicio(date);
-                    }}
-                />
-            )}
-
-            <Text style={styles.label}>Data Fim:</Text>
-            <Pressable onPress={() => setMostrarFim(true)}>
-                <Text style={styles.input}>{dataFim.toLocaleDateString()}</Text>
-            </Pressable>
-            {mostrarFim && (
-                <DateTimePicker
-                    value={dataFim}
-                    mode="date"
-                    display="default"
-                    onChange={(event, date) => {
-                        setMostrarFim(false);
-                        if (date) setDataFim(date);
-                    }}
-                />
-            )}
-
-            <Button title="Buscar" onPress={buscarPorData} />
-
-            <FlatList
-                style={styles.lista}
-                data={resultados}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <Text><Text style={styles.negrito}>Data e Hora:</Text> {item.dataHora?.toDate().toLocaleString()}</Text>
-                        <Text><Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}</Text>
-                        <Text><Text style={styles.negrito}>Descrição:</Text> {item.descricao}</Text>
-                        <Text><Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}</Text>
-                        <Text><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
-                        <Text><Text style={styles.negrito}>Unidade:</Text> {item.unidade}</Text>
-                    </View>
+                <Text style={styles.label}>Data Início:</Text>
+                <Pressable onPress={() => setMostrarInicio(true)}>
+                    <Text style={styles.input}>{dataInicio.toLocaleDateString()}</Text>
+                </Pressable>
+                {mostrarInicio && (
+                    <DateTimePicker
+                        value={dataInicio}
+                        mode="date"
+                        display="default"
+                        onChange={(event, date) => {
+                            setMostrarInicio(false);
+                            if (date) setDataInicio(date);
+                        }}
+                    />
                 )}
-                ListEmptyComponent={<Text style={{ marginTop: 20 }}>Nenhum dado para exibir.</Text>}
-            />
 
-            {resultados.length > 0 && (
-                <Button title="Gerar Excel e Compartilhar" onPress={gerarExcel} color="#4CAF50" />
-            )}
+                <Text style={styles.label}>Data Fim:</Text>
+                <Pressable onPress={() => setMostrarFim(true)}>
+                    <Text style={styles.input}>{dataFim.toLocaleDateString()}</Text>
+                </Pressable>
+                {mostrarFim && (
+                    <DateTimePicker
+                        value={dataFim}
+                        mode="date"
+                        display="default"
+                        onChange={(event, date) => {
+                            setMostrarFim(false);
+                            if (date) setDataFim(date);
+                        }}
+                    />
+                )}
 
+                <Button title="Buscar" onPress={buscarPorData} />
+
+                <FlatList
+                    style={styles.lista}
+                    data={resultados}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <Text><Text style={styles.negrito}>Data e Hora:</Text> {item.dataHora?.toDate().toLocaleString()}</Text>
+                            <Text><Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}</Text>
+                            <Text><Text style={styles.negrito}>Descrição:</Text> {item.descricao}</Text>
+                            <Text><Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}</Text>
+                            <Text><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
+                            <Text><Text style={styles.negrito}>Unidade:</Text> {item.unidade}</Text>
+                        </View>
+                    )}
+                    ListEmptyComponent={<Text style={{ marginTop: 20 }}>Nenhum dado para exibir.</Text>}
+                />
+
+                {resultados.length > 0 && (
+                    <Button title="Gerar Excel e Compartilhar" onPress={gerarExcel} color="#4CAF50" />
+                )}
+            </View>
+
+            {/* Navbar no rodapé */}
+            <NavbarBottom navigation={navigation} />
         </View>
     );
 }

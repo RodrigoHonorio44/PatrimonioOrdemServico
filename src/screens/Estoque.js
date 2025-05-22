@@ -12,11 +12,13 @@ export default function Estoque() {
     const [equipamento, setEquipamento] = useState('');
     const [local, setLocal] = useState('');
     const [quantidade, setQuantidade] = useState('');
+    const [unidade, setUnidade] = useState(''); // estado novo para unidade
     const [modoSaidaViaLista, setModoSaidaViaLista] = useState(false);
 
-    const abrirFormularioSaidaComEquipamento = ({ equipamento, local }) => {
+    const abrirFormularioSaidaComEquipamento = ({ equipamento, local, unidade }) => {
         setEquipamento(equipamento);
         setLocal(local);
+        setUnidade(unidade);  // salva unidade no estado
         setQuantidade('');
         setTipoMovimentacao('saida');
         setMostrarEstoque(false);
@@ -27,6 +29,7 @@ export default function Estoque() {
         setEquipamento('');
         setLocal('');
         setQuantidade('');
+        setUnidade('');  // limpa unidade
         setMostrarEstoque(true);
         setModoSaidaViaLista(false);
     };
@@ -45,6 +48,7 @@ export default function Estoque() {
                             setEquipamento('');
                             setLocal('');
                             setQuantidade('');
+                            setUnidade('');
                         }}
                         color={tipoMovimentacao === 'entrada' ? 'green' : 'gray'}
                     />
@@ -57,6 +61,7 @@ export default function Estoque() {
                             setEquipamento('');
                             setLocal('');
                             setQuantidade('');
+                            setUnidade('');
                         }}
                         color={tipoMovimentacao === 'saida' ? 'red' : 'gray'}
                     />
@@ -68,6 +73,7 @@ export default function Estoque() {
                             setEquipamento('');
                             setLocal('');
                             setQuantidade('');
+                            setUnidade('');
                         }}
                         color={mostrarEstoque ? 'blue' : 'gray'}
                     />
@@ -98,6 +104,7 @@ export default function Estoque() {
                             <FormularioSaida
                                 equipamento={equipamento}
                                 local={local}
+                                unidade={unidade}  // passou aqui a unidade
                                 quantidade={quantidade}
                                 setQuantidade={setQuantidade}
                             />

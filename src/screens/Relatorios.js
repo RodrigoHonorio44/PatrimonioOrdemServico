@@ -7,22 +7,28 @@ import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 export default function Relatorios({ navigation }) {
     const relatorios = [
         {
-            label: 'Relatório de Ordens de Serviço',
+            label: 'Relatórios de Ordens de Serviço',
             route: 'Relatorio', // <- esta é a rota que abre o componente Relatorio.js
             icon: <MaterialIcons name="assignment" size={28} color="#fff" />,
             bgColor: '#4a90e2',
         },
         {
-            label: 'Relatório de Entregas',
-            route: 'RelatorioEntregas',
+            label: 'Relatórios de Entregas Equipamentos',
+            route: 'RelatorioEntregasEquipamentos',
             icon: <Ionicons name="cube-outline" size={28} color="#fff" />,
             bgColor: '#50e3c2',
         },
         {
-            label: 'Relatorio Baixa Patrimonio',
+            label: 'Relatórios Baixa Patrimonio',
             route: 'RelatorioBaixaPatrimonio',
             icon: <FontAwesome5 name="tasks" size={26} color="#fff" />,
             bgColor: '#f5a623',
+        },
+        {
+            label: 'Relatórios do Estoque',
+            route: 'RelatorioEstoque',
+            icon: <FontAwesome5 name="tasks" size={26} color="#fff" />,
+            bgColor: '#9013FE',
         },
     ];
 
