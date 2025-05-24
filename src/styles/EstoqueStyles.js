@@ -15,4 +15,14 @@ export default StyleSheet.create({
     conteudo: {
         flex: 1,
     },
+    navbar: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderColor: '#ccc',
+        zIndex: 10,
+    },
 });

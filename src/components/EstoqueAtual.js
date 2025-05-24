@@ -1,94 +1,109 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function EstoqueAtual({ navigation }) {
     const [estoque, setEstoque] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchMovimentacoes = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'movimentacoes'));
-                const movimentacoes = [];
+    const fetchEstoque = async () => {
+        setLoading(true);
+        try {
+            const querySnapshot = await getDocs(collection(db, 'estoque'));
+            const lista = querySnapshot.docs.map((doc) => {
+                return {
+                    id: doc.id,  // sempre vem aqui
+                    ...doc.data(),
+                };
+            });
+            setEstoque(lista);
+        } catch (error) {
+            console.error('Erro ao buscar estoque:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                querySnapshot.forEach((doc) => {
-                    movimentacoes.push(doc.data());
-                });
-
-                // Consolidar estoque
-                const estoqueMap = {};
-
-                movimentacoes.forEach((mov) => {
-                    const key = `${mov.equipamento}-${mov.patrimonio}-${mov.localArmazenamento}-${mov.unidade}`;
-
-                    if (!estoqueMap[key]) {
-                        estoqueMap[key] = {
-                            equipamento: mov.equipamento,
-                            patrimonio: mov.patrimonio,
-                            localArmazenamento: mov.localArmazenamento,
-                            unidade: mov.unidade,
-                            quantidade: 0,
-                        };
-                    }
-
-                    if (mov.tipo === 'entrada') {
-                        estoqueMap[key].quantidade += mov.quantidade;
-                    } else if (mov.tipo === 'saida') {
-                        estoqueMap[key].quantidade -= mov.quantidade;
-                    }
-                });
-
-                const estoqueArray = Object.values(estoqueMap).filter(item => item.quantidade > 0);
-
-                setEstoque(estoqueArray);
-            } catch (error) {
-                console.error('Erro ao buscar movimentações: ', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMovimentacoes();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchEstoque();
+        }, [])
+    );
 
     const renderItem = ({ item }) => (
         <View style={styles.card}>
-            <Text>Equipamento: {item.equipamento}</Text>
-            <Text>Quantidade: {item.quantidade}</Text>
-            <Text>Patrimônio: {item.patrimonio}</Text>
-            <Text>Local: {item.localArmazenamento}</Text>
-            <Text>Unidade: {item.unidade}</Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Equipamento:</Text> {item.equipamento || '-'}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Quantidade:</Text> {item.quantidade || '-'}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Patrimônio:</Text> {item.patrimonio || '-'}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Local:</Text> {item.localArmazenamento || '-'}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Unidade:</Text> {item.unidade || '-'}
+            </Text>
 
             <Button
-                title="Saída"
-                onPress={() => navigation.navigate('FormularioSaida', { equipamento: item })}
+                title="Registrar Saída"
+                onPress={() => navigation.navigate('FormularioSaida', { equipamentoSelecionado: item })}
             />
         </View>
     );
 
     if (loading) {
-        return <ActivityIndicator size="large" color="#0000ff" />;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text>Carregando estoque...</Text>
+            </View>
+        );
     }
 
     return (
         <FlatList
             data={estoque}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => item.id ? item.id : index.toString()}
             renderItem={renderItem}
+            contentContainerStyle={{ padding: 10 }}
+            ListEmptyComponent={<Text style={styles.emptyText}>Nenhum item em estoque.</Text>}
         />
     );
 }
 
 const styles = StyleSheet.create({
     card: {
-        padding: 10,
-        margin: 10,
-        backgroundColor: '#eee',
+        padding: 15,
+        marginVertical: 8,
+        backgroundColor: '#f8f9fa',
         borderRadius: 8,
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    text: {
+        marginBottom: 4,
+    },
+    label: {
+        fontWeight: 'bold',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 20,
+    },
+    emptyText: {
+        textAlign: 'center',
+        marginTop: 20,
+        fontSize: 16,
+        color: '#555',
     },
 });

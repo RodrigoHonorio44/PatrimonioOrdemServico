@@ -1,134 +1,161 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, Alert, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import styles from '../styles/stylesSaida';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig';
+import styles from '../styles/FormularioSaidaStyles';
 
 export default function FormularioSaida({ equipamentoSelecionado, onSaidaConcluida }) {
-    const [equipamento, setEquipamento] = useState('');
+    const { idRastreio, equipamento: equipamentoParam, quantidade: quantidadeEstoque, patrimonio: patrimonioParam, localArmazenamento, unidade: unidadeParam } = equipamentoSelecionado || {};
+
     const [quantidade, setQuantidade] = useState('');
-    const [patrimonio, setPatrimonio] = useState('');
     const [localDestino, setLocalDestino] = useState('');
-    const [unidade, setUnidade] = useState('');
+    const [unidade, setUnidade] = useState(unidadeParam || '');
     const [loading, setLoading] = useState(false);
+    const [botaoHabilitado, setBotaoHabilitado] = useState(false);
 
     useEffect(() => {
-        if (equipamentoSelecionado) {
-            setEquipamento(equipamentoSelecionado.equipamento || '');
-            setQuantidade('');
-            setPatrimonio(equipamentoSelecionado.patrimonio || '');
-            setLocalDestino('');
-            setUnidade(equipamentoSelecionado.unidade || '');
-        }
-    }, [equipamentoSelecionado]);
+        const qtdNumero = Number(quantidade);
+        const podeHabilitar = quantidade !== '' && qtdNumero > 0 && localDestino.trim() !== '' && unidade.trim() !== '';
+        setBotaoHabilitado(podeHabilitar);
+    }, [quantidade, localDestino, unidade]);
+
+    const handleQuantidadeChange = (valor) => {
+        let somenteNumeros = valor.replace(/[^0-9]/g, '');
+        setQuantidade(somenteNumeros);
+    };
 
     const handleRegistrarSaida = async () => {
-        const quantidadeNum = parseInt(quantidade, 10);
-
-        if (!equipamento || !quantidade || !patrimonio || !localDestino || !unidade) {
-            Alert.alert('Atenção', 'Preencha todos os campos.');
+        const qtdNumero = Number(quantidade);
+        if (!quantidade || qtdNumero <= 0) {
+            Alert.alert('Erro', 'Informe uma quantidade válida para saída');
             return;
         }
-        if (quantidadeNum <= 0 || quantidadeNum > parseInt(equipamentoSelecionado.quantidade, 10)) {
-            Alert.alert('Erro', 'Quantidade para saída inválida.');
+        if (qtdNumero > quantidadeEstoque) {
+            Alert.alert('Erro', 'Quantidade de saída maior que a disponível no estoque');
+            return;
+        }
+        if (!localDestino.trim()) {
+            Alert.alert('Erro', 'Informe o local de destino');
+            return;
+        }
+        if (!unidade.trim()) {
+            Alert.alert('Erro', 'Informe a unidade');
             return;
         }
 
         setLoading(true);
 
         try {
+            await addDoc(collection(db, 'movimentacoes'), {
+                tipo: 'saida',
+                equipamento: equipamentoParam,
+                quantidade: qtdNumero,
+                patrimonio: patrimonioParam,
+                localArmazenamento,
+                localDestino,
+                unidade,
+                data: serverTimestamp(),
+                idRastreio,
+            });
+
             Alert.alert('Sucesso', 'Saída registrada com sucesso!');
+            setQuantidade('');
+            setLocalDestino('');
             onSaidaConcluida();
         } catch (error) {
-            Alert.alert('Erro', `Erro ao registrar saída: ${error.message}`);
+            Alert.alert('Erro', 'Falha ao registrar saída: ' + error.message);
         } finally {
             setLoading(false);
         }
     };
 
+    if (!equipamentoSelecionado) {
+        return (
+            <View style={styles.container}>
+                <Text>Nenhum equipamento selecionado.</Text>
+            </View>
+        );
+    }
+
     return (
-        <View style={styles.container}>
-            <View style={styles.infoBox}>
-                <Text style={styles.infoLabel}>Equipamento:</Text>
-                <Text style={styles.infoValue}>{equipamento}</Text>
-            </View>
-
-            <View style={styles.infoBox}>
-                <Text style={styles.infoLabel}>Quantidade disponível:</Text>
-                <Text style={styles.infoValue}>{String(equipamentoSelecionado?.quantidade || '0')}</Text>
-            </View>
-
-            <View style={styles.infoBox}>
-                <Text style={styles.infoLabel}>Patrimônio:</Text>
-                <Text style={styles.infoValue}>{patrimonio}</Text>
-            </View>
-
-            <View style={styles.infoBox}>
-                <Text style={styles.infoLabel}>Local Armazenado:</Text>
-                <Text style={styles.infoValue}>{equipamentoSelecionado?.localArmazenamento || ''}</Text>
-            </View>
-
-            <View style={styles.infoBox}>
-                <Text style={styles.infoLabel}>Unidade:</Text>
-                <Text style={styles.infoValue}>{unidade}</Text>
-            </View>
-
-            <Text style={styles.label}>Quantidade para saída</Text>
-            <TextInput
-                placeholder="Quantidade para saída"
-                keyboardType="numeric"
-                value={quantidade}
-                onChangeText={setQuantidade}
-                style={styles.input}
-            />
-
-            <Text style={styles.label}>Número do Patrimônio</Text>
-            <TextInput
-                placeholder="Número do Patrimônio"
-                value={patrimonio}
-                onChangeText={setPatrimonio}
-                style={styles.input}
-            />
-
-            <Text style={styles.label}>Local de Destino</Text>
-            <TextInput
-                placeholder="Local de Destino"
-                value={localDestino}
-                onChangeText={setLocalDestino}
-                style={styles.input}
-            />
-
-            <Text style={styles.label}>Unidade</Text>
-            <View style={{
-                borderWidth: 1,
-                borderColor: '#ddd',
-                borderRadius: 8,
-                backgroundColor: '#fafafa',
-                marginBottom: 20,
-                overflow: 'hidden'
-            }}>
-                <Picker
-                    selectedValue={unidade}
-                    onValueChange={setUnidade}
-                    style={{ height: 50 }}
-                >
-                    <Picker.Item label="Selecione a Unidade" value="" />
-                    <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                    <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
-                    <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                    <Picker.Item label="Samu Barroco" value="Samu Barroco" />
-                    <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
-                </Picker>
-            </View>
-
-            <TouchableOpacity
-                style={[styles.button, loading && styles.buttonDisabled]}
-                onPress={handleRegistrarSaida}
-                disabled={loading}
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        >
+            <ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
             >
-                <Text style={styles.buttonText}>
-                    {loading ? 'Registrando...' : 'Registrar Saída'}
-                </Text>
-            </TouchableOpacity>
-        </View>
+                <View style={styles.card}>
+                    <Text style={styles.header}>Registrar Saída</Text>
+
+                    <Text style={styles.label}>Equipamento:</Text>
+                    <Text style={styles.value}>{equipamentoParam}</Text>
+
+                    <Text style={styles.label}>Patrimônio:</Text>
+                    <Text style={styles.value}>{patrimonioParam}</Text>
+
+                    <Text style={styles.label}>Quantidade em estoque:</Text>
+                    <Text style={styles.value}>{quantidadeEstoque}</Text>
+
+                    <Text style={styles.label}>Local Armazenado:</Text>
+                    <Text style={styles.value}>{localArmazenamento}</Text>
+
+                    <Text style={styles.label}>Unidade:</Text>
+                    <Text style={styles.value}>{unidade}</Text>
+
+                    <Text style={styles.label}>Quantidade para saída:</Text>
+                    <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        value={quantidade}
+                        onChangeText={handleQuantidadeChange}
+                        placeholder="Informe a quantidade"
+                    />
+                    {quantidade !== '' && Number(quantidade) > quantidadeEstoque && (
+                        <Text style={styles.alerta}>
+                            Quantidade maior que o estoque disponível!
+                        </Text>
+                    )}
+
+                    <Text style={styles.label}>Local de destino:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={localDestino}
+                        onChangeText={setLocalDestino}
+                        placeholder="Informe o local de destino"
+                    />
+
+                    <Text style={styles.label}>Unidade:</Text>
+                    <Picker
+                        selectedValue={unidade}
+                        style={styles.input}
+                        onValueChange={(itemValue) => setUnidade(itemValue)}
+                    >
+                        <Picker.Item label="Selecione a Unidade" value="" />
+                        <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                        <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
+                        <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                        <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                        <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                    </Picker>
+
+                    {loading ? (
+                        <ActivityIndicator size="large" color="#d9534f" />
+                    ) : (
+                        <View style={styles.botaoContainer}>
+                            <Button
+                                title="Registrar Saída"
+                                onPress={handleRegistrarSaida}
+                                color="#d9534f"
+                                disabled={!botaoHabilitado}
+                            />
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }

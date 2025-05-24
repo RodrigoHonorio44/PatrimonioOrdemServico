@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Button, Alert, Text } from 'react-native';
+import { View, TextInput, Button, Alert, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../styles/stylesEntrada';
 import { db } from '../config/firebaseConfig';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, Timestamp, query, where, getDocs } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+
+// Função para formatar Date JS no formato desejado
+function formatarDataHora(date) {
+    const opcoesData = { day: '2-digit', month: 'long', year: 'numeric' };
+    const data = date.toLocaleDateString('pt-BR', opcoesData);
+    const hora = date.toLocaleTimeString('pt-BR');
+    return `${data} às ${hora}`;
+}
 
 export default function FormularioEntrada({
     equipamento,
@@ -19,9 +28,7 @@ export default function FormularioEntrada({
 
     useEffect(() => {
         const agora = new Date();
-        const dataFormatada = agora.toLocaleDateString();
-        const horaFormatada = agora.toLocaleTimeString();
-        setDataHora(`${dataFormatada} ${horaFormatada}`);
+        setDataHora(formatarDataHora(agora));
     }, []);
 
     const handleRegistrar = async () => {
@@ -31,11 +38,53 @@ export default function FormularioEntrada({
         }
 
         setLoading(true);
+
         try {
-            // addDoc gera id automaticamente
-            await addDoc(collection(db, 'movimentacoes'), {
+            // Consulta estoque pelo equipamento
+            const estoqueRef = collection(db, 'estoque');
+            const q = query(estoqueRef, where('equipamento', '==', equipamento));
+            const querySnapshot = await getDocs(q);
+
+            let equipamentoId;
+            let estoqueDocRef;
+
+            if (querySnapshot.empty) {
+                // Cria novo equipamento no estoque
+                equipamentoId = uuidv4();
+                const estoqueDoc = await addDoc(estoqueRef, {
+                    equipamentoId,
+                    equipamento,
+                    patrimonio,
+                    localArmazenamento,
+                    unidade,
+                    quantidade: parseInt(quantidade, 10),
+                    dataHora: Timestamp.now(),
+                });
+                estoqueDocRef = estoqueDoc;
+            } else {
+                // Atualiza equipamento existente
+                const docEstoque = querySnapshot.docs[0];
+                const dataEstoque = docEstoque.data();
+                equipamentoId = dataEstoque.equipamentoId;
+                estoqueDocRef = docEstoque.ref;
+
+                const novaQuantidade = dataEstoque.quantidade + parseInt(quantidade, 10);
+
+                await updateDoc(estoqueDocRef, {
+                    quantidade: novaQuantidade,
+                    patrimonio,
+                    localArmazenamento,
+                    unidade,
+                    dataHora: Timestamp.now(),
+                });
+            }
+
+            // Registra movimentação
+            const movimentacoesRef = collection(db, 'movimentacoes');
+            const docMovimentacao = await addDoc(movimentacoesRef, {
                 tipo: 'entrada',
                 equipamento,
+                equipamentoId,
                 quantidade: parseInt(quantidade, 10),
                 patrimonio,
                 localArmazenamento,
@@ -43,14 +92,23 @@ export default function FormularioEntrada({
                 dataHora: Timestamp.now(),
             });
 
+            await updateDoc(doc(movimentacoesRef, docMovimentacao.id), {
+                id: docMovimentacao.id,
+            });
+
             Alert.alert('Sucesso', 'Entrada registrada com sucesso!');
+
+            // Resetar campos
             setEquipamento('');
             setQuantidade('');
             setPatrimonio('');
             setLocalArmazenamento('');
             setUnidade('');
+            setDataHora(formatarDataHora(new Date()));
+
         } catch (error) {
             Alert.alert('Erro', `Erro ao registrar entrada: ${error.message}`);
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -60,23 +118,26 @@ export default function FormularioEntrada({
         <View>
             <TextInput
                 style={styles.input}
+                placeholder="Descrição do Equipamento"
+                value={equipamento}
+                onChangeText={setEquipamento}
+            />
+
+            <TextInput
+                style={styles.input}
                 placeholder="Quantidade"
                 keyboardType="numeric"
                 value={quantidade}
                 onChangeText={setQuantidade}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Descrição do Equipamento"
-                value={equipamento}
-                onChangeText={setEquipamento}
-            />
+
             <TextInput
                 style={styles.input}
                 placeholder="Nº do Patrimônio"
                 value={patrimonio}
                 onChangeText={setPatrimonio}
             />
+
             <TextInput
                 style={styles.input}
                 placeholder="Local de Armazenamento"
@@ -98,11 +159,15 @@ export default function FormularioEntrada({
             </Picker>
 
             <Text style={styles.dataHora}>Data e Hora: {dataHora}</Text>
-            <Button
-                title={loading ? 'Registrando...' : 'Registrar Entrada'}
-                onPress={handleRegistrar}
-                disabled={loading}
-            />
+
+            {loading ? (
+                <ActivityIndicator size="large" color="blue" />
+            ) : (
+                <Button
+                    title="Registrar Entrada"
+                    onPress={handleRegistrar}
+                />
+            )}
         </View>
     );
 }
