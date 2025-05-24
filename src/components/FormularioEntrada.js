@@ -3,7 +3,7 @@ import { View, TextInput, Button, Alert, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../styles/stylesEntrada';
 import { db } from '../config/firebaseConfig';
-import { collection, doc, setDoc, Timestamp } from 'firebase/firestore';  // ✅ Alterado aqui
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 export default function FormularioEntrada({
     equipamento,
@@ -15,6 +15,7 @@ export default function FormularioEntrada({
     const [localArmazenamento, setLocalArmazenamento] = useState('');
     const [unidade, setUnidade] = useState('');
     const [dataHora, setDataHora] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const agora = new Date();
@@ -24,41 +25,34 @@ export default function FormularioEntrada({
     }, []);
 
     const handleRegistrar = async () => {
-        if (
-            !equipamento ||
-            !quantidade ||
-            !patrimonio ||
-            !localArmazenamento ||
-            !unidade
-        ) {
+        if (!equipamento || !quantidade || !patrimonio || !localArmazenamento || !unidade) {
             Alert.alert('Atenção', 'Preencha todos os campos.');
             return;
         }
 
+        setLoading(true);
         try {
-            // ✅ Gera referência e ID automaticamente
-            const docRef = doc(collection(db, 'movimentacoes'));
-            const id = docRef.id;
-
-            await setDoc(docRef, {
-                id,  // ✅ salva o id no documento
+            // addDoc gera id automaticamente
+            await addDoc(collection(db, 'movimentacoes'), {
                 tipo: 'entrada',
                 equipamento,
-                quantidade: parseInt(quantidade),
+                quantidade: parseInt(quantidade, 10),
                 patrimonio,
                 localArmazenamento,
                 unidade,
-                dataHora: Timestamp.now(),  // ✅ permanece
+                dataHora: Timestamp.now(),
             });
 
-            Alert.alert('Entrada registrada com sucesso!');
+            Alert.alert('Sucesso', 'Entrada registrada com sucesso!');
             setEquipamento('');
             setQuantidade('');
             setPatrimonio('');
             setLocalArmazenamento('');
             setUnidade('');
         } catch (error) {
-            Alert.alert('Erro ao registrar entrada', error.message);
+            Alert.alert('Erro', `Erro ao registrar entrada: ${error.message}`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -92,11 +86,10 @@ export default function FormularioEntrada({
 
             <Picker
                 selectedValue={unidade}
-                onValueChange={(itemValue) => setUnidade(itemValue)}
+                onValueChange={setUnidade}
                 style={styles.input}
             >
                 <Picker.Item label="Selecione a Unidade" value="" enabled={false} />
-                <Picker.Item label="Selecione a Unidade" value="" />
                 <Picker.Item label="Hospital Conde" value="Hospital Conde" />
                 <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
                 <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
@@ -105,7 +98,11 @@ export default function FormularioEntrada({
             </Picker>
 
             <Text style={styles.dataHora}>Data e Hora: {dataHora}</Text>
-            <Button title="Registrar Entrada" onPress={handleRegistrar} />
+            <Button
+                title={loading ? 'Registrando...' : 'Registrar Entrada'}
+                onPress={handleRegistrar}
+                disabled={loading}
+            />
         </View>
     );
 }

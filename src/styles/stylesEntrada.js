@@ -7,6 +7,7 @@ export default StyleSheet.create({
         padding: 8,
         marginBottom: 12,
         borderRadius: 4,
+        marginTop: 10,
     },
     dataHora: {
         marginBottom: 12,

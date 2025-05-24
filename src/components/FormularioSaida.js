@@ -1,270 +1,134 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Alert,
-    StyleSheet,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, TextInput, Alert, Text, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import styles from '../styles/stylesSaida';
 
-export default function FormularioSaida({
-    equipamento,
-    local,
-    unidade,
-    quantidade,
-    onSubmit,
-}) {
-    const [quantidadeSaida, setQuantidadeSaida] = useState('');
+export default function FormularioSaida({ equipamentoSelecionado, onSaidaConcluida }) {
+    const [equipamento, setEquipamento] = useState('');
+    const [quantidade, setQuantidade] = useState('');
     const [patrimonio, setPatrimonio] = useState('');
     const [localDestino, setLocalDestino] = useState('');
-    const [dataHoraAtual, setDataHoraAtual] = useState('');
-    const [quantidadeInvalida, setQuantidadeInvalida] = useState(false);
-
-    // Estado interno para estoque disponível (quantidade)
-    const [estoqueDisponivel, setEstoqueDisponivel] = useState(quantidade);
-
-    // Atualiza estoqueDisponivel sempre que a prop quantidade mudar
-    useEffect(() => {
-        setEstoqueDisponivel(quantidade);
-    }, [quantidade]);
-
-    // Atualiza data e hora
-    useEffect(() => {
-        const atualizarDataHora = () => {
-            const agora = new Date();
-            const data = agora.toLocaleDateString();
-            const hora = agora.toLocaleTimeString();
-            setDataHoraAtual(`${data} - ${hora}`);
-        };
-        atualizarDataHora();
-        const interval = setInterval(atualizarDataHora, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const validarQuantidade = useCallback(() => {
-        const qtd = parseInt(quantidadeSaida, 10);
-        return !isNaN(qtd) && qtd > 0 && qtd <= estoqueDisponivel;
-    }, [quantidadeSaida, estoqueDisponivel]);
+    const [unidade, setUnidade] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const valido = validarQuantidade();
-        setQuantidadeInvalida(!valido && quantidadeSaida !== '');
-    }, [validarQuantidade, quantidadeSaida]);
+        if (equipamentoSelecionado) {
+            setEquipamento(equipamentoSelecionado.equipamento || '');
+            setQuantidade('');
+            setPatrimonio(equipamentoSelecionado.patrimonio || '');
+            setLocalDestino('');
+            setUnidade(equipamentoSelecionado.unidade || '');
+        }
+    }, [equipamentoSelecionado]);
 
-    const camposPreenchidos = useCallback(() =>
-        patrimonio.trim() !== '' && localDestino.trim() !== ''
-        , [patrimonio, localDestino]);
+    const handleRegistrarSaida = async () => {
+        const quantidadeNum = parseInt(quantidade, 10);
 
-    const enviarSaida = useCallback(() => {
-        if (!validarQuantidade()) {
-            Alert.alert(
-                'Quantidade inválida',
-                `Informe uma quantidade entre 1 e ${estoqueDisponivel}`
-            );
+        if (!equipamento || !quantidade || !patrimonio || !localDestino || !unidade) {
+            Alert.alert('Atenção', 'Preencha todos os campos.');
             return;
         }
-        if (!camposPreenchidos()) {
-            Alert.alert(
-                'Campos obrigatórios',
-                'Preencha o número do patrimônio e o local de destino.'
-            );
+        if (quantidadeNum <= 0 || quantidadeNum > parseInt(equipamentoSelecionado.quantidade, 10)) {
+            Alert.alert('Erro', 'Quantidade para saída inválida.');
             return;
         }
 
-        onSubmit({
-            equipamento,
-            local,
-            unidade,
-            quantidade: parseInt(quantidadeSaida, 10),
-            patrimonio: patrimonio.trim(),
-            localDestino: localDestino.trim(),
-            dataHora: dataHoraAtual,
-            tipo: 'saida',
-        });
+        setLoading(true);
 
-        // Limpa campos após envio
-        setQuantidadeSaida('');
-        setPatrimonio('');
-        setLocalDestino('');
-        setQuantidadeInvalida(false);
-    }, [validarQuantidade, camposPreenchidos, equipamento, local, unidade, quantidadeSaida, patrimonio, localDestino, dataHoraAtual, onSubmit]);
-
-    const isFormValid = validarQuantidade() && camposPreenchidos();
+        try {
+            Alert.alert('Sucesso', 'Saída registrada com sucesso!');
+            onSaidaConcluida();
+        } catch (error) {
+            Alert.alert('Erro', `Erro ao registrar saída: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
-        >
-            <ScrollView
-                contentContainerStyle={styles.container}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-                <Text style={styles.header}>Registrar Saída</Text>
+        <View style={styles.container}>
+            <View style={styles.infoBox}>
+                <Text style={styles.infoLabel}>Equipamento:</Text>
+                <Text style={styles.infoValue}>{equipamento}</Text>
+            </View>
 
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoLabel}>Equipamento:</Text>
-                    <Text style={styles.infoValue}>{equipamento || '-'}</Text>
-                </View>
+            <View style={styles.infoBox}>
+                <Text style={styles.infoLabel}>Quantidade disponível:</Text>
+                <Text style={styles.infoValue}>{String(equipamentoSelecionado?.quantidade || '0')}</Text>
+            </View>
 
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoLabel}>Local atual:</Text>
-                    <Text style={styles.infoValue}>{local || '-'}</Text>
-                </View>
+            <View style={styles.infoBox}>
+                <Text style={styles.infoLabel}>Patrimônio:</Text>
+                <Text style={styles.infoValue}>{patrimonio}</Text>
+            </View>
 
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoLabel}>Unidade:</Text>
-                    <Text style={styles.infoValue}>{unidade || '-'}</Text>
-                </View>
+            <View style={styles.infoBox}>
+                <Text style={styles.infoLabel}>Local Armazenado:</Text>
+                <Text style={styles.infoValue}>{equipamentoSelecionado?.localArmazenamento || ''}</Text>
+            </View>
 
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoLabel}>Estoque disponível:</Text>
-                    <Text style={styles.infoValue}>{estoqueDisponivel}</Text>
-                </View>
+            <View style={styles.infoBox}>
+                <Text style={styles.infoLabel}>Unidade:</Text>
+                <Text style={styles.infoValue}>{unidade}</Text>
+            </View>
 
-                <Text style={styles.label}>Número do Patrimônio:</Text>
-                <TextInput
-                    style={styles.input}
-                    value={patrimonio}
-                    onChangeText={setPatrimonio}
-                    placeholder="Digite o número do patrimônio"
-                    placeholderTextColor="#999"
-                    accessibilityLabel="Número do patrimônio"
-                    autoCapitalize="characters"
-                    autoCorrect={false}
-                />
+            <Text style={styles.label}>Quantidade para saída</Text>
+            <TextInput
+                placeholder="Quantidade para saída"
+                keyboardType="numeric"
+                value={quantidade}
+                onChangeText={setQuantidade}
+                style={styles.input}
+            />
 
-                <Text style={styles.label}>Local de Destino:</Text>
-                <TextInput
-                    style={styles.input}
-                    value={localDestino}
-                    onChangeText={setLocalDestino}
-                    placeholder="Digite o local de destino"
-                    placeholderTextColor="#999"
-                    accessibilityLabel="Local de destino"
-                    autoCapitalize="words"
-                    autoCorrect={false}
-                />
+            <Text style={styles.label}>Número do Patrimônio</Text>
+            <TextInput
+                placeholder="Número do Patrimônio"
+                value={patrimonio}
+                onChangeText={setPatrimonio}
+                style={styles.input}
+            />
 
-                <Text style={styles.label}>Quantidade para saída:</Text>
-                <TextInput
-                    style={[
-                        styles.input,
-                        quantidadeInvalida && styles.inputError
-                    ]}
-                    keyboardType="numeric"
-                    value={quantidadeSaida}
-                    onChangeText={setQuantidadeSaida}
-                    placeholder="Digite a quantidade"
-                    placeholderTextColor="#999"
-                    accessibilityLabel="Quantidade para saída"
-                />
-                {quantidadeInvalida && (
-                    <Text style={styles.errorText}>
-                        Informe uma quantidade entre 1 e {estoqueDisponivel}.
-                    </Text>
-                )}
+            <Text style={styles.label}>Local de Destino</Text>
+            <TextInput
+                placeholder="Local de Destino"
+                value={localDestino}
+                onChangeText={setLocalDestino}
+                style={styles.input}
+            />
 
-                <Text style={styles.dataHora}>Data/Hora atual: {dataHoraAtual}</Text>
-
-                <TouchableOpacity
-                    style={[styles.button, !isFormValid && styles.buttonDisabled]}
-                    onPress={enviarSaida}
-                    disabled={!isFormValid}
-                    accessibilityRole="button"
-                    accessibilityState={{ disabled: !isFormValid }}
-                    accessibilityLabel="Botão para registrar saída"
+            <Text style={styles.label}>Unidade</Text>
+            <View style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                backgroundColor: '#fafafa',
+                marginBottom: 20,
+                overflow: 'hidden'
+            }}>
+                <Picker
+                    selectedValue={unidade}
+                    onValueChange={setUnidade}
+                    style={{ height: 50 }}
                 >
-                    <Text style={styles.buttonText}>Registrar Saída</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </KeyboardAvoidingView>
+                    <Picker.Item label="Selecione a Unidade" value="" />
+                    <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                    <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
+                    <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                    <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                    <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                </Picker>
+            </View>
+
+            <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleRegistrarSaida}
+                disabled={loading}
+            >
+                <Text style={styles.buttonText}>
+                    {loading ? 'Registrando...' : 'Registrar Saída'}
+                </Text>
+            </TouchableOpacity>
+        </View>
     );
 }
-
-// ... (mesmos estilos do código anterior)
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        margin: 16,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-        flexGrow: 1,
-    },
-    header: {
-        fontSize: 22,
-        fontWeight: '700',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#d9534f',
-    },
-    infoBox: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 12,
-    },
-    infoLabel: {
-        fontWeight: '600',
-        color: '#333',
-    },
-    infoValue: {
-        fontWeight: '400',
-        color: '#555',
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-        marginTop: 16,
-        color: '#333',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-        fontSize: 16,
-        color: '#333',
-        backgroundColor: '#fafafa',
-    },
-    inputError: {
-        borderColor: '#d9534f',
-    },
-    errorText: {
-        color: '#d9534f',
-        marginTop: 4,
-        fontSize: 14,
-    },
-    dataHora: {
-        marginTop: 20,
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
-    },
-    button: {
-        marginTop: 16,
-        backgroundColor: '#d9534f',
-        paddingVertical: 14,
-        borderRadius: 8,
-    },
-    buttonDisabled: {
-        backgroundColor: '#f1a9a0',
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: '700',
-        fontSize: 18,
-        textAlign: 'center',
-    },
-});

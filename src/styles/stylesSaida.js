@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-
 const styles = StyleSheet.create({
     container: {
         padding: 20,
@@ -49,20 +48,11 @@ const styles = StyleSheet.create({
         color: '#333',
         backgroundColor: '#fafafa',
     },
-    dataHora: {
-        marginTop: 20,
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
-    },
     button: {
         marginTop: 16,
         backgroundColor: '#d9534f',
         paddingVertical: 14,
         borderRadius: 8,
-    },
-    buttonDisabled: {
-        backgroundColor: '#f1a9a0',
     },
     buttonText: {
         color: '#fff',
@@ -71,6 +61,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
 
 export default styles;
