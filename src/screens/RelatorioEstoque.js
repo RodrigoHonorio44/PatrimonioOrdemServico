@@ -24,7 +24,6 @@ export default function RelatorioEstoque({ navigation }) {
     const [mostrarFim, setMostrarFim] = useState(false);
     const [entradas, setEntradas] = useState([]);
     const [saidas, setSaidas] = useState([]);
-    const [estoqueAtual, setEstoqueAtual] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const formatarDataHora = (dataHora) => {
@@ -56,7 +55,6 @@ export default function RelatorioEstoque({ navigation }) {
             const inicioTimestamp = Timestamp.fromDate(inicio);
             const fimTimestamp = Timestamp.fromDate(fim);
 
-            // Query para filtrar movimentações pelo campo 'dataHora' no intervalo e ordenar pela dataHora ascendente
             const periodoQuery = query(
                 collection(db, 'movimentacoes'),
                 where('dataHora', '>=', inicioTimestamp),
@@ -68,29 +66,6 @@ export default function RelatorioEstoque({ navigation }) {
 
             setEntradas(periodoDados.filter(item => item.tipo === 'entrada'));
             setSaidas(periodoDados.filter(item => item.tipo === 'saida'));
-
-            // Para calcular estoque atual, buscamos todas movimentações (sem filtro de data)
-            const todasSnapshot = await getDocs(collection(db, 'movimentacoes'));
-            const todasMovimentacoes = todasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            const estoqueMap = {};
-            todasMovimentacoes.forEach(item => {
-                const key = `${item.equipamento || ''}||${item.patrimonio || ''}||${item.unidade || ''}`;
-                if (!estoqueMap[key]) {
-                    estoqueMap[key] = {
-                        equipamento: item.equipamento || '',
-                        patrimonio: item.patrimonio || '',
-                        unidade: item.unidade || '',
-                        quantidade: 0,
-                    };
-                }
-                const quantidade = Number(item.quantidade) || 0;
-                if (item.tipo === 'entrada') estoqueMap[key].quantidade += quantidade;
-                else if (item.tipo === 'saida') estoqueMap[key].quantidade -= quantidade;
-            });
-
-            const estoqueArray = Object.values(estoqueMap).filter(item => item.quantidade > 0);
-            setEstoqueAtual(estoqueArray);
         } catch (error) {
             console.error(error);
             Alert.alert('Erro', `Erro ao buscar dados: ${error.message}`);
@@ -100,46 +75,33 @@ export default function RelatorioEstoque({ navigation }) {
     };
 
     const exportarExcel = async () => {
-        const dadosExcel = [];
+        const dadosEntradas = entradas.map(item => ({
+            DataHora: formatarDataHora(item.dataHora),
+            Equipamento: item.equipamento || '',
+            Patrimonio: item.patrimonio || '',
+            Quantidade: item.quantidade,
+            LocalArmazenamento: item.localArmazenamento || '',
+            Unidade: item.unidade || '',
+        }));
 
-        entradas.forEach(item => {
-            dadosExcel.push({
-                Tipo: 'Entrada',
-                DataHora: formatarDataHora(item.dataHora),
-                Equipamento: item.equipamento || '',
-                Patrimonio: item.patrimonio || '',
-                Quantidade: item.quantidade,
-                LocalArmazenamento: item.localArmazenamento || '',
-                Unidade: item.unidade || '',
-            });
-        });
-
-        saidas.forEach(item => {
-            dadosExcel.push({
-                Tipo: 'Saida',
-                DataHora: formatarDataHora(item.dataHora),
-                Equipamento: item.equipamento || '',
-                Patrimonio: item.patrimonio || '',
-                Quantidade: item.quantidade,
-                LocalDestino: item.localDestino || '',
-                LocalArmazenamento: item.localArmazenamento || '',
-                Unidade: item.unidade || '',
-            });
-        });
-
-        estoqueAtual.forEach(item => {
-            dadosExcel.push({
-                Tipo: 'Estoque Atual',
-                Equipamento: item.equipamento || '',
-                Patrimonio: item.patrimonio || '',
-                Quantidade: item.quantidade,
-                Unidade: item.unidade || '',
-            });
-        });
+        const dadosSaidas = saidas.map(item => ({
+            DataHora: formatarDataHora(item.dataHora),
+            Equipamento: item.equipamento || '',
+            Patrimonio: item.patrimonio || '',
+            Quantidade: item.quantidade,
+            LocalDestino: item.localDestino || '',
+            LocalArmazenamento: item.localArmazenamento || '',
+            Unidade: item.unidade || '',
+        }));
 
         const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.json_to_sheet(dadosExcel);
-        XLSX.utils.book_append_sheet(wb, ws, 'Relatório');
+
+        const wsEntradas = XLSX.utils.json_to_sheet(dadosEntradas);
+        XLSX.utils.book_append_sheet(wb, wsEntradas, 'Entradas');
+
+        const wsSaidas = XLSX.utils.json_to_sheet(dadosSaidas);
+        XLSX.utils.book_append_sheet(wb, wsSaidas, 'Saídas');
+
         const wbout = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
 
         const uri = FileSystem.cacheDirectory + 'relatorio_estoque.xlsx';
@@ -159,8 +121,6 @@ export default function RelatorioEstoque({ navigation }) {
         ...entradas.map(item => ({ key: item.id, type: 'entrada', data: item })),
         { key: 'saidasTitle', type: 'title', title: 'Saídas' },
         ...saidas.map(item => ({ key: item.id, type: 'saida', data: item })),
-        { key: 'estoqueTitle', type: 'title', title: 'Estoque Atual' },
-        ...estoqueAtual.map((item, index) => ({ key: `estoque_${index}`, type: 'estoque', data: item })),
     ];
 
     const renderItem = useCallback(({ item }) => {
@@ -172,9 +132,7 @@ export default function RelatorioEstoque({ navigation }) {
 
         return (
             <View style={styles.item}>
-                {item.type !== 'estoque' && (
-                    <Text><Text style={styles.negrito}>Data Hora:</Text> {formatarDataHora(data.dataHora)}</Text>
-                )}
+                <Text><Text style={styles.negrito}>Data Hora:</Text> {formatarDataHora(data.dataHora)}</Text>
                 <Text><Text style={styles.negrito}>Equipamento:</Text> {data.equipamento}</Text>
                 <Text><Text style={styles.negrito}>Patrimônio:</Text> {data.patrimonio}</Text>
                 <Text><Text style={styles.negrito}>Quantidade:</Text> {data.quantidade}</Text>
@@ -191,18 +149,15 @@ export default function RelatorioEstoque({ navigation }) {
                         <Text><Text style={styles.negrito}>Unidade:</Text> {data.unidade || '-'}</Text>
                     </>
                 )}
-                {item.type === 'estoque' && (
-                    <Text><Text style={styles.negrito}>Unidade:</Text> {data.unidade || '-'}</Text>
-                )}
             </View>
         );
-    }, [entradas, saidas, estoqueAtual]);
+    }, [entradas, saidas]);
 
     return (
         <View style={styles.container}>
             <View style={styles.datePickerContainer}>
-                <View>
-                    <Text>Data Início:</Text>
+                <View style={styles.datePickerGroup}>
+                    <Text style={styles.label}>Data Início:</Text>
                     <Pressable onPress={() => setMostrarInicio(true)} style={styles.datePicker}>
                         <Text>{dataInicio.toLocaleDateString()}</Text>
                     </Pressable>
@@ -218,8 +173,8 @@ export default function RelatorioEstoque({ navigation }) {
                         />
                     )}
                 </View>
-                <View>
-                    <Text>Data Fim:</Text>
+                <View style={styles.datePickerGroup}>
+                    <Text style={styles.label}>Data Fim:</Text>
                     <Pressable onPress={() => setMostrarFim(true)} style={styles.datePicker}>
                         <Text>{dataFim.toLocaleDateString()}</Text>
                     </Pressable>
@@ -237,8 +192,14 @@ export default function RelatorioEstoque({ navigation }) {
                 </View>
             </View>
 
-            <Button title="Buscar" onPress={buscarDados} />
-            <Button title="Exportar Excel" onPress={exportarExcel} disabled={loading} />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                    <Button title="Buscar" onPress={buscarDados} />
+                </View>
+                <View style={{ flex: 1 }}>
+                    <Button title="Exportar Excel" onPress={exportarExcel} disabled={loading} />
+                </View>
+            </View>
 
             {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
 
@@ -247,6 +208,7 @@ export default function RelatorioEstoque({ navigation }) {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.key}
                 style={{ marginTop: 20 }}
+                contentContainerStyle={{ paddingBottom: 100 }}
             />
 
             <NavbarBottom navigation={navigation} />
