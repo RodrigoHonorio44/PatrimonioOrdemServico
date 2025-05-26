@@ -21,6 +21,7 @@ import BaixaPatrimonio from '../screens/BaixaPatrimonio';
 import RelatorioBaixaPatrimonio from '../screens/RelatorioBaixaPatrimonio'
 import RelatorioEntregasEquipamentos from '../screens/RelatorioEntregasEquipamentos'
 import RelatorioEstoque from '../screens/RelatorioEstoque'
+import Chat from '../screens/Chat';
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -116,6 +117,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="Assinatura"
                         component={Assinatura}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Chat"
+                        component={Chat}
                         options={{ headerShown: false }}
                     />
                 </Stack.Navigator>

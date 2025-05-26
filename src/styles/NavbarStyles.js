@@ -16,6 +16,12 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: width * 0.045,  // responsivo
         fontWeight: 'bold',
+        flex: 1,                 // Para ocupar o máximo possível de espaço
+    },
+    chatButton: {
+        paddingHorizontal: width * 0.03,
+        paddingVertical: width * 0.015,
+        marginRight: width * 0.02,
     },
     logoutButton: {
         backgroundColor: '#FF3B30',
