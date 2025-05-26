@@ -6,19 +6,32 @@ import { db } from '../config/firebaseConfig';
 import styles from '../styles/FormularioSaidaStyles';
 
 export default function FormularioSaida({ equipamentoSelecionado, onSaidaConcluida }) {
-    const { idRastreio, equipamento: equipamentoParam, quantidade: quantidadeEstoque, patrimonio: patrimonioParam, localArmazenamento, unidade: unidadeParam } = equipamentoSelecionado || {};
+    const { idRastreio, equipamento: equipamentoParam, quantidade: quantidadeEstoque, localArmazenamento, unidade: unidadeParam, patrimonio: patrimonioEntrada } = equipamentoSelecionado || {};
 
     const [quantidade, setQuantidade] = useState('');
     const [localDestino, setLocalDestino] = useState('');
     const [unidade, setUnidade] = useState(unidadeParam || '');
     const [loading, setLoading] = useState(false);
     const [botaoHabilitado, setBotaoHabilitado] = useState(false);
+    const [patrimonio, setPatrimonio] = useState('');
+
+    useEffect(() => {
+        // Preenche automaticamente o patrimônio
+        if (patrimonioEntrada) {
+            setPatrimonio(patrimonioEntrada);
+        }
+    }, [patrimonioEntrada]);
 
     useEffect(() => {
         const qtdNumero = Number(quantidade);
-        const podeHabilitar = quantidade !== '' && qtdNumero > 0 && localDestino.trim() !== '' && unidade.trim() !== '';
+        const podeHabilitar =
+            quantidade !== '' &&
+            qtdNumero > 0 &&
+            localDestino.trim() !== '' &&
+            unidade.trim() !== '' &&
+            patrimonio.trim() !== '';
         setBotaoHabilitado(podeHabilitar);
-    }, [quantidade, localDestino, unidade]);
+    }, [quantidade, localDestino, unidade, patrimonio]);
 
     const handleQuantidadeChange = (valor) => {
         let somenteNumeros = valor.replace(/[^0-9]/g, '');
@@ -43,6 +56,10 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
             Alert.alert('Erro', 'Informe a unidade');
             return;
         }
+        if (!patrimonio.trim()) {
+            Alert.alert('Erro', 'Informe o número do patrimônio');
+            return;
+        }
 
         setLoading(true);
 
@@ -51,17 +68,18 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                 tipo: 'saida',
                 equipamento: equipamentoParam,
                 quantidade: qtdNumero,
-                patrimonio: patrimonioParam,
+                patrimonio,
                 localArmazenamento,
                 localDestino,
                 unidade,
-                data: serverTimestamp(),
+                dataHora: serverTimestamp(),
                 idRastreio,
             });
 
             Alert.alert('Sucesso', 'Saída registrada com sucesso!');
             setQuantidade('');
             setLocalDestino('');
+            setPatrimonio('');
             onSaidaConcluida();
         } catch (error) {
             Alert.alert('Erro', 'Falha ao registrar saída: ' + error.message);
@@ -94,8 +112,8 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                     <Text style={styles.label}>Equipamento:</Text>
                     <Text style={styles.value}>{equipamentoParam}</Text>
 
-                    <Text style={styles.label}>Patrimônio:</Text>
-                    <Text style={styles.value}>{patrimonioParam}</Text>
+                    <Text style={styles.label}>Patrimônio de Entrada:</Text>
+                    <Text style={styles.value}>{patrimonioEntrada}</Text>
 
                     <Text style={styles.label}>Quantidade em estoque:</Text>
                     <Text style={styles.value}>{quantidadeEstoque}</Text>
@@ -126,6 +144,14 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                         value={localDestino}
                         onChangeText={setLocalDestino}
                         placeholder="Informe o local de destino"
+                    />
+
+                    <Text style={styles.label}>Número do Patrimônio:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={patrimonio}
+                        onChangeText={setPatrimonio}
+                        placeholder="Informe o número do patrimônio"
                     />
 
                     <Text style={styles.label}>Unidade:</Text>

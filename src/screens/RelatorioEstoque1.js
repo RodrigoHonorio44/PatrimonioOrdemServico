@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as XLSX from 'xlsx';
-import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import NavbarBottom from '../components/NavbarBottom';
 import styles from '../styles/RelatorioEstoqueStyles';
@@ -56,12 +56,10 @@ export default function RelatorioEstoque({ navigation }) {
             const inicioTimestamp = Timestamp.fromDate(inicio);
             const fimTimestamp = Timestamp.fromDate(fim);
 
-            // Query para filtrar movimentações pelo campo 'dataHora' no intervalo e ordenar pela dataHora ascendente
             const periodoQuery = query(
                 collection(db, 'movimentacoes'),
                 where('dataHora', '>=', inicioTimestamp),
-                where('dataHora', '<=', fimTimestamp),
-                orderBy('dataHora', 'asc')
+                where('dataHora', '<=', fimTimestamp)
             );
             const periodoSnapshot = await getDocs(periodoQuery);
             const periodoDados = periodoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -69,7 +67,6 @@ export default function RelatorioEstoque({ navigation }) {
             setEntradas(periodoDados.filter(item => item.tipo === 'entrada'));
             setSaidas(periodoDados.filter(item => item.tipo === 'saida'));
 
-            // Para calcular estoque atual, buscamos todas movimentações (sem filtro de data)
             const todasSnapshot = await getDocs(collection(db, 'movimentacoes'));
             const todasMovimentacoes = todasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
@@ -238,16 +235,18 @@ export default function RelatorioEstoque({ navigation }) {
             </View>
 
             <Button title="Buscar" onPress={buscarDados} />
-            <Button title="Exportar Excel" onPress={exportarExcel} disabled={loading} />
+            <Button title="Exportar Excel" onPress={exportarExcel} />
 
-            {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
-
-            <FlatList
-                data={sections}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.key}
-                style={{ marginTop: 20 }}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 20 }} />
+            ) : (
+                <FlatList
+                    data={sections}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.key}
+                    contentContainerStyle={{ paddingBottom: 80 }}
+                />
+            )}
 
             <NavbarBottom navigation={navigation} />
         </View>
