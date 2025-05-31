@@ -9,20 +9,26 @@ export default StyleSheet.create({
         paddingTop: 40,
     },
 
+    conteudo: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f8f9fa',
+    },
+
     botoes: {
-        flexDirection: 'row',           // lado a lado
+        flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginVertical: 10,
     },
 
     botao: {
-        flex: 1,                        // mesmo tamanho
-        marginHorizontal: 5,            // espaçamento entre eles
+        flex: 1,
+        marginHorizontal: 5,
         padding: 12,
-        backgroundColor: '#007bff',     // cor do botão
+        backgroundColor: '#007bff',
         borderRadius: 8,
-        alignItems: 'center',           // texto centralizado
+        alignItems: 'center',
     },
 
     botaoTexto: {

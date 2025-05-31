@@ -2,16 +2,16 @@ import { StyleSheet, Dimensions, Platform } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const basePadding = width * 0.05;       // 5% da largura da tela
-const baseFontSize = width * 0.045;     // fonte responsiva ~4.5% da largura
-const cardPadding = width * 0.05;       // padding do card proporcional
+const basePadding = width * 0.05;
+const baseFontSize = width * 0.045;
+const cardPadding = width * 0.05;
 
 export default StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',  // começa do topo
         padding: basePadding,
-        paddingBottom: height * 0.25, // espaço maior para o teclado, 25% da altura
+        paddingBottom: height * 0.25,  // espaço para teclado
     },
     card: {
         backgroundColor: '#fff',
@@ -30,14 +30,14 @@ export default StyleSheet.create({
         }),
     },
     header: {
-        fontSize: baseFontSize * 1.2,  // 20% maior que base
+        fontSize: baseFontSize * 1.2,
         fontWeight: 'bold',
         marginBottom: basePadding,
         textAlign: 'center',
         color: '#d9534f',
     },
     label: {
-        marginTop: basePadding * 0.4,  // 40% do padding base
+        marginTop: basePadding * 0.4,
         fontWeight: 'bold',
         fontSize: baseFontSize,
     },
@@ -52,11 +52,6 @@ export default StyleSheet.create({
         padding: basePadding * 0.5,
         marginTop: basePadding * 0.2,
         fontSize: baseFontSize,
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     alerta: {
         color: 'red',

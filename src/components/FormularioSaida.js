@@ -1,27 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+    View, Text, TextInput, Button, Alert,
+    ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import styles from '../styles/FormularioSaidaStyles';
 
 export default function FormularioSaida({ equipamentoSelecionado, onSaidaConcluida }) {
-    const { idRastreio, equipamento: equipamentoParam, quantidade: quantidadeEstoque, localArmazenamento, unidade: unidadeParam, patrimonio: patrimonioEntrada } = equipamentoSelecionado || {};
+    // Extrair dados do equipamento selecionado
+    const {
+        idRastreio,
+        equipamento: equipamentoParam,
+        quantidade: quantidadeEstoque,
+        localArmazenamento,
+        unidade: unidadeParam,
+        patrimonio: patrimonioEntrada
+    } = equipamentoSelecionado || {};
 
+    // Estados do formulário
     const [quantidade, setQuantidade] = useState('');
     const [localDestino, setLocalDestino] = useState('');
     const [unidade, setUnidade] = useState(unidadeParam || '');
+    const [patrimonio, setPatrimonio] = useState('');
     const [loading, setLoading] = useState(false);
     const [botaoHabilitado, setBotaoHabilitado] = useState(false);
-    const [patrimonio, setPatrimonio] = useState('');
 
+    // Preencher patrimônio automaticamente quando mudar o equipamento
     useEffect(() => {
-        // Preenche automaticamente o patrimônio
         if (patrimonioEntrada) {
             setPatrimonio(patrimonioEntrada);
         }
     }, [patrimonioEntrada]);
 
+    // Habilitar botão só se os campos estiverem válidos
     useEffect(() => {
         const qtdNumero = Number(quantidade);
         const podeHabilitar =
@@ -33,11 +46,13 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
         setBotaoHabilitado(podeHabilitar);
     }, [quantidade, localDestino, unidade, patrimonio]);
 
+    // Permitir só números no input de quantidade
     const handleQuantidadeChange = (valor) => {
-        let somenteNumeros = valor.replace(/[^0-9]/g, '');
+        const somenteNumeros = valor.replace(/[^0-9]/g, '');
         setQuantidade(somenteNumeros);
     };
 
+    // Função para registrar a saída no Firestore
     const handleRegistrarSaida = async () => {
         const qtdNumero = Number(quantidade);
         if (!quantidade || qtdNumero <= 0) {
@@ -62,7 +77,6 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
         }
 
         setLoading(true);
-
         try {
             await addDoc(collection(db, 'movimentacoes'), {
                 tipo: 'saida',
@@ -75,7 +89,6 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                 dataHora: serverTimestamp(),
                 idRastreio,
             });
-
             Alert.alert('Sucesso', 'Saída registrada com sucesso!');
             setQuantidade('');
             setLocalDestino('');
