@@ -6,7 +6,7 @@ export default function Sobre() {
     const versaoApp = Constants.manifest.version;
 
     const handleContato = () => {
-        Linking.openURL('mailto:seuemail@exemplo.com');  // Troque pelo seu e-mail
+        Linking.openURL('rodrigohono21@gmail.com');  // Troque pelo seu e-mail
     };
 
     return (
@@ -14,15 +14,18 @@ export default function Sobre() {
             <Text style={styles.titulo}>Sobre o App</Text>
 
             <Text style={styles.texto}>
-                Versão: <Text style={styles.bold}>{versaoApp}</Text>
+                Versão: 1.0.0<Text style={styles.bold}>{versaoApp}</Text>
             </Text>
 
             <Text style={styles.texto}>
-                Criado por: <Text style={styles.bold}>Seu Nome</Text>
+                Criado por: <Text style={styles.bold}>Rodrigo da Silva Honório</Text>
             </Text>
 
             <Text style={styles.texto}>
-                E-mail: <Text style={styles.link}>seuemail@exemplo.com</Text>
+                E-mail: <Text style={styles.link}>rodrigohono21@gmail.com</Text>
+            </Text>
+            <Text style={styles.texto}>
+                Linkedin: <Text style={styles.link}>https://www.linkedin.com/in/rodrigo-s-hon%C3%B3rio/</Text>
             </Text>
 
             <Button title="Entrar em contato" onPress={handleContato} />

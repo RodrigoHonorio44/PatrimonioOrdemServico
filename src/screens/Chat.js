@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     TextInput,
-    Button,
     FlatList,
     Text,
     KeyboardAvoidingView,
@@ -10,7 +9,7 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
-    AppState,
+    TouchableOpacity,
 } from 'react-native';
 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -22,9 +21,11 @@ import {
     orderBy,
     onSnapshot,
     doc,
-    updateDoc,
-    serverTimestamp,
     setDoc,
+    getDoc,
+    getDocs,
+    writeBatch,
+    serverTimestamp,
 } from 'firebase/firestore';
 
 export default function Chat({ navigation }) {
@@ -32,85 +33,78 @@ export default function Chat({ navigation }) {
     const db = getFirestore();
 
     const [currentUser, setCurrentUser] = useState(null);
+    const [userRole, setUserRole] = useState(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [otherTyping, setOtherTyping] = useState(false);
-    const [appState, setAppState] = useState(AppState.currentState);
 
+    // Observa estado da autenticação e busca o role do usuário
     useEffect(() => {
-        // Atualiza o currentUser e já pega o displayName para facilitar
-        const unsubscribeAuth = onAuthStateChanged(auth, user => {
+        const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
-            setUserOnlineStatus(!!user);
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    setUserRole(data.role || null);
+                }
+            } else {
+                setUserRole(null);
+            }
         });
 
-        return unsubscribeAuth;
+        return () => unsubscribeAuth();
     }, []);
 
-    const setUserOnlineStatus = async (isOnline) => {
-        if (!currentUser) return;
-        try {
-            await updateDoc(doc(db, 'users', currentUser.uid), {
-                online: isOnline,
-                lastOnline: isOnline ? null : serverTimestamp(),
-            });
-        } catch (error) {
-            console.error('Erro ao atualizar status online:', error);
-        }
-    };
-
+    // Atualiza lista de mensagens em tempo real
     useEffect(() => {
-        const subscription = AppState.addEventListener('change', nextAppState => {
-            setAppState(nextAppState);
-            setUserOnlineStatus(nextAppState === 'active');
+        if (!currentUser) return;
+
+        const q = query(
+            collection(db, 'messages'),
+            orderBy('createdAt', 'asc')
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            setMessages(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         });
 
-        return () => {
-            setUserOnlineStatus(false);
-            subscription.remove();
-        };
+        return () => unsubscribe();
     }, [currentUser]);
 
+    // Atualiza lista de usuários (sem status online)
     useEffect(() => {
         if (!currentUser) return;
 
-        const q = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
-        const unsubscribe = onSnapshot(q, snapshot => {
-            setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
+            setUsers(
+                snapshot.docs.map((doc) => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        name: data.displayName || data.name || 'Usuário',
+                        // online e lastOnline removidos
+                    };
+                })
+            );
         });
 
-        return unsubscribe;
+        return () => unsubscribe();
     }, [currentUser]);
 
+    // Atualiza indicador de digitação dos outros usuários
     useEffect(() => {
         if (!currentUser) return;
 
-        const unsubscribe = onSnapshot(collection(db, 'users'), snapshot => {
-            setUsers(snapshot.docs.map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    name: data.displayName || data.name || 'Usuário',
-                    online: data.online,
-                    lastOnline: data.lastOnline,
-                };
-            }));
+        const unsubscribe = onSnapshot(collection(db, 'typing'), (snapshot) => {
+            setOtherTyping(
+                snapshot.docs.some(
+                    (doc) => doc.id !== currentUser.uid && doc.data().isTyping
+                )
+            );
         });
 
-        return unsubscribe;
-    }, [currentUser]);
-
-    useEffect(() => {
-        if (!currentUser) return;
-
-        const unsubscribe = onSnapshot(collection(db, 'typing'), snapshot => {
-            setOtherTyping(snapshot.docs.some(doc =>
-                doc.id !== currentUser.uid && doc.data().isTyping
-            ));
-        });
-
-        return unsubscribe;
+        return () => unsubscribe();
     }, [currentUser]);
 
     const sendMessage = async () => {
@@ -119,12 +113,12 @@ export default function Chat({ navigation }) {
         try {
             await addDoc(collection(db, 'messages'), {
                 text: message.trim(),
-                createdAt: new Date(),
+                createdAt: serverTimestamp(),
                 uid: currentUser.uid,
                 userName: currentUser.displayName || 'Usuário',
             });
             setMessage('');
-            updateTyping(false);
+            await updateTyping(false);
             Keyboard.dismiss();
         } catch (error) {
             console.error('Erro ao enviar mensagem:', error);
@@ -140,29 +134,57 @@ export default function Chat({ navigation }) {
         }
     };
 
-    const handleLogout = () => {
+    const resetMessages = async () => {
+        if (!currentUser || userRole !== 'admin') return;
+
+        try {
+            const messagesSnapshot = await getDocs(collection(db, 'messages'));
+            const batch = writeBatch(db);
+
+            messagesSnapshot.forEach((docSnap) => {
+                batch.delete(docSnap.ref);
+            });
+
+            await batch.commit();
+            console.log('Mensagens resetadas com sucesso!');
+        } catch (error) {
+            console.error('Erro ao resetar mensagens:', error);
+        }
+    };
+
+    // Apenas navega para Home (sem atualizar status online)
+    const handleLogout = async () => {
         navigation.navigate('Home');
     };
 
     const renderItem = ({ item }) => {
-        const time = item.createdAt?.toDate
-            ? item.createdAt.toDate()
-            : item.createdAt instanceof Date
-                ? item.createdAt
-                : new Date();
+        let time;
+        if (item.createdAt && typeof item.createdAt.toDate === 'function') {
+            time = item.createdAt.toDate();
+        } else if (item.createdAt instanceof Date) {
+            time = item.createdAt;
+        } else {
+            time = new Date();
+        }
 
-        const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const formattedTime = time.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
         const isMyMessage = item.uid === currentUser?.uid;
 
-        // Busca usuário pelo uid na lista de users para pegar o nome correto
-        const messageUser = users.find(u => u.id === item.uid);
-        const userName = isMyMessage ? 'Você' : (messageUser?.name || item.userName || 'Usuário');
+        const messageUser = users.find((u) => u.id === item.uid);
+        const userName = isMyMessage
+            ? 'Você'
+            : messageUser?.name || item.userName || 'Usuário';
 
         return (
-            <View style={[
-                styles.messageContainer,
-                isMyMessage ? styles.myMessageLeft : styles.otherMessageRight
-            ]}>
+            <View
+                style={[
+                    styles.messageContainer,
+                    isMyMessage ? styles.myMessageRight : styles.otherMessageLeft,
+                ]}
+            >
                 <Text style={styles.userName}>{userName}</Text>
                 <Text style={styles.messageText}>{item.text}</Text>
                 <Text style={styles.timestamp}>{formattedTime}</Text>
@@ -171,15 +193,10 @@ export default function Chat({ navigation }) {
     };
 
     const renderUserItem = ({ item }) => {
-        const isOnline = item.online;
-        const lastOnline = item.lastOnline?.toDate ? item.lastOnline.toDate() : null;
-
         return (
             <View style={styles.userItem}>
                 <Text style={styles.userName}>{item.name || item.id}</Text>
-                <Text style={[styles.status, isOnline ? styles.online : styles.offline]}>
-                    {isOnline ? 'Online' : lastOnline ? `Último: ${lastOnline.toLocaleString()}` : 'Offline'}
-                </Text>
+                {/* Status online removido */}
             </View>
         );
     };
@@ -194,16 +211,37 @@ export default function Chat({ navigation }) {
                 <View style={styles.flexContainer}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.chatHeader}>Chat Geral</Text>
-                        <Button title="Sair" onPress={handleLogout} />
+                        <View style={{ flexDirection: 'row' }}>
+                            {userRole === 'admin' && (
+                                <TouchableOpacity
+                                    style={styles.resetButton}
+                                    onPress={resetMessages}
+                                >
+                                    <Text style={styles.resetButtonText}>Reset</Text>
+                                </TouchableOpacity>
+                            )}
+                            <TouchableOpacity
+                                style={styles.logoutButton}
+                                onPress={handleLogout}
+                            >
+                                <Text style={styles.logoutButtonText}>Sair</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
-                    {otherTyping && <Text style={styles.typingIndicator}>Alguém está digitando...</Text>}
+                    {otherTyping && (
+                        <Text style={styles.typingIndicator}>Alguém está digitando...</Text>
+                    )}
 
                     <FlatList
-                        data={messages.slice().reverse()}
-                        keyExtractor={item => item.id}
+                        data={[...messages].reverse()}
+                        keyExtractor={(item) => item.id}
                         renderItem={renderItem}
-                        contentContainerStyle={{ padding: 10, flexGrow: 1, justifyContent: 'flex-end' }}
+                        contentContainerStyle={{
+                            padding: 10,
+                            flexGrow: 1,
+                            justifyContent: 'flex-end',
+                        }}
                         style={styles.messagesList}
                         keyboardShouldPersistTaps="handled"
                     />
@@ -212,7 +250,7 @@ export default function Chat({ navigation }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 value={message}
-                                onChangeText={text => {
+                                onChangeText={(text) => {
                                     setMessage(text);
                                     updateTyping(text.length > 0);
                                 }}
@@ -222,19 +260,22 @@ export default function Chat({ navigation }) {
                                 onSubmitEditing={() => sendMessage()}
                                 blurOnSubmit={false}
                             />
-                            <Button title="Enviar" onPress={sendMessage} />
+                            <TouchableOpacity
+                                style={styles.sendButton}
+                                onPress={sendMessage}
+                            >
+                                <Text style={styles.sendButtonText}>Enviar</Text>
+                            </TouchableOpacity>
                         </View>
 
-                        <Text style={styles.usersTitle}>Usuários online</Text>
+                        <Text style={styles.usersTitle}>Usuários</Text>
 
                         <FlatList
                             data={users}
-                            keyExtractor={item => item.id}
+                            keyExtractor={(item) => item.id}
                             renderItem={renderUserItem}
                             contentContainerStyle={{ paddingBottom: 5 }}
                             style={styles.usersList}
-                            scrollEnabled={true}
-                            nestedScrollEnabled={true}
                         />
                     </View>
                 </View>
@@ -244,72 +285,132 @@ export default function Chat({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    flexContainer: { flex: 1, backgroundColor: '#f8f8f8' },
+    flexContainer: {
+        flex: 1,
+        backgroundColor: '#f0f0f0',
+    },
     headerContainer: {
+        paddingTop: 50,
+        paddingBottom: 10,
+        backgroundColor: '#000367',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#000367',
-        padding: 15,
-        marginTop: 45,
-    },
-    chatHeader: { fontSize: 22, fontWeight: 'bold', color: 'white' },
-    typingIndicator: { fontStyle: 'italic', paddingHorizontal: 15, color: '#555' },
-    messagesList: { flex: 1 },
-    footerContainer: {
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#ccc',
-        paddingHorizontal: 10,
-        paddingTop: 5,
-        paddingBottom: 0,
-        maxHeight: 240,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: 5,
-    },
-    input: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 20,
         paddingHorizontal: 15,
-        paddingVertical: 8,
+        alignItems: 'center',
+    },
+    chatHeader: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    resetButton: {
+        backgroundColor: '#e63946',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
         marginRight: 10,
-        maxHeight: 100,
-        backgroundColor: 'white',
+    },
+    resetButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    logoutButton: {
+        backgroundColor: '#333',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    logoutButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    typingIndicator: {
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+        fontStyle: 'italic',
+        color: '#666',
+    },
+    messagesList: {
+        flex: 1,
+        backgroundColor: '#f0f0f0',
     },
     messageContainer: {
         marginVertical: 5,
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 8,
         maxWidth: '80%',
     },
-    myMessageLeft: {
-        backgroundColor: '#dcf8c6',
+    myMessageRight: {
+        backgroundColor: '#DCF8C6',
+        alignSelf: 'flex-end',
+    },
+    otherMessageLeft: {
+        backgroundColor: '#ffffff',
         alignSelf: 'flex-start',
     },
-    otherMessageRight: {
+    userName: {
+        fontWeight: 'bold',
+        marginBottom: 2,
+        color: '#333',
+    },
+    messageText: {
+        fontSize: 16,
+        color: '#000',
+    },
+    timestamp: {
+        fontSize: 10,
+        color: '#666',
+        marginTop: 3,
+        textAlign: 'right',
+    },
+    footerContainer: {
+        padding: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
         backgroundColor: '#fff',
-        alignSelf: 'flex-end',
-        borderWidth: 1,
-        borderColor: '#ddd',
     },
-    userName: { fontWeight: 'bold', marginBottom: 3, color: '#333', textAlign: 'left' },
-    messageText: { fontSize: 16, color: '#222' },
-    timestamp: { fontSize: 10, color: '#888', marginTop: 4, textAlign: 'right' },
-    usersTitle: { fontWeight: 'bold', fontSize: 16, marginTop: 10, marginBottom: 5, color: '#000367' },
-    usersList: { maxHeight: 80 },
-    userItem: {
+    inputContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: 2,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#ccc',
+        alignItems: 'center',
+        marginBottom: 10,
     },
-    status: { fontSize: 12, fontStyle: 'italic' },
-    online: { color: 'green' },
-    offline: { color: 'gray' },
+    input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#999',
+        borderRadius: 20,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        fontSize: 16,
+        maxHeight: 100,
+        backgroundColor: '#fff',
+    },
+    sendButton: {
+        marginLeft: 10,
+        backgroundColor: '#000367',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+    },
+    sendButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    usersTitle: {
+        fontWeight: 'bold',
+        marginBottom: 5,
+        fontSize: 16,
+        color: '#000',
+    },
+    usersList: {
+        maxHeight: 120,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+    },
+    userItem: {
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderBottomColor: '#eee',
+        borderBottomWidth: 1,
+    },
 });

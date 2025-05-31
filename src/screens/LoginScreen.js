@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
     View,
     Text,
@@ -13,8 +13,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../styles/LoginStyles';
 import { login } from '../services/authService';
+import { AuthContext } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
+    const { user } = useContext(AuthContext); // Se quiser usar para debug ou algo
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [error, setError] = useState('');
@@ -42,7 +44,7 @@ export default function LoginScreen({ navigation }) {
 
         try {
             await login(email, senha);
-            navigation.replace('Home');
+            // REMOVIDO: navegação manual aqui, a mudança no contexto redireciona automaticamente
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 setError('Usuário não encontrado.');
