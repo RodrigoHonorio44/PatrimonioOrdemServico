@@ -27,6 +27,7 @@ import Assinatura from '../screens/Assinatura';
 import Chat from '../screens/Chat';
 import Sobre from '../screens/Sobre';
 import DevolucaoDeEquipamento from '../screens/DevolucaoDeEquipamento';
+import RelatorioDevolucaoDeEquipamento from '../screens/RelatorioDevolucaoDeEquipamento';
 
 const Stack = createStackNavigator();
 
@@ -39,31 +40,34 @@ function Routes() {
 
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {user
-                ? [
-                    <Stack.Screen key="Home" name="Home" component={HomeScreen} />,
-                    <Stack.Screen key="OrdemServico" name="OrdemServico" component={OrdemServico} />,
-                    <Stack.Screen key="EntregaDeEquipamento" name="EntregaDeEquipamento" component={EntregaDeEquipamento} />,
-                    <Stack.Screen key="ListaDeTarefas" name="ListaDeTarefas" component={ListaDeTarefas} />,
-                    <Stack.Screen key="TarefasTecnico" name="TarefasTecnico" component={TarefasTecnico} />,
-                    <Stack.Screen key="Relatorio" name="Relatorio" component={Relatorio} />,
-                    <Stack.Screen key="Relatorios" name="Relatorios" component={Relatorios} />,
-                    <Stack.Screen key="RelatorioEstoque" name="RelatorioEstoque" component={RelatorioEstoque} />,
-                    <Stack.Screen key="Estoque" name="Estoque" component={Estoque} />,
-                    <Stack.Screen key="BaixaPatrimonio" name="BaixaPatrimonio" component={BaixaPatrimonio} />,
-                    <Stack.Screen key="RelatorioBaixaPatrimonio" name="RelatorioBaixaPatrimonio" component={RelatorioBaixaPatrimonio} />,
-                    <Stack.Screen key="RelatorioEntregasEquipamentos" name="RelatorioEntregasEquipamentos" component={RelatorioEntregasEquipamentos} />,
-                    <Stack.Screen key="Assinatura" name="Assinatura" component={Assinatura} />,
-                    <Stack.Screen key="Chat" name="Chat" component={Chat} />,
-                    <Stack.Screen key="Sobre" name="Sobre" component={Sobre} />,
-                    <Stack.Screen key="DevolucaoDeEquipamento" name="DevolucaoDeEquipamento" component={DevolucaoDeEquipamento} />,
-                ]
-                : [
-                    <Stack.Screen key="Welcome" name="Welcome" component={WelcomeScreen} />,
-                    <Stack.Screen key="Login" name="Login" component={LoginScreen} />,
-                    <Stack.Screen key="Cadastro" name="Cadastro" component={CadastroScreen} />,
-                    <Stack.Screen key="EsqueceuSenha" name="EsqueceuSenha" component={EsqueceuSenha} />,
-                ]}
+            {user ? (
+                <>
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="OrdemServico" component={OrdemServico} />
+                    <Stack.Screen name="EntregaDeEquipamento" component={EntregaDeEquipamento} />
+                    <Stack.Screen name="ListaDeTarefas" component={ListaDeTarefas} />
+                    <Stack.Screen name="TarefasTecnico" component={TarefasTecnico} />
+                    <Stack.Screen name="Relatorio" component={Relatorio} />
+                    <Stack.Screen name="Relatorios" component={Relatorios} />
+                    <Stack.Screen name="RelatorioEstoque" component={RelatorioEstoque} />
+                    <Stack.Screen name="Estoque" component={Estoque} />
+                    <Stack.Screen name="BaixaPatrimonio" component={BaixaPatrimonio} />
+                    <Stack.Screen name="RelatorioBaixaPatrimonio" component={RelatorioBaixaPatrimonio} />
+                    <Stack.Screen name="RelatorioEntregasEquipamentos" component={RelatorioEntregasEquipamentos} />
+                    <Stack.Screen name="Assinatura" component={Assinatura} />
+                    <Stack.Screen name="Chat" component={Chat} />
+                    <Stack.Screen name="Sobre" component={Sobre} />
+                    <Stack.Screen name="DevolucaoDeEquipamento" component={DevolucaoDeEquipamento} />
+                    <Stack.Screen name="RelatorioDevolucaoDeEquipamento" component={RelatorioDevolucaoDeEquipamento} />
+                </>
+            ) : (
+                <>
+                    <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Cadastro" component={CadastroScreen} />
+                    <Stack.Screen name="EsqueceuSenha" component={EsqueceuSenha} />
+                </>
+            )}
         </Stack.Navigator>
     );
 }

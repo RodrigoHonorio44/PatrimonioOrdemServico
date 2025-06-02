@@ -1,43 +1,53 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const guidelineBaseWidth = 375;
+const guidelineBaseHeight = 667;
+
+const scale = (size) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size) => (height / guidelineBaseHeight) * size;
+const moderateScale = (size, factor = 0.5) =>
+    size + (scale(size) - size) * factor;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: moderateScale(20),
         backgroundColor: '#fff',
     },
 
     titulo: {
-        fontSize: 22,
+        fontSize: moderateScale(22),
         fontWeight: 'bold',
-        marginBottom: 15,
-        marginTop: 45,
+        marginBottom: verticalScale(15),
+        marginTop: verticalScale(45),
         color: '#333',
     },
 
     label: {
-        fontSize: 16,
-        marginTop: 10,
-        marginBottom: 5,
+        fontSize: moderateScale(16),
+        marginTop: verticalScale(10),
+        marginBottom: verticalScale(5),
         color: '#555',
     },
 
     input: {
-        fontSize: 16,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderWidth: 1,
+        fontSize: moderateScale(16),
+        paddingVertical: verticalScale(10),
+        paddingHorizontal: moderateScale(12),
+        borderWidth: moderateScale(1),
         borderColor: '#999',
-        borderRadius: 5,
+        borderRadius: moderateScale(5),
         color: '#000',
     },
 
     item: {
-        borderWidth: 1,
+        borderWidth: moderateScale(1),
         borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 12,
-        marginVertical: 6,
+        borderRadius: moderateScale(8),
+        padding: moderateScale(12),
+        marginVertical: verticalScale(6),
         backgroundColor: '#f9f9f9',
     },
 

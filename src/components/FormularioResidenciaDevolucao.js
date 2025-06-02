@@ -3,7 +3,7 @@ import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore'; // <-- import Timestamp aqui
 import { TextInputMask } from 'react-native-masked-text';
 import gerarPdfResidencia from '../components/GerarPdfDevolucaoResidencia';
 
@@ -64,7 +64,7 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
         setIsSaving(true);
         try {
             const docRef = await addDoc(collection(db, "devolucao_Residencia"), {
-                data: new Date().toLocaleDateString(),
+                data: Timestamp.fromDate(new Date()), // <-- aqui salvo como Timestamp
                 nomePaciente: dadosFormulario.nomePaciente,
                 endereco: dadosFormulario.endereco,
                 telefone: dadosFormulario.telefone,

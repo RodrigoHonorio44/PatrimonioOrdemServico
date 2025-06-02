@@ -7,6 +7,10 @@ import {
     Alert,
     ScrollView,
     Platform,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
+    ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
@@ -17,7 +21,7 @@ import {
     getDocs,
     Timestamp,
 } from 'firebase/firestore';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import NavbarBottom from '../components/NavbarBottom';
 import { styles } from '../styles/RelatorioStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -37,29 +41,24 @@ const Relatorio = () => {
     const [showDatePickerFim, setShowDatePickerFim] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Formatar data para input
-    const formatDate = (date) => (date ? format(date, 'dd/MM/yyyy') : '');
+    const formatDate = (date) => date ? format(date, 'dd/MM/yyyy') : '';
 
     const handleFetchRelatorio = async () => {
+        if (!dataInicio || !dataFim) {
+            Alert.alert('Erro', 'Por favor, selecione uma data de início e fim.');
+            return;
+        }
+
+        if (dataInicio > dataFim) {
+            Alert.alert('Erro', 'Data início deve ser menor ou igual à data fim.');
+            return;
+        }
+
+        setIsLoading(true);
+
         try {
-            if (!dataInicio || !dataFim) {
-                Alert.alert('Erro', 'Por favor, selecione uma data de início e fim.');
-                return;
-            }
-
-            if (dataInicio > dataFim) {
-                Alert.alert('Erro', 'Data início deve ser menor ou igual à data fim.');
-                return;
-            }
-
-            setIsLoading(true);
-
-            const dataInicioTimestamp = Timestamp.fromDate(
-                new Date(dataInicio.setHours(0, 0, 0, 0))
-            );
-            const dataFimTimestamp = Timestamp.fromDate(
-                new Date(dataFim.setHours(23, 59, 59, 999))
-            );
+            const dataInicioTimestamp = Timestamp.fromDate(new Date(dataInicio.setHours(0, 0, 0, 0)));
+            const dataFimTimestamp = Timestamp.fromDate(new Date(dataFim.setHours(23, 59, 59, 999)));
 
             const q = query(
                 collection(db, 'ordensServico'),
@@ -87,27 +86,23 @@ const Relatorio = () => {
         }
     };
 
-    const onChangeInicio = (event, selectedDate) => {
+    const onChangeInicio = (_, selectedDate) => {
         setShowDatePickerInicio(Platform.OS === 'ios');
-        if (selectedDate) {
-            setDataInicio(selectedDate);
-        }
+        if (selectedDate) setDataInicio(selectedDate);
     };
 
-    const onChangeFim = (event, selectedDate) => {
+    const onChangeFim = (_, selectedDate) => {
         setShowDatePickerFim(Platform.OS === 'ios');
-        if (selectedDate) {
-            setDataFim(selectedDate);
-        }
+        if (selectedDate) setDataFim(selectedDate);
     };
 
     const exportToExcel = async () => {
-        try {
-            if (ordensCompleta.length === 0) {
-                Alert.alert('Aviso', 'Nenhuma ordem para exportar.');
-                return;
-            }
+        if (ordensCompleta.length === 0) {
+            Alert.alert('Aviso', 'Nenhuma ordem para exportar.');
+            return;
+        }
 
+        try {
             const ws = XLSX.utils.json_to_sheet(
                 ordensCompleta.map(ordem => ({
                     Data: ordem.criadoEm?.toDate
@@ -128,12 +123,10 @@ const Relatorio = () => {
 
             const excelData = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
 
-            const nomeArquivoSeguro = `Relatorio_${formatDate(dataInicio).replace(/\//g, '-')}_a_${formatDate(dataFim).replace(/\//g, '-')}.xlsx`;
-            const fileUri = FileSystem.documentDirectory + nomeArquivoSeguro;
+            const nomeArquivo = `Relatorio_${formatDate(dataInicio).replace(/\//g, '-')}_a_${formatDate(dataFim).replace(/\//g, '-')}.xlsx`;
+            const fileUri = FileSystem.documentDirectory + nomeArquivo;
 
-            await FileSystem.writeAsStringAsync(fileUri, excelData, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
+            await FileSystem.writeAsStringAsync(fileUri, excelData, { encoding: FileSystem.EncodingType.Base64 });
 
             Alert.alert('Sucesso', 'Relatório exportado com sucesso!');
             console.log('📁 Arquivo salvo em:', fileUri);
@@ -150,80 +143,87 @@ const Relatorio = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.title}>Relatório de Ordens de Serviço</Text>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
+                        <Text style={styles.title}>Relatório de Ordens de Serviço</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Data Início (dd/MM/yyyy)"
-                    value={formatDate(dataInicio)}
-                    onFocus={() => setShowDatePickerInicio(true)}
-                />
-                {showDatePickerInicio && (
-                    <DateTimePicker
-                        value={dataInicio || new Date()}
-                        mode="date"
-                        display="default"
-                        onChange={onChangeInicio}
-                        maximumDate={dataFim || undefined}
-                    />
-                )}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Data Início (dd/MM/yyyy)"
+                            value={formatDate(dataInicio)}
+                            onFocus={() => setShowDatePickerInicio(true)}
+                        />
+                        {showDatePickerInicio && (
+                            <DateTimePicker
+                                value={dataInicio || new Date()}
+                                mode="date"
+                                display="default"
+                                onChange={onChangeInicio}
+                                maximumDate={dataFim || undefined}
+                            />
+                        )}
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Data Fim (dd/MM/yyyy)"
-                    value={formatDate(dataFim)}
-                    onFocus={() => setShowDatePickerFim(true)}
-                />
-                {showDatePickerFim && (
-                    <DateTimePicker
-                        value={dataFim || new Date()}
-                        mode="date"
-                        display="default"
-                        onChange={onChangeFim}
-                        minimumDate={dataInicio || undefined}
-                    />
-                )}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Data Fim (dd/MM/yyyy)"
+                            value={formatDate(dataFim)}
+                            onFocus={() => setShowDatePickerFim(true)}
+                        />
+                        {showDatePickerFim && (
+                            <DateTimePicker
+                                value={dataFim || new Date()}
+                                mode="date"
+                                display="default"
+                                onChange={onChangeFim}
+                                minimumDate={dataInicio || undefined}
+                            />
+                        )}
 
-                <View style={styles.buttonContainer}>
-                    <Button title="Gerar Relatório" onPress={handleFetchRelatorio} />
-                </View>
+                        <View style={styles.buttonContainer}>
+                            <Button title="Gerar Relatório" onPress={handleFetchRelatorio} />
+                        </View>
 
-                {isLoading && <Text style={styles.loadingText}>Carregando...</Text>}
+                        {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
 
-                <View style={styles.buttonContainer}>
-                    <Button title="Exportar e Compartilhar Excel" onPress={exportToExcel} />
-                </View>
+                        <View style={styles.buttonContainer}>
+                            <Button title="Exportar e Compartilhar Excel" onPress={exportToExcel} />
+                        </View>
 
-                <View style={styles.relatorioContainer}>
-                    <Text style={styles.subtitle}>Atendimentos por Unidade</Text>
+                        <View style={styles.relatorioContainer}>
+                            <Text style={styles.subtitle}>Atendimentos por Unidade</Text>
 
-                    {relatorio.length > 0 ? (
-                        <>
-                            <Text style={styles.totalText}>
-                                Total de atendimentos: {totalAtendimentos}
-                            </Text>
-                            {relatorio.map(([unidade, count]) => (
-                                <View key={unidade} style={styles.unidadeItem}>
-                                    <Text style={styles.unidadeText}>
-                                        {unidade}: {count} atendimentos
+                            {relatorio.length > 0 ? (
+                                <>
+                                    <Text style={styles.totalText}>
+                                        Total de atendimentos: {totalAtendimentos}
                                     </Text>
-                                </View>
-                            ))}
-                        </>
-                    ) : (
-                        <Text style={styles.noDataText}>
-                            Nenhum dado encontrado para o período selecionado.
-                        </Text>
-                    )}
-                </View>
-            </ScrollView>
+                                    {relatorio.map(([unidade, count]) => (
+                                        <View key={unidade} style={styles.unidadeItem}>
+                                            <Text style={styles.unidadeText}>
+                                                {unidade}: {count} atendimentos
+                                            </Text>
+                                        </View>
+                                    ))}
+                                </>
+                            ) : (
+                                <Text style={styles.noDataText}>
+                                    Nenhum dado encontrado para o período selecionado.
+                                </Text>
+                            )}
+                        </View>
+                    </ScrollView>
 
-            <View style={styles.navbarContainer}>
-                <NavbarBottom navigation={navigation} />
-            </View>
-        </View>
+                    <View style={styles.navbarContainer}>
+                        <NavbarBottom navigation={navigation} />
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 };
 

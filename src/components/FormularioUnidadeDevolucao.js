@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';  // <-- Importar Timestamp aqui
 import { db } from '../config/firebaseConfig';
 import gerarPdfUnidade from '../components/GerarPdfDevolucaoUnidade';
 
@@ -71,7 +71,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             const devolucaoUnidadeRef = collection(db, "devolucao_unidade");
 
             const docRef = await addDoc(devolucaoUnidadeRef, {
-                data: new Date().toLocaleDateString(),
+                data: Timestamp.fromDate(new Date()), // <-- aqui salva como Timestamp
                 setor: dadosFormulario.setor,
                 numeroPatrimonio: dadosFormulario.numeroPatrimonio,
                 descricaoEquipamento: dadosFormulario.descricaoEquipamento,
@@ -79,7 +79,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 nomeTecnico: dadosFormulario.nomeTecnico,
                 nomeResponsavel: dadosFormulario.nomeResponsavel,
                 unidade: dadosFormulario.unidade,
-                // **Não salvar as assinaturas no Firestore**
+                // Não salvar as assinaturas no Firestore
                 // assinaturaTecnico: dadosFormulario.assinaturaTecnico,
                 // assinaturaCliente: dadosFormulario.assinaturaCliente,
             });

@@ -9,7 +9,11 @@ import { db } from '../config/firebaseConfig';
 import styles from '../styles/RelatorioEntregasEquipamentosStyles';
 import NavbarBottom from '../components/NavbarBottom';
 
-export default function RelatorioEntregas({ navigation }) {
+// Correção aqui
+const devolucao_Residencia = collection(db, 'devolucao_Residencia');
+const devolucao_unidade = collection(db, 'devolucao_unidade');
+
+export default function RelatorioDevolucaoDeEquipamento({ navigation }) {
     const [dataInicio, setDataInicio] = useState(new Date());
     const [dataFim, setDataFim] = useState(new Date());
     const [mostrarInicio, setMostrarInicio] = useState(false);
@@ -19,34 +23,36 @@ export default function RelatorioEntregas({ navigation }) {
 
     const buscarDados = async () => {
         try {
-            const inicio = new Date(dataInicio.setHours(0, 0, 0, 0));
-            const fim = new Date(dataFim.setHours(23, 59, 59, 999));
+            const inicio = new Date(dataInicio);
+            inicio.setHours(0, 0, 0, 0);
+            const fim = new Date(dataFim);
+            fim.setHours(23, 59, 59, 999);
 
             const inicioTimestamp = Timestamp.fromDate(inicio);
             const fimTimestamp = Timestamp.fromDate(fim);
 
-            // Buscar Entrega de Equipamento Residência
+            // Buscar Devolução de Equipamento Residência
             const qResidencia = query(
-                collection(db, 'entregasResidencia'),
-                where('data', '>=', formatDate(inicio)),
-                where('data', '<=', formatDate(fim))
+                devolucao_Residencia,
+                where('data', '>=', inicioTimestamp),
+                where('data', '<=', fimTimestamp)
             );
             const snapshotResidencia = await getDocs(qResidencia);
             const dadosResidencia = snapshotResidencia.docs.map(doc => doc.data());
             setResidenciaDados(dadosResidencia);
 
-            // Buscar Entrega de Equipamento Unidades
+            // Buscar Devolução de Equipamento Unidades
             const qUnidades = query(
-                collection(db, 'entregasUnidades'),
-                where('data', '>=', formatDate(inicio)),
-                where('data', '<=', formatDate(fim))
+                devolucao_unidade,
+                where('data', '>=', inicioTimestamp),
+                where('data', '<=', fimTimestamp)
             );
             const snapshotUnidades = await getDocs(qUnidades);
             const dadosUnidades = snapshotUnidades.docs.map(doc => doc.data());
             setUnidadesDados(dadosUnidades);
 
             if (dadosResidencia.length === 0 && dadosUnidades.length === 0) {
-                Alert.alert('Nenhum resultado', 'Não foram encontradas entregas neste período.');
+                Alert.alert('Nenhum resultado', 'Não foram encontradas devoluções neste período.');
             }
         } catch (error) {
             console.error(error);
@@ -54,8 +60,9 @@ export default function RelatorioEntregas({ navigation }) {
         }
     };
 
-    // Função para formatar data para string no padrão dd/mm/yyyy (caso seu campo data seja string nesse formato)
     const formatDate = (date) => {
+        if (!date) return '';
+        if (date.toDate) date = date.toDate();
         const d = date.getDate().toString().padStart(2, '0');
         const m = (date.getMonth() + 1).toString().padStart(2, '0');
         const y = date.getFullYear();
@@ -68,9 +75,8 @@ export default function RelatorioEntregas({ navigation }) {
             return;
         }
 
-        // Montar aba Entrega de Equipamento Residência
         const wsResidenciaData = residenciaDados.map(item => [
-            item.data || '',
+            formatDate(item.data),
             item.descricaoEquipamento || '',
             item.endereco || '',
             item.nomePaciente || '',
@@ -84,9 +90,8 @@ export default function RelatorioEntregas({ navigation }) {
             ...wsResidenciaData,
         ]);
 
-        // Montar aba Entrega de Equipamento Unidades
         const wsUnidadesData = unidadesDados.map(item => [
-            item.data || '',
+            formatDate(item.data),
             item.descricaoEquipamento || '',
             item.motivo || '',
             item.nomeResponsavel || '',
@@ -100,14 +105,12 @@ export default function RelatorioEntregas({ navigation }) {
             ...wsUnidadesData,
         ]);
 
-        // Criar workbook e adicionar abas
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, wsResidencia, 'EntregaEquipResidencia');
-        XLSX.utils.book_append_sheet(workbook, wsUnidades, 'EntregaEquipUnidades');
+        XLSX.utils.book_append_sheet(workbook, wsResidencia, 'DevolucaoResidencia');
+        XLSX.utils.book_append_sheet(workbook, wsUnidades, 'DevolucaoUnidades');
 
-        // Gerar arquivo base64
         const wbout = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
-        const uri = FileSystem.cacheDirectory + 'relatorio_entregas.xlsx';
+        const uri = FileSystem.cacheDirectory + 'relatorio_devolucao.xlsx';
 
         await FileSystem.writeAsStringAsync(uri, wbout, { encoding: FileSystem.EncodingType.Base64 });
         await Sharing.shareAsync(uri);
@@ -116,7 +119,7 @@ export default function RelatorioEntregas({ navigation }) {
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.container}>
-                <Text style={styles.titulo}>Relatório de Entregas</Text>
+                <Text style={styles.titulo}>Relatório de Devolução</Text>
 
                 <Text style={styles.label}>Data Início:</Text>
                 <Pressable onPress={() => setMostrarInicio(true)}>
@@ -153,13 +156,13 @@ export default function RelatorioEntregas({ navigation }) {
                     <Button title="Buscar Dados" onPress={buscarDados} />
                 </View>
 
-                <Text style={[styles.titulo, { marginTop: 20 }]}>Entrega Equipamento Residência</Text>
+                <Text style={[styles.titulo, { marginTop: 20 }]}>Devolução Equipamento Residência</Text>
                 <FlatList
                     data={residenciaDados}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text><Text style={styles.negrito}>Data:</Text> {item.data}</Text>
+                            <Text><Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}</Text>
                             <Text><Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}</Text>
                             <Text><Text style={styles.negrito}>Endereço:</Text> {item.endereco}</Text>
                             <Text><Text style={styles.negrito}>Paciente:</Text> {item.nomePaciente}</Text>
@@ -172,13 +175,13 @@ export default function RelatorioEntregas({ navigation }) {
                     ListEmptyComponent={<Text>Nenhum dado encontrado para Residência.</Text>}
                 />
 
-                <Text style={[styles.titulo, { marginTop: 20 }]}>Entrega Equipamento Unidades</Text>
+                <Text style={[styles.titulo, { marginTop: 20 }]}>Devolução de Equipamento Unidade</Text>
                 <FlatList
                     data={unidadesDados}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text><Text style={styles.negrito}>Data:</Text> {item.data}</Text>
+                            <Text><Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}</Text>
                             <Text><Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}</Text>
                             <Text><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
                             <Text><Text style={styles.negrito}>Responsável:</Text> {item.nomeResponsavel}</Text>

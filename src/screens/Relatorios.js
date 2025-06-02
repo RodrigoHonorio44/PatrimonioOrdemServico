@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, Animated } from 'react-native';
+import { View, Text, Pressable, Animated, ScrollView } from 'react-native';
 import styles from '../styles/RelatoriosStyles';
 import NavbarBottom from '../components/NavbarBottom';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ export default function Relatorios({ navigation }) {
     const relatorios = [
         {
             label: 'Relatórios de Ordens de Serviço',
-            route: 'Relatorio', // <- esta é a rota que abre o componente Relatorio.js
+            route: 'Relatorio',
             icon: <MaterialIcons name="assignment" size={28} color="#fff" />,
             bgColor: '#4a90e2',
         },
@@ -19,7 +19,13 @@ export default function Relatorios({ navigation }) {
             bgColor: '#50e3c2',
         },
         {
-            label: 'Relatórios Baixa Patrimonio',
+            label: 'Relatórios de Devolução de Equipamento',
+            route: 'RelatorioDevolucaoDeEquipamento',
+            icon: <Ionicons name="cube-outline" size={28} color="#fff" />,
+            bgColor: '#f2445e',
+        },
+        {
+            label: 'Relatórios Baixa Patrimônio',
             route: 'RelatorioBaixaPatrimonio',
             icon: <FontAwesome5 name="tasks" size={26} color="#fff" />,
             bgColor: '#f5a623',
@@ -33,12 +39,17 @@ export default function Relatorios({ navigation }) {
     ];
 
     return (
-        <View style={styles.container}>
-            <View style={styles.content}>
+        <View style={{ flex: 1 }}>
+            <ScrollView
+                // Removido style flex:1 do ScrollView para o scroll funcionar
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={styles.title}>Selecione um Relatório</Text>
+
                 <View style={styles.cardsContainer}>
                     {relatorios.map((item, index) => {
-                        const scale = new Animated.Value(1);
+                        const scale = React.useRef(new Animated.Value(1)).current;
 
                         const onPressIn = () => {
                             Animated.spring(scale, {
@@ -61,6 +72,10 @@ export default function Relatorios({ navigation }) {
                                 onPressIn={onPressIn}
                                 onPressOut={onPressOut}
                                 onPress={() => navigation.navigate(item.route)}
+                                style={({ pressed }) => [
+                                    styles.pressable,
+                                    pressed && styles.pressed,
+                                ]}
                             >
                                 <Animated.View
                                     style={[
@@ -75,7 +90,8 @@ export default function Relatorios({ navigation }) {
                         );
                     })}
                 </View>
-            </View>
+            </ScrollView>
+
             <NavbarBottom navigation={navigation} />
         </View>
     );
