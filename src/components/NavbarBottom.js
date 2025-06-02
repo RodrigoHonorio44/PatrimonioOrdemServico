@@ -17,6 +17,7 @@ export default function NavbarBottom() {
 
         { label: 'Estoque', route: 'Estoque', icon: 'inventory' },
         { label: 'Baixa Patrimonio', route: 'BaixaPatrimonio', icon: 'archive' },
+        { label: 'Devolução', route: 'DevolucaoDeEquipamento', icon: 'archive' },
 
         { label: 'Relatórios', route: 'Relatorios', icon: 'bar-chart' },
     ];

@@ -67,6 +67,15 @@ export default function Navbar() {
                 <Icon name="chat" size={28} color="white" />
             </TouchableOpacity>
 
+            <TouchableOpacity
+                style={styles.chatButton}
+                onPress={() => navigation.navigate('Sobre')}
+                accessible={true}
+                accessibilityLabel="Abrir página Sobre"
+            >
+                <Icon name="info" size={28} color="white" />
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>

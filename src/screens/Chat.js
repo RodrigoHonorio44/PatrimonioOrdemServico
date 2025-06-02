@@ -342,11 +342,11 @@ const styles = StyleSheet.create({
     },
     myMessageRight: {
         backgroundColor: '#DCF8C6',
-        alignSelf: 'flex-end',
+        alignSelf: 'flex-start',
     },
     otherMessageLeft: {
-        backgroundColor: '#ffffff',
-        alignSelf: 'flex-start',
+        backgroundColor: '#d2a4ff',
+        alignSelf: 'flex-end',
     },
     userName: {
         fontWeight: 'bold',

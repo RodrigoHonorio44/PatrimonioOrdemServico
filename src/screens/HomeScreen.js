@@ -21,6 +21,7 @@ const cards = [
     { title: 'Estoque', icon: 'inventory', color: '#a7a844', screen: 'Estoque' },
     { title: 'Relatórios', icon: 'bar-chart', color: '#7ED321', screen: 'Relatorios' },
     { title: 'Baixa Patrimonio', icon: 'archive', color: '#D0021B', screen: 'BaixaPatrimonio' },
+    { title: 'Devolução Equipamento', icon: 'archive', color: '#D0021B', screen: 'DevolucaoDeEquipamento' },
 ];
 
 export default function HomeScreen({ navigation }) {
