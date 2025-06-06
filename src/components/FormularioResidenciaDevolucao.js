@@ -3,8 +3,8 @@ import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
-import { collection, addDoc, Timestamp } from 'firebase/firestore'; // <-- import Timestamp aqui
-import { TextInputMask } from 'react-native-masked-text';
+import { collection, addDoc, Timestamp } from 'firebase/firestore'; // import Timestamp
+import MaskInput from 'react-native-mask-input';
 import gerarPdfResidencia from '../components/GerarPdfDevolucaoResidencia';
 
 export default function FormularioResidencia({ dadosFormulario, setDadosFormulario }) {
@@ -63,28 +63,31 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
 
         setIsSaving(true);
         try {
-            const docRef = await addDoc(collection(db, "devolucao_Residencia"), {
-                data: Timestamp.fromDate(new Date()), // <-- aqui salvo como Timestamp
+            await addDoc(collection(db, "devolucao_Residencia"), {
+                data: Timestamp.fromDate(new Date()),
                 nomePaciente: dadosFormulario.nomePaciente,
                 endereco: dadosFormulario.endereco,
                 telefone: dadosFormulario.telefone,
                 descricaoEquipamento: dadosFormulario.descricaoEquipamento,
                 numeroPatrimonio: dadosFormulario.numeroPatrimonio,
                 nomeTecnico: dadosFormulario.nomeTecnico,
-                nomeResponsavel: dadosFormulario.nomeResponsavel
+                nomeResponsavel: dadosFormulario.nomeResponsavel,
+                assinaturaTecnico: dadosFormulario.assinaturaTecnico,
+                assinaturaCliente: dadosFormulario.assinaturaCliente,
             });
 
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            // Gerar PDF com os dados antes de resetar
             try {
-                await gerarPdfResidencia(dadosFormulario);
+                await gerarPdfResidencia({
+                    ...dadosFormulario,
+                    data: new Date()
+                });
             } catch (pdfError) {
                 Alert.alert("Erro", "Falha ao gerar PDF.");
                 console.error(pdfError);
             }
 
-            // Resetar formulário
             setDadosFormulario({
                 nomePaciente: '',
                 endereco: '',
@@ -119,16 +122,12 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 onChangeText={(text) => handleChange('endereco', text)}
                 value={dadosFormulario.endereco || ''}
             />
-            <TextInputMask
-                type={'cel-phone'}
-                options={{
-                    withDDD: true,
-                    dddMask: '(99) '
-                }}
+            <MaskInput
                 style={styles.input}
                 placeholder="(XX) XXXXX-XXXX"
                 value={dadosFormulario.telefone || ''}
-                onChangeText={(text) => handleChange('telefone', text)}
+                onChangeText={(masked, unmasked) => handleChange('telefone', masked)}
+                mask={['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
             />
             <TextInput
                 style={styles.input}

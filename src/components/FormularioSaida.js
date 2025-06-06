@@ -9,7 +9,6 @@ import { db } from '../config/firebaseConfig';
 import styles from '../styles/FormularioSaidaStyles';
 
 export default function FormularioSaida({ equipamentoSelecionado, onSaidaConcluida }) {
-    // Extrair dados do equipamento selecionado
     const {
         idRastreio,
         equipamento: equipamentoParam,
@@ -19,7 +18,6 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
         patrimonio: patrimonioEntrada
     } = equipamentoSelecionado || {};
 
-    // Estados do formulário
     const [quantidade, setQuantidade] = useState('');
     const [localDestino, setLocalDestino] = useState('');
     const [unidade, setUnidade] = useState(unidadeParam || '');
@@ -27,34 +25,33 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
     const [loading, setLoading] = useState(false);
     const [botaoHabilitado, setBotaoHabilitado] = useState(false);
 
-    // Preencher patrimônio automaticamente quando mudar o equipamento
+    // Atualiza patrimônio quando equipamento mudar
     useEffect(() => {
-        if (patrimonioEntrada) {
-            setPatrimonio(patrimonioEntrada);
-        }
+        if (patrimonioEntrada) setPatrimonio(patrimonioEntrada);
     }, [patrimonioEntrada]);
 
-    // Habilitar botão só se os campos estiverem válidos
+    // Verifica se botão deve estar habilitado
     useEffect(() => {
         const qtdNumero = Number(quantidade);
         const podeHabilitar =
             quantidade !== '' &&
             qtdNumero > 0 &&
+            qtdNumero <= quantidadeEstoque &&
             localDestino.trim() !== '' &&
             unidade.trim() !== '' &&
             patrimonio.trim() !== '';
         setBotaoHabilitado(podeHabilitar);
-    }, [quantidade, localDestino, unidade, patrimonio]);
+    }, [quantidade, localDestino, unidade, patrimonio, quantidadeEstoque]);
 
-    // Permitir só números no input de quantidade
+    // Só permite números no campo quantidade
     const handleQuantidadeChange = (valor) => {
         const somenteNumeros = valor.replace(/[^0-9]/g, '');
         setQuantidade(somenteNumeros);
     };
 
-    // Função para registrar a saída no Firestore
     const handleRegistrarSaida = async () => {
         const qtdNumero = Number(quantidade);
+
         if (!quantidade || qtdNumero <= 0) {
             Alert.alert('Erro', 'Informe uma quantidade válida para saída');
             return;
@@ -89,10 +86,15 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                 dataHora: serverTimestamp(),
                 idRastreio,
             });
+
             Alert.alert('Sucesso', 'Saída registrada com sucesso!');
+
+            // Resetar campos (decida se quer resetar unidade também)
             setQuantidade('');
             setLocalDestino('');
             setPatrimonio('');
+            // setUnidade(''); // Opcional
+
             onSaidaConcluida();
         } catch (error) {
             Alert.alert('Erro', 'Falha ao registrar saída: ' + error.message);

@@ -4,26 +4,26 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 
 const gerarPdfResidencia = async (dados) => {
-    const verificarAssinatura = (assinatura) => {
-        if (!assinatura) return '';
-        return assinatura.startsWith('data:image') ? assinatura : '';
-    };
+  const verificarAssinatura = (assinatura) => {
+    if (!assinatura) return '';
+    return assinatura.startsWith('data:image') ? assinatura : '';
+  };
 
-    const dataAtual = new Date().toLocaleDateString('pt-BR');
+  const dataAtual = new Date().toLocaleDateString('pt-BR');
 
-    const loadLogoBase64 = async () => {
-        const asset = Asset.fromModule(require('../../assets/HospitalMG.png'));
-        await asset.downloadAsync();
-        const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
-        return `data:image/png;base64,${base64}`;
-    };
+  const loadLogoBase64 = async () => {
+    const asset = Asset.fromModule(require('../../assets/hospital.png'));
+    await asset.downloadAsync();
+    const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return `data:image/png;base64,${base64}`;
+  };
 
-    try {
-        const logoBase64 = await loadLogoBase64();
+  try {
+    const logoBase64 = await loadLogoBase64();
 
-        const htmlContent = `
+    const htmlContent = `
   <html>
     <head>
       <style>
@@ -138,18 +138,18 @@ const gerarPdfResidencia = async (dados) => {
 `;
 
 
-        const { uri } = await Print.printToFileAsync({ html: htmlContent });
+    const { uri } = await Print.printToFileAsync({ html: htmlContent });
 
-        if (uri) {
-            console.log('PDF gerado com sucesso:', uri);
-            await Sharing.shareAsync(uri);
-        } else {
-            throw new Error('Falha ao gerar o PDF: URI não recebida.');
-        }
-    } catch (error) {
-        console.error('Erro ao gerar o PDF:', error);
-        alert('Ocorreu um erro ao gerar ou compartilhar o PDF.');
+    if (uri) {
+      console.log('PDF gerado com sucesso:', uri);
+      await Sharing.shareAsync(uri);
+    } else {
+      throw new Error('Falha ao gerar o PDF: URI não recebida.');
     }
+  } catch (error) {
+    console.error('Erro ao gerar o PDF:', error);
+    alert('Ocorreu um erro ao gerar ou compartilhar o PDF.');
+  }
 };
 
 export default gerarPdfResidencia;

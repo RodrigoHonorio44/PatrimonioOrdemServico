@@ -1,38 +1,40 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f7f7f7',
-        padding: 20,
-        paddingBottom: 80, // espaço para a navbar
+        padding: width * 0.05, // 5% da largura
+        paddingBottom: height * 0.1, // 10% da altura para navbar
     },
     label: {
-        fontSize: 16,
+        fontSize: width > 350 ? 16 : 14,
         fontWeight: 'bold',
-        marginTop: 15,
+        marginTop: height * 0.02,
         color: '#333',
     },
     input: {
-        padding: 12,
+        padding: width * 0.035,
         backgroundColor: '#fff',
         borderRadius: 8,
         borderColor: '#ccc',
         borderWidth: 1,
-        marginTop: 5,
-        marginBottom: 10,
-        fontSize: 16,
+        marginTop: height * 0.006,
+        marginBottom: height * 0.013,
+        fontSize: width > 350 ? 16 : 14,
         color: '#333',
     },
     lista: {
-        marginTop: 20,
-        marginBottom: 20,
+        marginTop: height * 0.025,
+        marginBottom: height * 0.025,
     },
     item: {
         backgroundColor: '#fff',
         borderRadius: 10,
-        padding: 15,
-        marginBottom: 12,
+        padding: width * 0.04,
+        marginBottom: height * 0.015,
         borderWidth: 1,
         borderColor: '#ddd',
         shadowColor: '#000',
@@ -45,11 +47,11 @@ export default StyleSheet.create({
         fontWeight: 'bold',
     },
     titulo: {
-        fontSize: 24,
+        fontSize: width > 350 ? 24 : 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20,
-        marginTop: 45,
+        marginBottom: height * 0.03,
+        marginTop: height * 0.06,
         color: '#333',
     },
     navbarContainer: {
@@ -58,10 +60,9 @@ export default StyleSheet.create({
         right: 0,
         bottom: 0,
         backgroundColor: '#fff',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        paddingVertical: height * 0.015,
+        paddingHorizontal: width * 0.04,
         borderTopWidth: 1,
         borderTopColor: '#ddd',
-        // Removi paddingTop negativo
     },
 });

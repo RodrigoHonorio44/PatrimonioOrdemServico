@@ -13,7 +13,7 @@ const verificarAssinatura = (assinatura) => {
 };
 
 const loadLogoBase64 = async () => {
-  const asset = Asset.fromModule(require('../../assets/HospitalMG.png'));
+  const asset = Asset.fromModule(require('../../assets/hospital.png'));
   await asset.downloadAsync();
   const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
     encoding: FileSystem.EncodingType.Base64,

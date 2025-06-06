@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
     safeArea: {
@@ -9,51 +11,52 @@ export default StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: 120, // espaço para a navbar
+        paddingBottom: height * 0.15, // espaço proporcional para navbar
     },
     container: {
-        padding: 16,
+        padding: width * 0.04, // padding proporcional à largura
     },
     title: {
-        fontSize: 22,
+        fontSize: width > 350 ? 22 : 18,
         fontWeight: 'bold',
-        marginBottom: 12,
+        marginBottom: height * 0.015,
         textAlign: 'center',
-        marginTop: 45,
+        marginTop: height * 0.06,
     },
     inputMultiline: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
-        padding: 10,
-        height: 130,
+        padding: width * 0.035,
+        height: height * 0.18, // altura proporcional
         textAlignVertical: 'top',
-        marginBottom: 16,
+        marginBottom: height * 0.02,
     },
     button: {
         backgroundColor: '#007bff',
-        padding: 12,
+        paddingVertical: height * 0.018,
         borderRadius: 8,
         alignItems: 'center',
-        marginBottom: 25,
-        marginTop: 20,
+        marginBottom: height * 0.03,
+        marginTop: height * 0.025,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: width > 350 ? 16 : 14,
         fontWeight: 'bold',
     },
     filterLabel: {
-        marginTop: 10,
-        marginBottom: 4,
+        marginTop: height * 0.015,
+        marginBottom: height * 0.006,
         fontWeight: 'bold',
+        fontSize: width > 350 ? 14 : 12,
     },
     picker: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
-        marginBottom: 12,
-        marginTop: 10,
+        marginBottom: height * 0.015,
+        marginTop: height * 0.015,
     },
     navbar: {
         position: 'absolute',
@@ -64,5 +67,6 @@ export default StyleSheet.create({
         borderTopWidth: 1,
         borderColor: '#ccc',
         zIndex: 10,
+        paddingVertical: height * 0.015,
     },
 });
