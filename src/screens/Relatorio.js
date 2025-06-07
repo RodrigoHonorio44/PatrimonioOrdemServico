@@ -155,6 +155,7 @@ const Relatorio = () => {
                         <TextInput
                             style={styles.input}
                             placeholder="Data Início (dd/MM/yyyy)"
+                            placeholderTextColor="#888888"
                             value={formatDate(dataInicio)}
                             onFocus={() => setShowDatePickerInicio(true)}
                         />
@@ -171,6 +172,7 @@ const Relatorio = () => {
                         <TextInput
                             style={styles.input}
                             placeholder="Data Fim (dd/MM/yyyy)"
+                            placeholderTextColor="#888888"
                             value={formatDate(dataFim)}
                             onFocus={() => setShowDatePickerFim(true)}
                         />
@@ -202,10 +204,10 @@ const Relatorio = () => {
                                     <Text style={styles.totalText}>
                                         Total de atendimentos: {totalAtendimentos}
                                     </Text>
-                                    {relatorio.map(([unidade, count]) => (
-                                        <View key={unidade} style={styles.unidadeItem}>
+                                    {relatorio.map(([unidadeItem, count]) => (
+                                        <View key={unidadeItem} style={styles.unidadeItem}>
                                             <Text style={styles.unidadeText}>
-                                                {unidade}: {count} atendimentos
+                                                {unidadeItem}: {count} atendimentos
                                             </Text>
                                         </View>
                                     ))}

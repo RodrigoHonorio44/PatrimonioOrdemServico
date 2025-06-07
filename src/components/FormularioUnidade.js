@@ -22,7 +22,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             motivo,
             nomeTecnico,
             nomeResponsavel,
-            unidade,  // novo campo
+            unidade,
         } = dadosFormulario;
 
         if (
@@ -32,7 +32,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             motivo &&
             nomeTecnico &&
             nomeResponsavel &&
-            unidade &&           // valida unidade
+            unidade &&
             dadosFormulario.assinaturaTecnico &&
             dadosFormulario.assinaturaCliente
         ) {
@@ -42,7 +42,6 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
         }
     }, [dadosFormulario]);
 
-    // Atualiza o tipoLocal para o campo unidade no estado
     useEffect(() => {
         if (tipoLocal) {
             setDadosFormulario(prev => ({ ...prev, unidade: tipoLocal }));
@@ -75,15 +74,13 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 motivo: dadosFormulario.motivo,
                 nomeTecnico: dadosFormulario.nomeTecnico,
                 nomeResponsavel: dadosFormulario.nomeResponsavel,
-                unidade: dadosFormulario.unidade,  // salva a unidade
+                unidade: dadosFormulario.unidade,
             });
 
-            console.log("Documento salvo com ID:", docRef.id);
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            gerarPdfUnidade(dadosFormulario); // Gera PDF com as assinaturas e unidade
+            gerarPdfUnidade(dadosFormulario);
 
-            // Limpa o formulário (inclui unidade para resetar)
             setDadosFormulario({
                 setor: '',
                 numeroPatrimonio: '',
@@ -107,43 +104,47 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Responsável"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('nomeResponsavel', text)}
                 value={dadosFormulario.nomeResponsavel || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Setor"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('setor', text)}
                 value={dadosFormulario.setor || ''}
             />
-
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('descricaoEquipamento', text)}
                 value={dadosFormulario.descricaoEquipamento || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Número do Patrimônio"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('numeroPatrimonio', text)}
                 value={dadosFormulario.numeroPatrimonio || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Motivo"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('motivo', text)}
                 value={dadosFormulario.motivo || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Técnico"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('nomeTecnico', text)}
                 value={dadosFormulario.nomeTecnico || ''}
             />
 
-            {/* Exibindo unidade como campo somente leitura */}
-            <Text style={{ marginVertical: 10, fontWeight: 'bold' }}>
+            <Text style={{ marginVertical: 10, fontWeight: 'bold', fontSize: 16 }}>
                 Unidade: {dadosFormulario.unidade || tipoLocal || 'Não selecionada'}
             </Text>
 

@@ -77,6 +77,7 @@ export default function BaixaPatrimonio({ navigation }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Descrição do Equipamento"
+                        placeholderTextColor="#999"
                         value={descricao}
                         onChangeText={setDescricao}
                         returnKeyType="next"
@@ -86,6 +87,7 @@ export default function BaixaPatrimonio({ navigation }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Número do Patrimônio"
+                        placeholderTextColor="#999"
                         value={patrimonio}
                         onChangeText={setPatrimonio}
                         keyboardType="number-pad"
@@ -96,6 +98,7 @@ export default function BaixaPatrimonio({ navigation }) {
                     <TextInput
                         style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
                         placeholder="Motivo da Baixa"
+                        placeholderTextColor="#999"
                         value={motivo}
                         onChangeText={setMotivo}
                         multiline
@@ -107,6 +110,7 @@ export default function BaixaPatrimonio({ navigation }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Local de Descarte"
+                        placeholderTextColor="#999"
                         value={localDescarte}
                         onChangeText={setLocalDescarte}
                         returnKeyType="next"

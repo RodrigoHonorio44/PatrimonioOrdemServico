@@ -36,4 +36,17 @@ export default StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+
+    card: {
+        backgroundColor: '#d3d3d3',  // cinza claro
+        padding: 15,
+        marginVertical: 8,
+        borderRadius: 8,
+    },
+
+    text: {
+        color: '#000',  // texto preto
+        fontSize: 16,
+        marginBottom: 5,
+    },
 });

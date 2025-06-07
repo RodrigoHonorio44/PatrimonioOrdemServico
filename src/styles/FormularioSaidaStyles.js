@@ -9,12 +9,13 @@ const cardPadding = width * 0.05;
 export default StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: 'flex-start',  // começa do topo
+        justifyContent: 'flex-start',
+        backgroundColor: '#f5f5f5', // cor de fundo suave
         padding: basePadding,
-        paddingBottom: height * 0.25,  // espaço para teclado
+        paddingBottom: height * 0.3,
     },
     card: {
-        backgroundColor: '#fff',
+        backgroundColor: '#eaeaea', // cinza claro
         borderRadius: 12,
         padding: cardPadding,
         ...Platform.select({
@@ -40,10 +41,12 @@ export default StyleSheet.create({
         marginTop: basePadding * 0.4,
         fontWeight: 'bold',
         fontSize: baseFontSize,
+        color: '#000', // texto preto
     },
     value: {
         marginBottom: basePadding * 0.2,
         fontSize: baseFontSize,
+        color: '#000', // texto preto
     },
     input: {
         borderWidth: 1,
@@ -52,6 +55,12 @@ export default StyleSheet.create({
         padding: basePadding * 0.5,
         marginTop: basePadding * 0.2,
         fontSize: baseFontSize,
+        backgroundColor: '#fff',
+        color: '#333', // <- Cor do texto digitado
+    },
+
+    inputErro: {
+        borderColor: 'red',
     },
     alerta: {
         color: 'red',
@@ -60,6 +69,6 @@ export default StyleSheet.create({
     },
     botaoContainer: {
         marginTop: basePadding * 0.6,
-        marginBottom: basePadding * 0.4,
+        marginBottom: basePadding,
     },
 });

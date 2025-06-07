@@ -4,8 +4,7 @@ import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
-// import { TextInputMask } from 'react-native-masked-text'; // removido
-import MaskInput from 'react-native-mask-input';  // import novo
+import MaskInput from 'react-native-mask-input';
 import gerarPdfResidencia from '../components/GerarPdfResidencia';
 
 export default function FormularioResidencia({ dadosFormulario, setDadosFormulario }) {
@@ -13,12 +12,10 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
     const [formularioValido, setFormularioValido] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    // Atualiza o campo do formulário
     const handleChange = (campo, valor) => {
         setDadosFormulario(prev => ({ ...prev, [campo]: valor }));
     };
 
-    // Verifica se o formulário está válido sempre que dadosFormulario mudar
     useEffect(() => {
         const {
             nomePaciente,
@@ -47,7 +44,6 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
         );
     }, [dadosFormulario]);
 
-    // Navega para tela de assinatura do Técnico
     const handleAssinaturaTecnico = () => {
         navigation.navigate('Assinatura', {
             onSave: (signature) => {
@@ -56,7 +52,6 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
         });
     };
 
-    // Navega para tela de assinatura do Cliente
     const handleAssinaturaCliente = () => {
         navigation.navigate('Assinatura', {
             onSave: (signature) => {
@@ -65,7 +60,6 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
         });
     };
 
-    // Salva os dados no Firestore e gera o PDF
     const salvarDadosNoFirestore = async () => {
         if (!formularioValido || isSaving) return;
 
@@ -86,7 +80,6 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
 
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
 
-            // Gera PDF com os dados preenchidos
             try {
                 await gerarPdfResidencia(dadosFormulario);
             } catch (pdfError) {
@@ -94,7 +87,6 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 console.error(pdfError);
             }
 
-            // Limpa o formulário após salvar e gerar PDF
             setDadosFormulario({
                 nomePaciente: '',
                 endereco: '',
@@ -115,24 +107,31 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
         }
     };
 
+    // Exemplo de cor de texto e placeholder personalizada:
+    const placeholderColor = '#999999'; // cinza claro
+    const textColor = '#333333'; // cinza escuro
+
     return (
         <View style={styles.container}>
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Nome do Paciente"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('nomePaciente', text)}
                 value={dadosFormulario.nomePaciente || ''}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Endereço"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('endereco', text)}
                 value={dadosFormulario.endereco || ''}
             />
 
             <MaskInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="(XX) XXXXX-XXXX"
+                placeholderTextColor={placeholderColor}
                 value={dadosFormulario.telefone || ''}
                 onChangeText={(masked, unmasked) => handleChange('telefone', masked)}
                 mask={[/\(\d/, /\d/, /\) /, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
@@ -140,26 +139,30 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             />
 
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Descrição do Equipamento"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('descricaoEquipamento', text)}
                 value={dadosFormulario.descricaoEquipamento || ''}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Número do Patrimônio"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('numeroPatrimonio', text)}
                 value={dadosFormulario.numeroPatrimonio || ''}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Nome do Técnico"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('nomeTecnico', text)}
                 value={dadosFormulario.nomeTecnico || ''}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor }]}
                 placeholder="Nome do Responsável"
+                placeholderTextColor={placeholderColor}
                 onChangeText={text => handleChange('nomeResponsavel', text)}
                 value={dadosFormulario.nomeResponsavel || ''}
             />

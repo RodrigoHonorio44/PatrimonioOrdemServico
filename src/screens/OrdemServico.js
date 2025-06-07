@@ -41,7 +41,6 @@ export default function OrdemServico() {
     const [assinaturaTecnico, setAssinaturaTecnico] = useState(null);
     const [assinaturaCliente, setAssinaturaCliente] = useState(null);
 
-    // NOVO estado de loading:
     const [loading, setLoading] = useState(false);
 
     const signatureRefTecnico = useRef();
@@ -80,7 +79,7 @@ export default function OrdemServico() {
         nomeTecnico &&
         assinaturaTecnico &&
         assinaturaCliente &&
-        !loading;  // desabilita botão se loading estiver true
+        !loading;
 
     const enviarParaFirestore = async () => {
         try {
@@ -126,10 +125,9 @@ export default function OrdemServico() {
     const handleGerarPDF = async () => {
         if (!validarCampos()) return;
 
-        setLoading(true);  // ativa loading
+        setLoading(true);
 
         try {
-            // 1. Gerar o PDF
             const file = await GerarPDF({
                 dataAtual,
                 nomeResponsavel,
@@ -149,25 +147,21 @@ export default function OrdemServico() {
                 return;
             }
 
-            // 2. Enviar para Firestore
             await enviarParaFirestore();
-
-            // 3. Compartilhar PDF
             await Sharing.shareAsync(file.uri);
-
         } catch (error) {
             console.error('Erro ao processar:', error);
             Alert.alert('Erro', 'Ocorreu um erro durante o processo.');
         } finally {
             resetarFormulario();
-            setLoading(false);  // desativa loading
+            setLoading(false);
         }
     };
 
     const navItems = [
         { label: 'Home', route: 'Home', icon: 'home' },
         { label: 'Ordem Serviço', route: 'OrdemServico', icon: 'assignment' },
-        { icon: 'inventory', label: 'Entrega', screen: 'EntregaDeEquipamento' },
+        { label: 'Entrega', route: 'EntregaDeEquipamento', icon: 'inventory' },
     ];
 
     const handleNavigate = (route) => {

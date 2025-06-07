@@ -34,6 +34,8 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: '#fff',
         fontSize: baseFontSize,
+        color: '#000', // texto dentro do input em preto
+        placeholderTextColor: '#888', // cor do placeholder
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
@@ -100,7 +102,6 @@ export const styles = StyleSheet.create({
         marginTop: 20,
     },
 
-    /** ✅ Atualização da navbar */
     navbarContainer: {
         position: 'absolute',
         left: 0,

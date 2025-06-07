@@ -25,12 +25,10 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
     const [loading, setLoading] = useState(false);
     const [botaoHabilitado, setBotaoHabilitado] = useState(false);
 
-    // Atualiza patrimônio quando equipamento mudar
     useEffect(() => {
         if (patrimonioEntrada) setPatrimonio(patrimonioEntrada);
     }, [patrimonioEntrada]);
 
-    // Verifica se botão deve estar habilitado
     useEffect(() => {
         const qtdNumero = Number(quantidade);
         const podeHabilitar =
@@ -39,11 +37,11 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
             qtdNumero <= quantidadeEstoque &&
             localDestino.trim() !== '' &&
             unidade.trim() !== '' &&
-            patrimonio.trim() !== '';
+            patrimonio.trim() !== '' &&
+            quantidadeEstoque > 0; // Impede se estoque for 0
         setBotaoHabilitado(podeHabilitar);
     }, [quantidade, localDestino, unidade, patrimonio, quantidadeEstoque]);
 
-    // Só permite números no campo quantidade
     const handleQuantidadeChange = (valor) => {
         const somenteNumeros = valor.replace(/[^0-9]/g, '');
         setQuantidade(somenteNumeros);
@@ -52,6 +50,10 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
     const handleRegistrarSaida = async () => {
         const qtdNumero = Number(quantidade);
 
+        if (quantidadeEstoque <= 0) {
+            Alert.alert('Erro', 'Não é possível registrar saída: estoque zerado.');
+            return;
+        }
         if (!quantidade || qtdNumero <= 0) {
             Alert.alert('Erro', 'Informe uma quantidade válida para saída');
             return;
@@ -88,13 +90,9 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
             });
 
             Alert.alert('Sucesso', 'Saída registrada com sucesso!');
-
-            // Resetar campos (decida se quer resetar unidade também)
             setQuantidade('');
             setLocalDestino('');
             setPatrimonio('');
-            // setUnidade(''); // Opcional
-
             onSaidaConcluida();
         } catch (error) {
             Alert.alert('Erro', 'Falha ao registrar saída: ' + error.message);
@@ -146,6 +144,7 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                         value={quantidade}
                         onChangeText={handleQuantidadeChange}
                         placeholder="Informe a quantidade"
+                        placeholderTextColor="#999"
                     />
                     {quantidade !== '' && Number(quantidade) > quantidadeEstoque && (
                         <Text style={styles.alerta}>
@@ -159,6 +158,7 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                         value={localDestino}
                         onChangeText={setLocalDestino}
                         placeholder="Informe o local de destino"
+                        placeholderTextColor="#999"
                     />
 
                     <Text style={styles.label}>Número do Patrimônio:</Text>
@@ -167,6 +167,7 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                         value={patrimonio}
                         onChangeText={setPatrimonio}
                         placeholder="Informe o número do patrimônio"
+                        placeholderTextColor="#999"
                     />
 
                     <Text style={styles.label}>Unidade:</Text>

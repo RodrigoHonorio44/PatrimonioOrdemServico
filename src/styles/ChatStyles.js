@@ -52,6 +52,7 @@ export default StyleSheet.create({
         paddingVertical: Platform.OS === 'ios' ? height * 0.015 : height * 0.012,
         marginRight: width * 0.025,
         fontSize: width > 350 ? 16 : 14,
+        color: '#000',
     },
     sendButton: {
         backgroundColor: '#25D366', // Verde WhatsApp

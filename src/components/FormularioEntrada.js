@@ -26,6 +26,8 @@ export default function FormularioEntrada({
     const [dataHora, setDataHora] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const placeholderColor = "#999"; // Cor do placeholder
+
     useEffect(() => {
         const agora = new Date();
         setDataHora(formatarDataHora(agora));
@@ -119,6 +121,7 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
+                placeholderTextColor={placeholderColor}
                 value={equipamento}
                 onChangeText={setEquipamento}
             />
@@ -127,6 +130,7 @@ export default function FormularioEntrada({
                 style={styles.input}
                 placeholder="Quantidade"
                 keyboardType="numeric"
+                placeholderTextColor={placeholderColor}
                 value={quantidade}
                 onChangeText={setQuantidade}
             />
@@ -134,6 +138,7 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Nº do Patrimônio"
+                placeholderTextColor={placeholderColor}
                 value={patrimonio}
                 onChangeText={setPatrimonio}
             />
@@ -141,6 +146,7 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Local de Armazenamento"
+                placeholderTextColor={placeholderColor}
                 value={localArmazenamento}
                 onChangeText={setLocalArmazenamento}
             />

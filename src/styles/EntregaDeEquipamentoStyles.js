@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
         fontSize: width * 0.04,           // fonte proporcional à largura
         marginBottom: height * 0.015,
         elevation: 2,
+        color: '#000',
     },
     signatureButton: {
         backgroundColor: '#4caf50',
@@ -49,6 +50,7 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: height * 0.04,
         fontSize: width * 0.055,
+        color: '#000',
     },
     saveButton1: {
         paddingVertical: height * 0.018,

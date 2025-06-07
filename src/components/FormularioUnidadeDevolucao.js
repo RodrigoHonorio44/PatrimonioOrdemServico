@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';  // <-- Importar Timestamp aqui
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import gerarPdfUnidade from '../components/GerarPdfDevolucaoUnidade';
 
@@ -27,7 +27,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             assinaturaCliente
         } = dadosFormulario;
 
-        if (
+        setFormularioValido(
             setor &&
             numeroPatrimonio &&
             descricaoEquipamento &&
@@ -37,11 +37,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             unidade &&
             assinaturaTecnico &&
             assinaturaCliente
-        ) {
-            setFormularioValido(true);
-        } else {
-            setFormularioValido(false);
-        }
+        );
     }, [dadosFormulario]);
 
     useEffect(() => {
@@ -70,8 +66,8 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
         try {
             const devolucaoUnidadeRef = collection(db, "devolucao_unidade");
 
-            const docRef = await addDoc(devolucaoUnidadeRef, {
-                data: Timestamp.fromDate(new Date()), // <-- aqui salva como Timestamp
+            await addDoc(devolucaoUnidadeRef, {
+                data: Timestamp.fromDate(new Date()),
                 setor: dadosFormulario.setor,
                 numeroPatrimonio: dadosFormulario.numeroPatrimonio,
                 descricaoEquipamento: dadosFormulario.descricaoEquipamento,
@@ -79,18 +75,11 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 nomeTecnico: dadosFormulario.nomeTecnico,
                 nomeResponsavel: dadosFormulario.nomeResponsavel,
                 unidade: dadosFormulario.unidade,
-                // Não salvar as assinaturas no Firestore
-                // assinaturaTecnico: dadosFormulario.assinaturaTecnico,
-                // assinaturaCliente: dadosFormulario.assinaturaCliente,
             });
 
-            console.log("Documento salvo com ID:", docRef.id);
             Alert.alert("Sucesso", "Dados salvos com sucesso!");
-
-            // Gerar PDF com as assinaturas e dados do formulário
             gerarPdfUnidade(dadosFormulario);
 
-            // Resetar formulário
             setDadosFormulario({
                 setor: '',
                 numeroPatrimonio: '',
@@ -114,36 +103,42 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Responsável"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('nomeResponsavel', text)}
                 value={dadosFormulario.nomeResponsavel || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Setor"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('setor', text)}
                 value={dadosFormulario.setor || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('descricaoEquipamento', text)}
                 value={dadosFormulario.descricaoEquipamento || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Número do Patrimônio"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('numeroPatrimonio', text)}
                 value={dadosFormulario.numeroPatrimonio || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Motivo"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('motivo', text)}
                 value={dadosFormulario.motivo || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Técnico"
+                placeholderTextColor="#999"
                 onChangeText={(text) => handleChange('nomeTecnico', text)}
                 value={dadosFormulario.nomeTecnico || ''}
             />

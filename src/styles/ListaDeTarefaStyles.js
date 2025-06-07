@@ -5,7 +5,7 @@ const { width, height } = Dimensions.get('window');
 export default StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#fff', // fundo branco suave da tela
     },
     wrapper: {
         flex: 1,
@@ -14,7 +14,9 @@ export default StyleSheet.create({
         paddingBottom: height * 0.15, // espaço proporcional para navbar
     },
     container: {
-        padding: width * 0.04, // padding proporcional à largura
+        padding: width * 0.04,
+        backgroundColor: '#f0f4f8', // cinza claro mais suave no card
+        borderRadius: 10,
     },
     title: {
         fontSize: width > 350 ? 22 : 18,
@@ -22,6 +24,7 @@ export default StyleSheet.create({
         marginBottom: height * 0.015,
         textAlign: 'center',
         marginTop: height * 0.06,
+        color: '#000', // texto preto
     },
     inputMultiline: {
         borderWidth: 1,
@@ -31,6 +34,8 @@ export default StyleSheet.create({
         height: height * 0.18, // altura proporcional
         textAlignVertical: 'top',
         marginBottom: height * 0.02,
+        backgroundColor: '#fff', // fundo branco no input pra destacar
+        color: '#000', // texto preto dentro do input
     },
     button: {
         backgroundColor: '#007bff',
@@ -41,7 +46,7 @@ export default StyleSheet.create({
         marginTop: height * 0.025,
     },
     buttonText: {
-        color: '#fff',
+        color: '#fff', // texto preto no botão
         fontSize: width > 350 ? 16 : 14,
         fontWeight: 'bold',
     },
@@ -50,6 +55,7 @@ export default StyleSheet.create({
         marginBottom: height * 0.006,
         fontWeight: 'bold',
         fontSize: width > 350 ? 14 : 12,
+        color: '#000', // texto preto nos labels
     },
     picker: {
         borderWidth: 1,
@@ -57,6 +63,8 @@ export default StyleSheet.create({
         borderRadius: 8,
         marginBottom: height * 0.015,
         marginTop: height * 0.015,
+        color: '#000', // texto preto no picker
+        backgroundColor: '#fff', // fundo branco no picker para melhor contraste
     },
     navbar: {
         position: 'absolute',

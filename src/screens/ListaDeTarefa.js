@@ -80,6 +80,7 @@ export default function ListaDeTarefa() {
                         <TextInput
                             style={styles.inputMultiline}
                             placeholder="Descreva a tarefa com mais detalhes..."
+                            placeholderTextColor="#888888"  // Cor cinza do placeholder
                             value={tarefa}
                             onChangeText={setTarefa}
                             multiline

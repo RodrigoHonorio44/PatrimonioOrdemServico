@@ -14,7 +14,7 @@ export default function EstoqueAtual({ navigation }) {
             const querySnapshot = await getDocs(collection(db, 'estoque'));
             const lista = querySnapshot.docs.map((doc) => {
                 return {
-                    id: doc.id,  // sempre vem aqui
+                    id: doc.id,
                     ...doc.data(),
                 };
             });
@@ -61,7 +61,7 @@ export default function EstoqueAtual({ navigation }) {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#0000ff" />
-                <Text>Carregando estoque...</Text>
+                <Text style={{ color: '#000' }}>Carregando estoque...</Text>
             </View>
         );
     }
@@ -69,7 +69,7 @@ export default function EstoqueAtual({ navigation }) {
     return (
         <FlatList
             data={estoque}
-            keyExtractor={(item, index) => item.id ? item.id : index.toString()}
+            keyExtractor={(item, index) => (item.id ? item.id : index.toString())}
             renderItem={renderItem}
             contentContainerStyle={{ padding: 10 }}
             ListEmptyComponent={<Text style={styles.emptyText}>Nenhum item em estoque.</Text>}
@@ -90,9 +90,11 @@ const styles = StyleSheet.create({
     },
     text: {
         marginBottom: 4,
+        color: '#333',          // cor explícita para o texto
     },
     label: {
         fontWeight: 'bold',
+        color: '#111',          // cor explícita para o label
     },
     loadingContainer: {
         flex: 1,

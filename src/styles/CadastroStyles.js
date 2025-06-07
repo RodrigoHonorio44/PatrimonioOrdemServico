@@ -27,6 +27,7 @@ export default StyleSheet.create({
         marginBottom: height * 0.03, // 3% da altura da tela
         textAlign: 'center',
         fontWeight: 'bold',
+        color: '#000',
     },
     input: {
         borderWidth: 1,
@@ -36,5 +37,6 @@ export default StyleSheet.create({
         marginBottom: height * 0.02, // 2% da altura da tela
         backgroundColor: '#fff',
         fontSize: width > 350 ? 16 : 14,
+        color: '#000',
     },
 });
