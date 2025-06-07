@@ -140,9 +140,6 @@ const GerarPDF = async ({
 </html>
 `;
 
-
-
-
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
     await Sharing.shareAsync(uri);
 
