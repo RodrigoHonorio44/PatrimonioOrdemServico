@@ -22,6 +22,7 @@ import NavbarBottom from '../components/NavbarBottom';
 
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function OrdemServico() {
     const navigation = useNavigation();
@@ -168,6 +169,11 @@ export default function OrdemServico() {
         navigation.navigate(route);
     };
 
+    const placeholderColor = '#999999'; // cinza claro
+    const textColor = '#333333'; // cinza escuro
+
+    const inputStyle = [styles.input, { color: textColor }];
+
     return (
         <View style={{ flex: 1 }}>
             <KeyboardAvoidingView
@@ -179,44 +185,50 @@ export default function OrdemServico() {
                     <Text style={styles.date}>Data: {dataAtual}</Text>
 
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Nome do Responsável (Cliente)"
                         value={nomeResponsavel}
                         onChangeText={setNomeResponsavel}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Setor"
                         value={setor}
                         onChangeText={setSetor}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Descrição do Equipamento"
                         value={descricao}
                         onChangeText={setDescricao}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Número do Patrimônio"
                         value={patrimonio}
                         onChangeText={setPatrimonio}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Serviço Realizado"
                         value={servico}
                         onChangeText={setServico}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
+                        placeholderTextColor={placeholderColor}
                         placeholder="Nome do Técnico"
                         value={nomeTecnico}
                         onChangeText={setNomeTecnico}
                     />
 
                     <Text style={styles.label}>Hospital / Unidade:</Text>
-                    <View style={styles.pickerContainer}>
+                    <View style={styles.pickerWrapper}>
                         <Picker
                             selectedValue={unidade}
                             onValueChange={(itemValue) => setUnidade(itemValue)}
@@ -228,8 +240,14 @@ export default function OrdemServico() {
                             <Picker.Item label="SAMU Barroco" value="SAMU Barroco" />
                             <Picker.Item label="SAMU Ponta Negra" value="SAMU Ponta Negra" />
                         </Picker>
-                    </View>
 
+                        <Icon
+                            name="arrow-drop-down"
+                            size={28}
+                            color="#666"
+                            style={styles.pickerIcon}
+                        />
+                    </View>
                     <TouchableOpacity
                         style={[styles.button, styles.signatureButton]}
                         onPress={() => setShowAssinaturaTecnico(true)}

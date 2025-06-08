@@ -35,7 +35,7 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: height * 0.025,
         textAlign: 'center',
-        color: colors.textPrimary,
+        color: '#000',
     },
     input: {
         width: '100%',
@@ -47,7 +47,7 @@ export default StyleSheet.create({
         marginBottom: height * 0.02,
         backgroundColor: colors.inputBackground,
         fontSize: width * 0.045,
-        color: colors.textPrimary,
+        color: '#000',
         ...Platform.select({
             ios: {
                 shadowColor: '#000',
@@ -62,7 +62,7 @@ export default StyleSheet.create({
     },
     button: {
         width: '100%',
-        backgroundColor: colors.primary,
+        backgroundColor: '#007BFF',
         paddingVertical: height * 0.018,
         borderRadius: 12,
         alignItems: 'center',
@@ -80,7 +80,7 @@ export default StyleSheet.create({
         }),
     },
     buttonText: {
-        color: colors.white,
+        color: '#fff',
         fontSize: width * 0.045,
         fontWeight: 'bold',
     },

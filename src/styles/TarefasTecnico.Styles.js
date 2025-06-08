@@ -32,6 +32,11 @@ export default StyleSheet.create({
         color: '#222',
         marginBottom: width * 0.015,
     },
+    textoInfo: {
+        color: '#333',       // cor escura e legível
+        fontSize: width * 0.04,
+        marginBottom: width * 0.01,
+    },
     botao: {
         marginTop: width * 0.03,
         backgroundColor: '#007bff',

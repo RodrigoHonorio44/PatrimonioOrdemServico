@@ -71,4 +71,28 @@ export default StyleSheet.create({
         marginTop: basePadding * 0.6,
         marginBottom: basePadding,
     },
+    pickerWrapper: {
+        position: 'relative',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        marginBottom: 10,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+    },
+
+    picker: {
+        height: 50,
+        color: '#000',
+        paddingHorizontal: 10,
+    },
+
+    icon: {
+        position: 'absolute',
+        right: 10,
+        top: '50%',
+        marginTop: -10,
+        pointerEvents: 'none',
+    },
+
 });

@@ -57,15 +57,31 @@ export default StyleSheet.create({
         fontSize: width > 350 ? 14 : 12,
         color: '#000', // texto preto nos labels
     },
-    picker: {
+    pickerWrapper: {
+        position: 'relative',
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#007BFF',
         borderRadius: 8,
-        marginBottom: height * 0.015,
-        marginTop: height * 0.015,
-        color: '#000', // texto preto no picker
-        backgroundColor: '#fff', // fundo branco no picker para melhor contraste
+        backgroundColor: '#fff',
+        marginBottom: 16,
+        height: 50,
+        justifyContent: 'center',
     },
+
+    picker: {
+        height: 50,
+        color: '#000',
+        paddingHorizontal: 12,
+    },
+
+    pickerIcon: {
+        position: 'absolute',
+        right: 10,
+        top: 10,
+        pointerEvents: 'none',
+    },
+
+
     navbar: {
         position: 'absolute',
         bottom: 0,

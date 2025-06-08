@@ -64,7 +64,7 @@ const EsqueceuSenhaStyles = StyleSheet.create({
     button: {
         height: height * 0.065,
         width: '100%',
-        backgroundColor: colors.primary || '#4a90e2',
+        backgroundColor: '#007BFF',
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',

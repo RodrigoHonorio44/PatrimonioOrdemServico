@@ -17,6 +17,8 @@ import NavbarBottom from '../components/NavbarBottom';
 import gerarPdfResidencia from '../components/GerarPdfResidencia';
 import gerarPdfUnidade from '../components/GerarPdfUnidade';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 export default function EntregaDeEquipamento() {
     const navigation = useNavigation();
@@ -56,19 +58,30 @@ export default function EntregaDeEquipamento() {
                     >
                         <Text style={styles.titulo}>Entrega de Equipamento</Text>
 
-                        <Picker
-                            selectedValue={tipoEntrega}
-                            onValueChange={(itemValue) => setTipoEntrega(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Selecione o tipo" value="" />
-                            <Picker.Item label="Residência" value="Residência" />
-                            <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                            <Picker.Item label="UPA Inoã" value="UPA Inoã" />
-                            <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                            <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
-                            <Picker.Item label="Samu Barroco" value="Samu Barroco" />
-                        </Picker>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={tipoEntrega}
+                                onValueChange={(itemValue) => setTipoEntrega(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="transparent" // esconde seta nativa no Android
+                            >
+                                <Picker.Item label="Selecione o tipo" value="" />
+                                <Picker.Item label="Residência" value="Residência" />
+                                <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                                <Picker.Item label="UPA Inoã" value="UPA Inoã" />
+                                <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                                <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                                <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                            </Picker>
+
+                            <Icon
+                                name="arrow-drop-down"
+                                size={28}
+                                color="#666"
+                                style={styles.pickerIcon}
+                            />
+                        </View>
+
 
                         {tipoEntrega === 'Residência' ? (
                             <FormularioResidencia

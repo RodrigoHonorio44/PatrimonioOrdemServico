@@ -1,12 +1,13 @@
+// imports...
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, Alert, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../styles/stylesEntrada';
+import { Ionicons } from '@expo/vector-icons';
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc, updateDoc, doc, Timestamp, query, where, getDocs } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
-// Função para formatar Date JS no formato desejado
 function formatarDataHora(date) {
     const opcoesData = { day: '2-digit', month: 'long', year: 'numeric' };
     const data = date.toLocaleDateString('pt-BR', opcoesData);
@@ -26,11 +27,8 @@ export default function FormularioEntrada({
     const [dataHora, setDataHora] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const placeholderColor = "#999"; // Cor do placeholder
-
     useEffect(() => {
-        const agora = new Date();
-        setDataHora(formatarDataHora(agora));
+        setDataHora(formatarDataHora(new Date()));
     }, []);
 
     const handleRegistrar = async () => {
@@ -42,7 +40,6 @@ export default function FormularioEntrada({
         setLoading(true);
 
         try {
-            // Consulta estoque pelo equipamento
             const estoqueRef = collection(db, 'estoque');
             const q = query(estoqueRef, where('equipamento', '==', equipamento));
             const querySnapshot = await getDocs(q);
@@ -51,7 +48,6 @@ export default function FormularioEntrada({
             let estoqueDocRef;
 
             if (querySnapshot.empty) {
-                // Cria novo equipamento no estoque
                 equipamentoId = uuidv4();
                 const estoqueDoc = await addDoc(estoqueRef, {
                     equipamentoId,
@@ -64,7 +60,6 @@ export default function FormularioEntrada({
                 });
                 estoqueDocRef = estoqueDoc;
             } else {
-                // Atualiza equipamento existente
                 const docEstoque = querySnapshot.docs[0];
                 const dataEstoque = docEstoque.data();
                 equipamentoId = dataEstoque.equipamentoId;
@@ -81,7 +76,6 @@ export default function FormularioEntrada({
                 });
             }
 
-            // Registra movimentação
             const movimentacoesRef = collection(db, 'movimentacoes');
             const docMovimentacao = await addDoc(movimentacoesRef, {
                 tipo: 'entrada',
@@ -99,8 +93,6 @@ export default function FormularioEntrada({
             });
 
             Alert.alert('Sucesso', 'Entrada registrada com sucesso!');
-
-            // Resetar campos
             setEquipamento('');
             setQuantidade('');
             setPatrimonio('');
@@ -121,7 +113,7 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor="#999"
                 value={equipamento}
                 onChangeText={setEquipamento}
             />
@@ -130,7 +122,7 @@ export default function FormularioEntrada({
                 style={styles.input}
                 placeholder="Quantidade"
                 keyboardType="numeric"
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor="#999"
                 value={quantidade}
                 onChangeText={setQuantidade}
             />
@@ -138,7 +130,7 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Nº do Patrimônio"
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor="#999"
                 value={patrimonio}
                 onChangeText={setPatrimonio}
             />
@@ -146,23 +138,27 @@ export default function FormularioEntrada({
             <TextInput
                 style={styles.input}
                 placeholder="Local de Armazenamento"
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor="#999"
                 value={localArmazenamento}
                 onChangeText={setLocalArmazenamento}
             />
 
-            <Picker
-                selectedValue={unidade}
-                onValueChange={setUnidade}
-                style={styles.input}
-            >
-                <Picker.Item label="Selecione a Unidade" value="" enabled={false} />
-                <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
-                <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                <Picker.Item label="Samu Barroco" value="Samu Barroco" />
-                <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
-            </Picker>
+            {/* Picker com seta */}
+            <View style={styles.pickerWrapper}>
+                <Picker
+                    selectedValue={unidade}
+                    onValueChange={setUnidade}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Selecione a Unidade" value="" enabled={false} />
+                    <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                    <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
+                    <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                    <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                    <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                </Picker>
+                <Ionicons name="chevron-down" size={20} color="#333" style={styles.icon} />
+            </View>
 
             <Text style={styles.dataHora}>Data e Hora: {dataHora}</Text>
 

@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    Button,
+    FlatList,
+    StyleSheet,
+    ActivityIndicator,
+    Dimensions,
+    ScrollView,
+} from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,12 +21,10 @@ export default function EstoqueAtual({ navigation }) {
         setLoading(true);
         try {
             const querySnapshot = await getDocs(collection(db, 'estoque'));
-            const lista = querySnapshot.docs.map((doc) => {
-                return {
-                    id: doc.id,
-                    ...doc.data(),
-                };
-            });
+            const lista = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
             setEstoque(lista);
         } catch (error) {
             console.error('Erro ao buscar estoque:', error.message);
@@ -50,10 +57,13 @@ export default function EstoqueAtual({ navigation }) {
                 <Text style={styles.label}>Unidade:</Text> {item.unidade || '-'}
             </Text>
 
-            <Button
-                title="Registrar Saída"
-                onPress={() => navigation.navigate('FormularioSaida', { equipamentoSelecionado: item })}
-            />
+            <View style={styles.buttonContainer}>
+                <Button
+                    title="Registrar Saída"
+                    onPress={() => navigation.navigate('FormularioSaida', { equipamentoSelecionado: item })}
+                    color="#007bff"
+                />
+            </View>
         </View>
     );
 
@@ -69,43 +79,55 @@ export default function EstoqueAtual({ navigation }) {
     return (
         <FlatList
             data={estoque}
-            keyExtractor={(item, index) => (item.id ? item.id : index.toString())}
+            keyExtractor={(item, index) => item.id || index.toString()}
             renderItem={renderItem}
-            contentContainerStyle={{ padding: 10 }}
+            contentContainerStyle={styles.listContent}
             ListEmptyComponent={<Text style={styles.emptyText}>Nenhum item em estoque.</Text>}
         />
     );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
+    listContent: {
+        padding: 10,
+        paddingBottom: 30,
+    },
     card: {
-        padding: 15,
-        marginVertical: 8,
-        backgroundColor: '#f8f9fa',
-        borderRadius: 8,
+        width: '100%',
+        padding: 16,
+        marginBottom: 12,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 10,
         shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 2,
+        elevation: 3,
     },
     text: {
         marginBottom: 4,
-        color: '#333',          // cor explícita para o texto
+        fontSize: width < 380 ? 14 : 16,
+        color: '#333',
     },
     label: {
         fontWeight: 'bold',
-        color: '#111',          // cor explícita para o label
+        color: '#111',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
+        paddingTop: 30,
     },
     emptyText: {
         textAlign: 'center',
-        marginTop: 20,
+        marginTop: 30,
         fontSize: 16,
-        color: '#555',
+        color: '#666',
+    },
+    buttonContainer: {
+        marginTop: 10,
     },
 });

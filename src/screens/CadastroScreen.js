@@ -78,7 +78,7 @@ export default function CadastroScreen() {
                             value={nome}
                             onChangeText={setNome}
                             style={styles.input}
-                            placeholderTextColor="#666"
+                            placeholderTextColor="#999"
                         />
                         <TextInput
                             placeholder="Email"
@@ -87,7 +87,7 @@ export default function CadastroScreen() {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             style={styles.input}
-                            placeholderTextColor="#666"
+                            placeholderTextColor="#999"
                         />
                         <TextInput
                             placeholder="Senha"
@@ -95,7 +95,7 @@ export default function CadastroScreen() {
                             onChangeText={setSenha}
                             secureTextEntry
                             style={styles.input}
-                            placeholderTextColor="#666"
+                            placeholderTextColor="#999"
                         />
 
                         {carregando ? (

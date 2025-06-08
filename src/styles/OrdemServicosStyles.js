@@ -35,19 +35,29 @@ export default StyleSheet.create({
         color: '#000367',
         fontWeight: '600',
     },
-    pickerContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginBottom: height * 0.02,
+    pickerWrapper: {
+        position: 'relative',
         borderWidth: 1,
-        borderColor: '#ccd',
-        width: '100%',
+        borderColor: '#ccc',
+        borderRadius: 5,
+        overflow: 'hidden',
+        justifyContent: 'center',
     },
+
     picker: {
-        height: 50,
         width: '100%',
-        color: '#111',
+        color: '#333',
+        paddingRight: 30, // espaço para a seta
     },
+
+    pickerIcon: {
+        position: 'absolute',
+        right: 10,
+        top: '50%',
+        marginTop: -14, // metade do tamanho do ícone para centralizar verticalmente
+        pointerEvents: 'none', // permite clicar no picker e não no ícone
+    },
+
     button: {
         paddingVertical: height * 0.018,
         borderRadius: 10,

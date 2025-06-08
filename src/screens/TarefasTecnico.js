@@ -77,9 +77,11 @@ export default function TarefasTecnico() {
                 renderItem={({ item }) => (
                     <View style={styles.item}>
                         <Text style={styles.nome}>Tarefa: {item.nome}</Text>
-                        <Text>Status: {item.status}</Text>
-                        <Text>Prioridade: {item.prioridade}</Text>
-                        <Text>Criada em: {item.dataCriacao}</Text>
+
+                        {/* Aqui apliquei o estilo textoInfo para a cor */}
+                        <Text style={styles.textoInfo}>Status: {item.status}</Text>
+                        <Text style={styles.textoInfo}>Prioridade: {item.prioridade}</Text>
+                        <Text style={styles.textoInfo}>Criada em: {item.dataCriacao}</Text>
 
                         <TouchableOpacity
                             style={styles.botao}

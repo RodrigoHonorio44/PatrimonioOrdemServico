@@ -69,4 +69,39 @@ export const styles = StyleSheet.create({
         fontSize: width * 0.045,
         fontWeight: 'bold',
     },
+    pickerWrapper: {
+        position: 'relative',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 6,
+        overflow: 'hidden',
+        height: 40,
+        justifyContent: 'center',
+    },
+    pickerWrapper: {
+        position: 'relative',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 6,
+        overflow: 'hidden',
+        height: 40,
+        justifyContent: 'center',
+        marginVertical: 10,
+        width: '100%',  // ajustar para ocupar todo o espaço horizontal
+    },
+
+    picker: {
+        width: '100%',
+        height: 50,     // mesma altura do wrapper
+        color: '#333',
+        fontSize: 16,
+        paddingLeft: 10,
+    },
+    pickerIcon: {
+        position: 'absolute',
+        right: 8,
+        top: 6,
+        pointerEvents: 'none', // para passar toque para o picker
+    },
+
 });

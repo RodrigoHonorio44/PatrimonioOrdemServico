@@ -9,6 +9,7 @@ import {
     ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { db, auth } from '../config/firebaseConfig';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import styles from '../styles/ListaDeTarefaStyles';
@@ -80,7 +81,7 @@ export default function ListaDeTarefa() {
                         <TextInput
                             style={styles.inputMultiline}
                             placeholder="Descreva a tarefa com mais detalhes..."
-                            placeholderTextColor="#888888"  // Cor cinza do placeholder
+                            placeholderTextColor="#999"
                             value={tarefa}
                             onChangeText={setTarefa}
                             multiline
@@ -92,28 +93,46 @@ export default function ListaDeTarefa() {
                         </TouchableOpacity>
 
                         <Text style={styles.filterLabel}>Filtrar por Status:</Text>
-                        <Picker
-                            selectedValue={statusFilter}
-                            onValueChange={(itemValue) => setStatusFilter(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Todos" value="todos" />
-                            <Picker.Item label="Pendente" value="pendente" />
-                            <Picker.Item label="Em andamento" value="em andamento" />
-                            <Picker.Item label="Concluída" value="concluída" />
-                        </Picker>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={statusFilter}
+                                onValueChange={(itemValue) => setStatusFilter(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="transparent"
+                            >
+                                <Picker.Item label="Todos" value="todos" />
+                                <Picker.Item label="Pendente" value="pendente" />
+                                <Picker.Item label="Em andamento" value="em andamento" />
+                                <Picker.Item label="Concluída" value="concluída" />
+                            </Picker>
+                            <Icon
+                                name="arrow-drop-down"
+                                size={28}
+                                color="#666"
+                                style={styles.pickerIcon}
+                            />
+                        </View>
 
                         <Text style={styles.filterLabel}>Filtrar por Prioridade:</Text>
-                        <Picker
-                            selectedValue={prioridadeFilter}
-                            onValueChange={(itemValue) => setPrioridadeFilter(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Todas" value="todas" />
-                            <Picker.Item label="Alta" value="alta" />
-                            <Picker.Item label="Média" value="média" />
-                            <Picker.Item label="Baixa" value="baixa" />
-                        </Picker>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={prioridadeFilter}
+                                onValueChange={(itemValue) => setPrioridadeFilter(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="transparent"
+                            >
+                                <Picker.Item label="Todas" value="todas" />
+                                <Picker.Item label="Alta" value="alta" />
+                                <Picker.Item label="Média" value="média" />
+                                <Picker.Item label="Baixa" value="baixa" />
+                            </Picker>
+                            <Icon
+                                name="arrow-drop-down"
+                                size={28}
+                                color="#666"
+                                style={styles.pickerIcon}
+                            />
+                        </View>
 
                         {loading ? <Text>Carregando tarefas...</Text> : null}
                     </View>
