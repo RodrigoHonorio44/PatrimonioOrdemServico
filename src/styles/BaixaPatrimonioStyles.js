@@ -27,16 +27,30 @@ export const styles = StyleSheet.create({
         marginBottom: height * 0.02,
         color: '#000',
     },
-    pickerContainer: {
-        height: height * 0.07,
-        backgroundColor: '#fff',
-        borderColor: '#ccc',
+    pickerWrapper: {
+        position: 'relative',
         borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: height * 0.02,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        marginBottom: 16,
+        height: 50,
         justifyContent: 'center',
-        paddingHorizontal: width * 0.02,
+        backgroundColor: '#fff',
     },
+
+    picker: {
+        width: '100%',
+        color: '#000',
+        paddingLeft: 10,
+    },
+
+    pickerIcon: {
+        position: 'absolute',
+        right: 10,
+        top: 11,
+        pointerEvents: 'none',
+    },
+
     saveButton: {
         backgroundColor: '#007bff',
         paddingVertical: height * 0.018,

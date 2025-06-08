@@ -25,15 +25,29 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333',
     },
-    picker: {
-        height: Platform.OS === 'ios' ? 150 : 50,  // picker no iOS ocupa mais espaço
-        marginBottom: height * 0.025,
+    pickerWrapper: {
+        position: 'relative',
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 8,
+        marginBottom: 16,
+        overflow: 'hidden',
         backgroundColor: '#fff',
-        justifyContent: 'center',
     },
+
+    picker: {
+        height: 50,
+        width: '100%',
+        color: '#333',
+    },
+
+    pickerIcon: {
+        position: 'absolute',
+        right: 10,
+        top: '35%',
+        pointerEvents: 'none',
+    },
+
     label: {
         fontSize: responsiveFontSize(16),
         fontWeight: '600',

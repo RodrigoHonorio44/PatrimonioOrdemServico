@@ -10,6 +10,7 @@ import {
     Keyboard,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import FormularioResidenciaDevolucao from '../components/FormularioResidenciaDevolucao';
 import FormularioUnidadeDevolucao from '../components/FormularioUnidadeDevolucao';
@@ -55,19 +56,29 @@ export default function DevolucaoDeEquipamento() {
                     >
                         <Text style={styles.titulo}>Entrega de Equipamento</Text>
 
-                        <Picker
-                            selectedValue={tipoEntrega}
-                            onValueChange={(itemValue) => setTipoEntrega(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Selecione o tipo" value="" />
-                            <Picker.Item label="Residência" value="Residência" />
-                            <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                            <Picker.Item label="UPA Inoã" value="UPA Inoã" />
-                            <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                            <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
-                            <Picker.Item label="Samu Barroco" value="Samu Barroco" />
-                        </Picker>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={tipoEntrega}
+                                onValueChange={(itemValue) => setTipoEntrega(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="transparent"
+                            >
+                                <Picker.Item label="Selecione o tipo" value="" />
+                                <Picker.Item label="Residência" value="Residência" />
+                                <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                                <Picker.Item label="UPA Inoã" value="UPA Inoã" />
+                                <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                                <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                                <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                            </Picker>
+
+                            <Icon
+                                name="arrow-drop-down"
+                                size={28}
+                                color="#666"
+                                style={styles.pickerIcon}
+                            />
+                        </View>
 
                         {tipoEntrega === 'Residência' ? (
                             <FormularioResidenciaDevolucao

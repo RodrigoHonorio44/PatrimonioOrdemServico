@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Rodhon Systems",
+    "name": "Patrimonio",
     "slug": "rodhon-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icone.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "splash": {

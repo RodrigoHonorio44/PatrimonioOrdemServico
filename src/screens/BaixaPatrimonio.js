@@ -10,7 +10,8 @@ import {
     ScrollView,
 } from 'react-native';
 
-import { Picker } from '@react-native-picker/picker';  // <- importe Picker
+import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // <- ícone adicionado
 import { styles } from '../styles/BaixaPatrimonioStyles';
 
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
@@ -117,18 +118,14 @@ export default function BaixaPatrimonio({ navigation }) {
                         editable={!loading}
                     />
 
-                    {/* Picker para selecionar Hospital/UPA */}
-                    <View
-                        style={[
-                            styles.input,
-                            { justifyContent: 'center', paddingHorizontal: 0, height: 50 },
-                        ]}
-                    >
+                    {/* Picker com estilo personalizado e ícone */}
+                    <View style={styles.pickerWrapper}>
                         <Picker
                             selectedValue={unidade}
-                            onValueChange={setUnidade}
+                            onValueChange={(itemValue) => setUnidade(itemValue)}
                             enabled={!loading}
-                            style={{ color: unidade ? '#000' : '#999' }}
+                            style={styles.picker}
+                            dropdownIconColor="transparent"
                         >
                             <Picker.Item label="Selecione Hospital/UPA" value="" />
                             <Picker.Item label="Hospital Conde" value="Hospital Conde" />
@@ -137,6 +134,12 @@ export default function BaixaPatrimonio({ navigation }) {
                             <Picker.Item label="SAMU Ponta Negra" value="SAMU Ponta Negra" />
                             <Picker.Item label="SAMU Barroco" value="SAMU Barroco" />
                         </Picker>
+                        <Icon
+                            name="arrow-drop-down"
+                            size={28}
+                            color="#666"
+                            style={styles.pickerIcon}
+                        />
                     </View>
 
                     <TouchableOpacity
