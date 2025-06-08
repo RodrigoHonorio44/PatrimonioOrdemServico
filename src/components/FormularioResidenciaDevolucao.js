@@ -18,16 +18,27 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
 
     useEffect(() => {
         const {
-            nomePaciente, endereco, telefone, descricaoEquipamento,
-            numeroPatrimonio, nomeTecnico, nomeResponsavel,
-            assinaturaTecnico, assinaturaCliente
+            nomePaciente,
+            endereco,
+            telefone,
+            descricaoEquipamento,
+            numeroPatrimonio,
+            nomeTecnico,
+            nomeResponsavel,
+            assinaturaTecnico,
+            assinaturaCliente
         } = dadosFormulario;
 
         setFormularioValido(
-            nomePaciente && endereco && telefone &&
-            descricaoEquipamento && numeroPatrimonio &&
-            nomeTecnico && nomeResponsavel &&
-            assinaturaTecnico && assinaturaCliente
+            nomePaciente &&
+            endereco &&
+            telefone &&
+            descricaoEquipamento &&
+            numeroPatrimonio &&
+            nomeTecnico &&
+            nomeResponsavel &&
+            assinaturaTecnico &&
+            assinaturaCliente
         );
     }, [dadosFormulario]);
 
@@ -50,13 +61,14 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
     const salvarDadosNoFirestore = async () => {
         if (!formularioValido || isSaving) return;
 
-        // Verificação de estoque zerado (exemplo simples)
+        // Exemplo de validação extra para estoque zerado
         if (dadosFormulario.descricaoEquipamento?.toLowerCase().includes('estoque zerado')) {
             Alert.alert("Aviso", "Não é possível registrar a saída. Estoque zerado.");
             return;
         }
 
         setIsSaving(true);
+
         try {
             await addDoc(collection(db, "devolucao_Residencia"), {
                 data: Timestamp.fromDate(new Date()),
@@ -92,7 +104,7 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 nomeTecnico: '',
                 nomeResponsavel: '',
                 assinaturaTecnico: null,
-                assinaturaCliente: null
+                assinaturaCliente: null,
             });
 
         } catch (e) {
@@ -109,14 +121,14 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 style={styles.input}
                 placeholder="Nome do Paciente"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('nomePaciente', text)}
+                onChangeText={text => handleChange('nomePaciente', text)}
                 value={dadosFormulario.nomePaciente || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Endereço"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('endereco', text)}
+                onChangeText={text => handleChange('endereco', text)}
                 value={dadosFormulario.endereco || ''}
             />
             <MaskInput
@@ -124,35 +136,35 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
                 placeholder="(XX) XXXXX-XXXX"
                 placeholderTextColor="#999"
                 value={dadosFormulario.telefone || ''}
-                onChangeText={(masked, unmasked) => handleChange('telefone', masked)}
+                onChangeText={(masked) => handleChange('telefone', masked)}
                 mask={['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Descrição do Equipamento"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('descricaoEquipamento', text)}
+                onChangeText={text => handleChange('descricaoEquipamento', text)}
                 value={dadosFormulario.descricaoEquipamento || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Número do Patrimônio"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('numeroPatrimonio', text)}
+                onChangeText={text => handleChange('numeroPatrimonio', text)}
                 value={dadosFormulario.numeroPatrimonio || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Técnico"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('nomeTecnico', text)}
+                onChangeText={text => handleChange('nomeTecnico', text)}
                 value={dadosFormulario.nomeTecnico || ''}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nome do Responsável"
                 placeholderTextColor="#999"
-                onChangeText={(text) => handleChange('nomeResponsavel', text)}
+                onChangeText={text => handleChange('nomeResponsavel', text)}
                 value={dadosFormulario.nomeResponsavel || ''}
             />
 

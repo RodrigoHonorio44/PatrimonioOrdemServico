@@ -36,6 +36,14 @@ export default StyleSheet.create({
         shadowRadius: moderateScale(3),
         shadowOffset: { width: 0, height: verticalScale(2) },
     },
+    datePickerText: {
+        color: '#000', // texto normal preto
+        fontSize: moderateScale(16),
+    },
+    placeholderText: {
+        color: '#999', // placeholder cinza claro
+        fontSize: moderateScale(16),
+    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',

@@ -121,12 +121,12 @@ const gerarPdfResidencia = async (dados) => {
         <div class="assinatura-item">
           <img src="${verificarAssinatura(dados.assinaturaTecnico)}" alt="Assinatura do Técnico" />
           <div class="linha-assinatura"></div>
-          <p>${dados.nomeTecnico || 'Técnico'}</p>
+          <p>${dados.nomeTecnico || 'Técnico'}<br>${dados.horaAssinaturaTecnico || ''}</p>
         </div>
         <div class="assinatura-item">
           <img src="${verificarAssinatura(dados.assinaturaCliente)}" alt="Assinatura do Responsável" />
           <div class="linha-assinatura"></div>
-          <p>${dados.nomeResponsavel || 'Responsável'}</p>
+          <p>${dados.nomeResponsavel || 'Responsável'}<br>${dados.horaAssinaturaCliente || ''}</p>
         </div>
       </div>
 
@@ -136,7 +136,6 @@ const gerarPdfResidencia = async (dados) => {
     </body>
   </html>
 `;
-
 
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
 

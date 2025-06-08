@@ -143,7 +143,8 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 value={dadosFormulario.nomeTecnico || ''}
             />
 
-            <Text style={{ marginVertical: 10, fontWeight: 'bold' }}>
+            {/* Texto da Unidade com cor preta para ficar visível */}
+            <Text style={{ marginVertical: 10, fontWeight: 'bold', color: '#000' }}>
                 Unidade: {dadosFormulario.unidade || tipoLocal || 'Não selecionada'}
             </Text>
 

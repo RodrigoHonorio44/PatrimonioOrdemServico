@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, Alert, Pressable } from 'react-native';
+import { View, Text, Button, FlatList, Alert, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -7,9 +7,9 @@ import * as XLSX from 'xlsx';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import styles from '../styles/RelatorioBaixaPatrimonioStyles';
-import NavbarBottom from '../components/NavbarBottom'; // 👈 importação
+import NavbarBottom from '../components/NavbarBottom';
 
-export default function RelatorioBaixaPatrimonio({ navigation }) { // 👈 importante receber navigation
+export default function RelatorioBaixaPatrimonio({ navigation }) {
     const [dataInicio, setDataInicio] = useState(new Date());
     const [dataFim, setDataFim] = useState(new Date());
     const [mostrarInicio, setMostrarInicio] = useState(false);
@@ -127,12 +127,12 @@ export default function RelatorioBaixaPatrimonio({ navigation }) { // 👈 impor
                     keyExtractor={item => item.id}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text><Text style={styles.negrito}>Data e Hora:</Text> {item.dataHora?.toDate().toLocaleString()}</Text>
-                            <Text><Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}</Text>
-                            <Text><Text style={styles.negrito}>Descrição:</Text> {item.descricao}</Text>
-                            <Text><Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}</Text>
-                            <Text><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
-                            <Text><Text style={styles.negrito}>Unidade:</Text> {item.unidade}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Data e Hora:</Text> {item.dataHora?.toDate().toLocaleString()}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Descrição:</Text> {item.descricao}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
+                            <Text style={styles.textCard}><Text style={styles.negrito}>Unidade:</Text> {item.unidade}</Text>
                         </View>
                     )}
                     ListEmptyComponent={<Text style={{ marginTop: 20 }}>Nenhum dado para exibir.</Text>}
@@ -143,7 +143,6 @@ export default function RelatorioBaixaPatrimonio({ navigation }) { // 👈 impor
                 )}
             </View>
 
-            {/* Navbar no rodapé */}
             <NavbarBottom navigation={navigation} />
         </View>
     );

@@ -7,20 +7,27 @@ import { Asset } from 'expo-asset';
 import { db, auth } from '../config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
+// Garante que apenas imagens base64 válidas sejam renderizadas
 const verificarAssinatura = (assinatura) => {
-  if (!assinatura) return '';
-  return assinatura.startsWith('data:image') ? assinatura : '';
+  return assinatura?.startsWith('data:image') ? assinatura : '';
 };
 
+// Carrega o logo do hospital como base64
 const loadLogoBase64 = async () => {
-  const asset = Asset.fromModule(require('../../assets/hospital.png'));
-  await asset.downloadAsync();
-  const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-  return `data:image/png;base64,${base64}`;
+  try {
+    const asset = Asset.fromModule(require('../../assets/hospital.png'));
+    await asset.downloadAsync();
+    const base64 = await FileSystem.readAsStringAsync(asset.localUri || asset.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    console.error('Erro ao carregar o logo:', error);
+    return '';
+  }
 };
 
+// Função principal para gerar e compartilhar PDF
 const GerarPDF = async ({
   dataAtual,
   nomeResponsavel,
@@ -35,6 +42,7 @@ const GerarPDF = async ({
 }) => {
   try {
     const logo = await loadLogoBase64();
+
     const htmlContent = `
 <html>
   <head>
@@ -44,7 +52,6 @@ const GerarPDF = async ({
         padding: 32px;
         font-size: 14px;
         color: #000;
-        min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -65,22 +72,16 @@ const GerarPDF = async ({
       h1 {
         text-align: center;
         font-size: 22px;
-        margin-top: 10px;
-        margin-bottom: 20px;
-      }
-      h1::after {
-        content: "";
-        display: block;
-        margin: 8px auto 0;
-        width: 60%;
+        margin: 10px 0 20px;
       }
       .campo {
-        margin-bottom: 20px;
+        margin-bottom: 12px;
       }
       .assinaturas {
         display: flex;
         justify-content: space-around;
         text-align: center;
+        margin-top: 40px;
       }
       .assinatura img {
         height: 80px;
@@ -96,6 +97,7 @@ const GerarPDF = async ({
         text-align: right;
         font-size: 11px;
         color: #555;
+        margin-top: 320px;
       }
     </style>
   </head>
@@ -140,12 +142,22 @@ const GerarPDF = async ({
 </html>
 `;
 
+    // Gera o PDF
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
+
+    // Verifica disponibilidade de compartilhamento
+    if (!(await Sharing.isAvailableAsync())) {
+      Alert.alert('Erro', 'Compartilhamento não está disponível neste dispositivo.');
+      return;
+    }
+
+    // Compartilha o PDF
     await Sharing.shareAsync(uri);
 
+    // Salva no Firestore se o usuário estiver logado
     const user = auth.currentUser;
     if (!user) {
-      console.log('Usuário não está logado. Dados não serão enviados.');
+      console.log('Usuário não autenticado. Dados não enviados.');
       return;
     }
 
@@ -162,7 +174,7 @@ const GerarPDF = async ({
       criadoEm: new Date(),
     });
 
-    console.log('Dados salvos no Firestore com sucesso.');
+    console.log('Dados salvos com sucesso no Firestore.');
   } catch (error) {
     console.error('Erro ao gerar PDF ou salvar dados:', error);
     Alert.alert('Erro', 'Ocorreu um erro ao gerar ou salvar os dados.');

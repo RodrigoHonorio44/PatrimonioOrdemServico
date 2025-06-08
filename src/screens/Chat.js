@@ -384,6 +384,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         maxHeight: 100,
         backgroundColor: '#fff',
+        color: '#000',
     },
     sendButton: {
         marginLeft: 10,

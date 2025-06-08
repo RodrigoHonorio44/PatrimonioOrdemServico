@@ -6,8 +6,9 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f7f7f7',
-        padding: width * 0.05, // 5% da largura
-        paddingBottom: height * 0.1, // 10% da altura para navbar
+        paddingHorizontal: width * 0.05, // 5% da largura nas laterais
+        paddingTop: height * 0.06,       // topo para título
+        paddingBottom: height * 0.1,     // espaço para navbar fixa
     },
     label: {
         fontSize: width > 350 ? 16 : 14,
@@ -51,7 +52,6 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: height * 0.03,
-        marginTop: height * 0.06,
         color: '#333',
     },
     navbarContainer: {
@@ -64,5 +64,11 @@ export default StyleSheet.create({
         paddingHorizontal: width * 0.04,
         borderTopWidth: 1,
         borderTopColor: '#ddd',
+        // para manter sombra na navbar, caso queira:
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 5,
     },
 });

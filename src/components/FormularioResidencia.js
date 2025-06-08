@@ -129,14 +129,16 @@ export default function FormularioResidencia({ dadosFormulario, setDadosFormular
             />
 
             <MaskInput
-                style={[styles.input, { color: textColor }]}
+                style={styles.input}
                 placeholder="(XX) XXXXX-XXXX"
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor="#999"
                 value={dadosFormulario.telefone || ''}
                 onChangeText={(masked, unmasked) => handleChange('telefone', masked)}
-                mask={[/\(\d/, /\d/, /\) /, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                keyboardType="phone-pad"
+                mask={['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+
             />
+
+
 
             <TextInput
                 style={[styles.input, { color: textColor }]}

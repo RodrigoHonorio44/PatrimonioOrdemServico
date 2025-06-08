@@ -14,45 +14,53 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: moderateScale(20),
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
     },
 
     titulo: {
-        fontSize: moderateScale(22),
-        fontWeight: 'bold',
-        marginBottom: verticalScale(15),
-        marginTop: verticalScale(45),
-        color: '#333',
+        fontSize: moderateScale(24),
+        fontWeight: '700',
+        marginBottom: verticalScale(20),
+        marginTop: verticalScale(50),
+        color: '#1a1a1a',
+        textAlign: 'center',
     },
 
     label: {
         fontSize: moderateScale(16),
-        marginTop: verticalScale(10),
-        marginBottom: verticalScale(5),
-        color: '#555',
+        marginTop: verticalScale(12),
+        marginBottom: verticalScale(6),
+        color: '#444',
     },
 
     input: {
         fontSize: moderateScale(16),
         paddingVertical: verticalScale(10),
-        paddingHorizontal: moderateScale(12),
+        paddingHorizontal: moderateScale(14),
         borderWidth: moderateScale(1),
-        borderColor: '#999',
-        borderRadius: moderateScale(5),
+        borderColor: '#ccc',
+        borderRadius: moderateScale(6),
+        backgroundColor: '#fff',
         color: '#000',
     },
 
     item: {
         borderWidth: moderateScale(1),
-        borderColor: '#ccc',
-        borderRadius: moderateScale(8),
-        padding: moderateScale(12),
-        marginVertical: verticalScale(6),
-        backgroundColor: '#f9f9f9',
+        borderColor: '#ddd',
+        borderRadius: moderateScale(10),
+        padding: moderateScale(14),
+        marginVertical: verticalScale(8),
+        backgroundColor: '#f2f2f2',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
 
     negrito: {
         fontWeight: 'bold',
+        color: '#222',
     },
 });
 

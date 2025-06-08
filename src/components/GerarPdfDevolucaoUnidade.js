@@ -32,53 +32,66 @@ const gerarPdfUnidade = async (dados = {}) => {
           <style>
             body {
               font-family: Arial, sans-serif;
-              padding: 20px;
+              padding: 32px;
+              font-size: 14px;
+              color: #000;
+              position: relative;
             }
+
             .logo {
-              display: flex;
-              justify-content: center;
+              text-align: center;
               margin-bottom: 10px;
             }
+
             .logo img {
-              max-width: 250px;
-              max-height: 250px;
+              max-width: 180px;
+              height: auto;
             }
+
             .subtitle {
               text-align: center;
               font-size: 12px;
-              margin-bottom: 4px;
+              color: #444;
+              margin-bottom: 6px;
             }
+
             h1 {
-              margin-top: 20px;
-              margin-bottom: 35px;
               text-align: center;
-              font-size: 18px;
+              font-size: 20px;
+              margin-top: 20px;
+              margin-bottom: 30px;
             }
+
             p {
               margin: 6px 0;
-              font-size: 14px;
             }
+
             .assinaturas {
               display: flex;
               justify-content: space-around;
-              margin-top: 150px;
-            }
-            .assinatura-item {
+              margin-top: 140px;
               text-align: center;
+            }
+
+            .assinatura-item {
               width: 45%;
             }
+
+            .assinatura-item img {
+              max-height: 80px;
+              margin-bottom: 5px;
+            }
+
             .linha-assinatura {
               margin-top: 5px;
               border-top: 1px solid #000;
               width: 100%;
               height: 1px;
             }
-            .assinatura-item img {
-              max-height: 100px;
-            }
+
             .footer {
               position: absolute;
-              bottom: 20px;
+              margin-top: 320px;
               right: 32px;
               font-size: 11px;
               color: #555;
@@ -96,7 +109,7 @@ const gerarPdfUnidade = async (dados = {}) => {
             FEDERAL: Decreto de 11/09/92 – Proc. M nº 14555/90-441
           </div>
 
-          <h1>Devolução de Equipamento </h1>
+          <h1>Devolução de Equipamento - Unidade</h1>
 
           <p><strong>Data:</strong> ${dataAtual}</p>
           <p><strong>Unidade:</strong> ${dados?.unidade || 'Não informada'}</p>

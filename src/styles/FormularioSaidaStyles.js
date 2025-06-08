@@ -76,23 +76,22 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
-        marginBottom: 10,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
+        marginBottom: 16,
+        overflow: 'hidden',
     },
 
     picker: {
         height: 50,
-        color: '#000',
-        paddingHorizontal: 10,
+        width: '100%',
+        color: '#333',
     },
 
-    icon: {
+    pickerIcon: {
         position: 'absolute',
         right: 10,
-        top: '50%',
-        marginTop: -10,
+        top: 12,
         pointerEvents: 'none',
     },
+
 
 });

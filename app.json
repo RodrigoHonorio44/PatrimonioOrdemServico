@@ -2,9 +2,9 @@
   "expo": {
     "name": "Patrimonio",
     "slug": "rodhon-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icone.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icone.png",
         "backgroundColor": "#000367"
       },
       "edgeToEdgeEnabled": true,
@@ -40,6 +40,9 @@
       "eas": {
         "projectId": "5fa3fa10-ae1f-41e0-9417-bd25b83e0171"
       }
-    }
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
   }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Alert, useColorScheme } from 'react-native';
 import { styles } from '../styles/EntregaDeEquipamentoStyles';
 import { useNavigation } from '@react-navigation/native';
 import { collection, addDoc } from 'firebase/firestore';
@@ -8,7 +8,10 @@ import gerarPdfUnidade from '../components/GerarPdfUnidade';
 
 export default function FormularioUnidade({ dadosFormulario, setDadosFormulario, tipoLocal }) {
     const navigation = useNavigation();
+    const esquema = useColorScheme();
     const [formularioValido, setFormularioValido] = useState(false);
+
+    const corTextoUnidade = esquema === 'dark' ? '#fff' : '#000';
 
     const handleChange = (campo, valor) => {
         setDadosFormulario(prev => ({ ...prev, [campo]: valor }));
@@ -66,7 +69,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
 
     const salvarDadosNoFirestore = async () => {
         try {
-            const docRef = await addDoc(collection(db, "entregasUnidades"), {
+            await addDoc(collection(db, "entregasUnidades"), {
                 data: new Date().toLocaleDateString(),
                 setor: dadosFormulario.setor,
                 numeroPatrimonio: dadosFormulario.numeroPatrimonio,
@@ -144,7 +147,7 @@ export default function FormularioUnidade({ dadosFormulario, setDadosFormulario,
                 value={dadosFormulario.nomeTecnico || ''}
             />
 
-            <Text style={{ marginVertical: 10, fontWeight: 'bold', fontSize: 16 }}>
+            <Text style={{ marginVertical: 10, fontWeight: 'bold', fontSize: 16, color: corTextoUnidade }}>
                 Unidade: {dadosFormulario.unidade || tipoLocal || 'Não selecionada'}
             </Text>
 

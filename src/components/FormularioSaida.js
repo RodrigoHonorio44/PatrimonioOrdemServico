@@ -4,6 +4,7 @@ import {
     ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import styles from '../styles/FormularioSaidaStyles';
@@ -38,7 +39,7 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
             localDestino.trim() !== '' &&
             unidade.trim() !== '' &&
             patrimonio.trim() !== '' &&
-            quantidadeEstoque > 0; // Impede se estoque for 0
+            quantidadeEstoque > 0;
         setBotaoHabilitado(podeHabilitar);
     }, [quantidade, localDestino, unidade, patrimonio, quantidadeEstoque]);
 
@@ -49,7 +50,6 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
 
     const handleRegistrarSaida = async () => {
         const qtdNumero = Number(quantidade);
-
         if (quantidadeEstoque <= 0) {
             Alert.alert('Erro', 'Não é possível registrar saída: estoque zerado.');
             return;
@@ -134,9 +134,6 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                     <Text style={styles.label}>Local Armazenado:</Text>
                     <Text style={styles.value}>{localArmazenamento}</Text>
 
-                    <Text style={styles.label}>Unidade:</Text>
-                    <Text style={styles.value}>{unidade}</Text>
-
                     <Text style={styles.label}>Quantidade para saída:</Text>
                     <TextInput
                         style={styles.input}
@@ -171,18 +168,27 @@ export default function FormularioSaida({ equipamentoSelecionado, onSaidaConclui
                     />
 
                     <Text style={styles.label}>Unidade:</Text>
-                    <Picker
-                        selectedValue={unidade}
-                        style={styles.input}
-                        onValueChange={(itemValue) => setUnidade(itemValue)}
-                    >
-                        <Picker.Item label="Selecione a Unidade" value="" />
-                        <Picker.Item label="Hospital Conde" value="Hospital Conde" />
-                        <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
-                        <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
-                        <Picker.Item label="Samu Barroco" value="Samu Barroco" />
-                        <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
-                    </Picker>
+                    <View style={styles.pickerWrapper}>
+                        <Picker
+                            selectedValue={unidade}
+                            onValueChange={(itemValue) => setUnidade(itemValue)}
+                            style={styles.picker}
+                            dropdownIconColor="transparent"
+                        >
+                            <Picker.Item label="Selecione a Unidade" value="" />
+                            <Picker.Item label="Hospital Conde" value="Hospital Conde" />
+                            <Picker.Item label="UPA de Inoã" value="UPA de Inoã" />
+                            <Picker.Item label="UPA Santa Rita" value="UPA Santa Rita" />
+                            <Picker.Item label="Samu Barroco" value="Samu Barroco" />
+                            <Picker.Item label="Samu Ponta Negra" value="Samu Ponta Negra" />
+                        </Picker>
+                        <Icon
+                            name="arrow-drop-down"
+                            size={28}
+                            color="#666"
+                            style={styles.pickerIcon}
+                        />
+                    </View>
 
                     {loading ? (
                         <ActivityIndicator size="large" color="#d9534f" />
