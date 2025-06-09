@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, FlatList, Alert, Pressable } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -12,9 +12,39 @@ import NavbarBottom from '../components/NavbarBottom';
 export default function RelatorioBaixaPatrimonio({ navigation }) {
     const [dataInicio, setDataInicio] = useState(new Date());
     const [dataFim, setDataFim] = useState(new Date());
-    const [mostrarInicio, setMostrarInicio] = useState(false);
-    const [mostrarFim, setMostrarFim] = useState(false);
+    const [showDatePickerInicio, setShowDatePickerInicio] = useState(false);
+    const [showDatePickerFim, setShowDatePickerFim] = useState(false);
     const [resultados, setResultados] = useState([]);
+
+    // Formata data no formato dd/MM/yyyy
+    const formatDate = (date) => {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const onChangeInicio = (event, selectedDate) => {
+        setShowDatePickerInicio(false);
+        if (selectedDate) {
+            setDataInicio(selectedDate);
+            if (selectedDate > dataFim) {
+                setDataFim(selectedDate);
+            }
+        }
+    };
+
+    const onChangeFim = (event, selectedDate) => {
+        setShowDatePickerFim(false);
+        if (selectedDate) {
+            setDataFim(selectedDate);
+            if (selectedDate < dataInicio) {
+                setDataInicio(selectedDate);
+            }
+        }
+    };
 
     const buscarPorData = async () => {
         try {
@@ -82,40 +112,57 @@ export default function RelatorioBaixaPatrimonio({ navigation }) {
         await Sharing.shareAsync(uri);
     };
 
+    // Função para converter dataHora segura
+    const formatDataHora = (dataHora) => {
+        if (!dataHora) return '';
+        if (dataHora.toDate && typeof dataHora.toDate === 'function') {
+            return dataHora.toDate().toLocaleString();
+        }
+        // Caso já seja Date
+        if (dataHora instanceof Date) {
+            return dataHora.toLocaleString();
+        }
+        return String(dataHora);
+    };
+
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.container}>
                 <Text style={styles.titulo}>Relatório de Baixa de Patrimônio</Text>
 
                 <Text style={styles.label}>Data Início:</Text>
-                <Pressable onPress={() => setMostrarInicio(true)}>
-                    <Text style={styles.input}>{dataInicio.toLocaleDateString()}</Text>
-                </Pressable>
-                {mostrarInicio && (
+                <TextInput
+                    style={styles.input}
+                    placeholder="Data Início (dd/MM/yyyy)"
+                    placeholderTextColor="#888888"
+                    value={formatDate(dataInicio)}
+                    onFocus={() => setShowDatePickerInicio(true)}
+                />
+                {showDatePickerInicio && (
                     <DateTimePicker
-                        value={dataInicio}
+                        value={dataInicio || new Date()}
                         mode="date"
                         display="default"
-                        onChange={(event, date) => {
-                            setMostrarInicio(false);
-                            if (date) setDataInicio(date);
-                        }}
+                        onChange={onChangeInicio}
+                        maximumDate={dataFim || undefined}
                     />
                 )}
 
                 <Text style={styles.label}>Data Fim:</Text>
-                <Pressable onPress={() => setMostrarFim(true)}>
-                    <Text style={styles.input}>{dataFim.toLocaleDateString()}</Text>
-                </Pressable>
-                {mostrarFim && (
+                <TextInput
+                    style={styles.input}
+                    placeholder="Data Fim (dd/MM/yyyy)"
+                    placeholderTextColor="#888888"
+                    value={formatDate(dataFim)}
+                    onFocus={() => setShowDatePickerFim(true)}
+                />
+                {showDatePickerFim && (
                     <DateTimePicker
-                        value={dataFim}
+                        value={dataFim || new Date()}
                         mode="date"
                         display="default"
-                        onChange={(event, date) => {
-                            setMostrarFim(false);
-                            if (date) setDataFim(date);
-                        }}
+                        onChange={onChangeFim}
+                        minimumDate={dataInicio || undefined}
                     />
                 )}
 
@@ -127,12 +174,24 @@ export default function RelatorioBaixaPatrimonio({ navigation }) {
                     keyExtractor={item => item.id}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Data e Hora:</Text> {item.dataHora?.toDate().toLocaleString()}</Text>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}</Text>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Descrição:</Text> {item.descricao}</Text>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}</Text>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
-                            <Text style={styles.textCard}><Text style={styles.negrito}>Unidade:</Text> {item.unidade}</Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Data e Hora:</Text> {formatDataHora(item.dataHora)}
+                            </Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Patrimônio:</Text> {item.patrimonio}
+                            </Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Descrição:</Text> {item.descricao}
+                            </Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Local Descarte:</Text> {item.localDescarte}
+                            </Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Motivo:</Text> {item.motivo}
+                            </Text>
+                            <Text style={styles.textCard}>
+                                <Text style={styles.negrito}>Unidade:</Text> {item.unidade}
+                            </Text>
                         </View>
                     )}
                     ListEmptyComponent={<Text style={{ marginTop: 20 }}>Nenhum dado para exibir.</Text>}

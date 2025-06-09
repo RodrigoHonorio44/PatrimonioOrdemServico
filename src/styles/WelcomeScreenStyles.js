@@ -22,7 +22,7 @@ export default StyleSheet.create({
     },
     text: {
         fontSize: 24,
-        color: '#000',
+        color: '#fff',  // texto branco
         fontWeight: '600',
         textAlign: 'center',
         fontFamily: Platform.OS === 'ios' ? 'AvenirNext-DemiBold' : 'Roboto',

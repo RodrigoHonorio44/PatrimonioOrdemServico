@@ -9,7 +9,6 @@ import { db } from '../config/firebaseConfig';
 import styles from '../styles/RelatorioEntregasEquipamentosStyles';
 import NavbarBottom from '../components/NavbarBottom';
 
-// Correção aqui
 const devolucao_Residencia = collection(db, 'devolucao_Residencia');
 const devolucao_unidade = collection(db, 'devolucao_unidade');
 
@@ -31,7 +30,6 @@ export default function RelatorioDevolucaoDeEquipamento({ navigation }) {
             const inicioTimestamp = Timestamp.fromDate(inicio);
             const fimTimestamp = Timestamp.fromDate(fim);
 
-            // Buscar Devolução de Equipamento Residência
             const qResidencia = query(
                 devolucao_Residencia,
                 where('data', '>=', inicioTimestamp),
@@ -41,7 +39,6 @@ export default function RelatorioDevolucaoDeEquipamento({ navigation }) {
             const dadosResidencia = snapshotResidencia.docs.map(doc => doc.data());
             setResidenciaDados(dadosResidencia);
 
-            // Buscar Devolução de Equipamento Unidades
             const qUnidades = query(
                 devolucao_unidade,
                 where('data', '>=', inicioTimestamp),
@@ -162,14 +159,30 @@ export default function RelatorioDevolucaoDeEquipamento({ navigation }) {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text><Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}</Text>
-                            <Text><Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}</Text>
-                            <Text><Text style={styles.negrito}>Endereço:</Text> {item.endereco}</Text>
-                            <Text><Text style={styles.negrito}>Paciente:</Text> {item.nomePaciente}</Text>
-                            <Text><Text style={styles.negrito}>Responsável:</Text> {item.nomeResponsavel}</Text>
-                            <Text><Text style={styles.negrito}>Técnico:</Text> {item.nomeTecnico}</Text>
-                            <Text><Text style={styles.negrito}>Patrimônio:</Text> {item.numeroPatrimonio}</Text>
-                            <Text><Text style={styles.negrito}>Telefone:</Text> {item.telefone}</Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Endereço:</Text> {item.endereco}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Paciente:</Text> {item.nomePaciente}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Responsável:</Text> {item.nomeResponsavel}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Técnico:</Text> {item.nomeTecnico}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Patrimônio:</Text> {item.numeroPatrimonio}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Telefone:</Text> {item.telefone}
+                            </Text>
                         </View>
                     )}
                     ListEmptyComponent={<Text>Nenhum dado encontrado para Residência.</Text>}
@@ -181,14 +194,30 @@ export default function RelatorioDevolucaoDeEquipamento({ navigation }) {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text><Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}</Text>
-                            <Text><Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}</Text>
-                            <Text><Text style={styles.negrito}>Motivo:</Text> {item.motivo}</Text>
-                            <Text><Text style={styles.negrito}>Responsável:</Text> {item.nomeResponsavel}</Text>
-                            <Text><Text style={styles.negrito}>Técnico:</Text> {item.nomeTecnico}</Text>
-                            <Text><Text style={styles.negrito}>Patrimônio:</Text> {item.numeroPatrimonio}</Text>
-                            <Text><Text style={styles.negrito}>Setor:</Text> {item.setor}</Text>
-                            <Text><Text style={styles.negrito}>Tipo Local:</Text> {item.tipoLocal}</Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Data:</Text> {formatDate(item.data)}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Equipamento:</Text> {item.descricaoEquipamento}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Motivo:</Text> {item.motivo}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Responsável:</Text> {item.nomeResponsavel}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Técnico:</Text> {item.nomeTecnico}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Patrimônio:</Text> {item.numeroPatrimonio}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Setor:</Text> {item.setor}
+                            </Text>
+                            <Text style={{ color: '#000' }}>
+                                <Text style={styles.negrito}>Tipo Local:</Text> {item.tipoLocal}
+                            </Text>
                         </View>
                     )}
                     ListEmptyComponent={<Text>Nenhum dado encontrado para Unidades.</Text>}

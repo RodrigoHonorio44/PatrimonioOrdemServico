@@ -104,11 +104,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
+        color: '#000',
     },
     texto: {
         fontSize: 16,
         marginBottom: 10,
         textAlign: 'center',
+        color: '#000',
     },
     bold: {
         fontWeight: 'bold',

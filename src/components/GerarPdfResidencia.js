@@ -2,6 +2,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
+import { Platform } from 'react-native';
 
 const gerarPdfResidencia = async (dados) => {
   const verificarAssinatura = (assinatura) => {
@@ -34,58 +35,53 @@ const gerarPdfResidencia = async (dados) => {
           color: #000;
           position: relative;
         }
-
         .logo {
           text-align: center;
           margin-bottom: 10px;
         }
-
         .logo img {
           max-width: 180px;
           height: auto;
         }
-
         .subtitle {
           text-align: center;
           font-size: 12px;
           color: #444;
           margin-bottom: 6px;
         }
-
         h1 {
           text-align: center;
           font-size: 20px;
           margin-top: 20px;
           margin-bottom: 30px;
         }
-
+        .container {
+          border: 1px solid #000;
+          padding: 20px;
+          border-radius: 8px;
+        }
         p {
           margin: 6px 0;
         }
-
         .assinaturas {
           display: flex;
           justify-content: space-around;
-          margin-top: 140px;
+          margin-top: 100px;
           text-align: center;
         }
-
         .assinatura-item {
           width: 45%;
         }
-
         .assinatura-item img {
           max-height: 80px;
           margin-bottom: 5px;
         }
-
         .linha-assinatura {
           margin-top: 5px;
           border-top: 1px solid #000;
           width: 100%;
           height: 1px;
         }
-
         .footer {
           position: absolute;
           bottom: 20px;
@@ -108,14 +104,16 @@ const gerarPdfResidencia = async (dados) => {
 
       <h1>Entrega de Equipamento - Residência</h1>
 
-      <p><strong>Data:</strong> ${dataAtual}</p>
-      <p><strong>Nome do Responsável:</strong> ${dados.nomeResponsavel || ''}</p>
-      <p><strong>Nome do Paciente:</strong> ${dados.nomePaciente || ''}</p>
-      <p><strong>Endereço:</strong> ${dados.endereco || ''}</p>
-      <p><strong>Telefone:</strong> ${dados.telefone || ''}</p>
-      <p><strong>Descrição do Equipamento:</strong> ${dados.descricaoEquipamento || ''}</p>
-      <p><strong>Nº do Patrimônio:</strong> ${dados.numeroPatrimonio || ''}</p>
-      <p><strong>Nome do Técnico:</strong> ${dados.nomeTecnico || ''}</p>
+      <div class="container">
+        <p><strong>Data:</strong> ${dataAtual}</p>
+        <p><strong>Nome do Responsável:</strong> ${dados.nomeResponsavel || ''}</p>
+        <p><strong>Nome do Paciente:</strong> ${dados.nomePaciente || ''}</p>
+        <p><strong>Endereço:</strong> ${dados.endereco || ''}</p>
+        <p><strong>Telefone:</strong> ${dados.telefone || ''}</p>
+        <p><strong>Descrição do Equipamento:</strong> ${dados.descricaoEquipamento || ''}</p>
+        <p><strong>Nº do Patrimônio:</strong> ${dados.numeroPatrimonio || ''}</p>
+        <p><strong>Nome do Técnico:</strong> ${dados.nomeTecnico || ''}</p>
+      </div>
 
       <div class="assinaturas">
         <div class="assinatura-item">
@@ -139,14 +137,17 @@ const gerarPdfResidencia = async (dados) => {
 
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
 
-    if (uri) {
-      console.log('PDF gerado com sucesso:', uri);
-      await Sharing.shareAsync(uri);
-    } else {
-      throw new Error('Falha ao gerar o PDF: URI não recebida.');
+    if (!uri) throw new Error('Falha ao gerar o PDF: URI não recebida.');
+
+    let shareableUri = uri;
+    if (Platform.OS === 'android') {
+      shareableUri = await FileSystem.getContentUriAsync(uri);
     }
+
+    console.log('PDF gerado com sucesso:', shareableUri);
+    await Sharing.shareAsync(shareableUri);
   } catch (error) {
-    console.error('Erro ao gerar o PDF:', error);
+    console.error('Erro ao gerar ou compartilhar o PDF:', error);
     alert('Ocorreu um erro ao gerar ou compartilhar o PDF.');
   }
 };

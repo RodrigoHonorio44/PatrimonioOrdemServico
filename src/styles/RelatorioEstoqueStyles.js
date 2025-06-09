@@ -11,66 +11,95 @@ const moderateScale = (size, factor = 0.5) =>
     size + (scale(size) - size) * factor;
 
 export default StyleSheet.create({
+
     container: {
         flex: 1,
-        backgroundColor: '#f5f7fa',
         padding: moderateScale(15),
+        backgroundColor: '#fff',
     },
+
+    // Título principal do relatório, maior e centralizado
+    tituloRelatorio: {
+        fontSize: moderateScale(22),
+        fontWeight: '800',
+        color: '#222',
+        textAlign: 'center',
+        marginBottom: verticalScale(20),
+    },
+
+    titulo: {
+        fontSize: moderateScale(18),
+        fontWeight: '700',
+        color: '#222',
+    },
+
+    item: {
+        backgroundColor: '#f9f9f9',
+        padding: moderateScale(12),
+        marginVertical: verticalScale(6),
+        borderRadius: 6,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+        elevation: 2,
+    },
+
+    negrito: {
+        fontWeight: '700',
+    },
+
     datePickerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: verticalScale(15),
-        marginTop: verticalScale(35),
     },
+
+    datePickerGroup: {
+        flex: 1,
+        alignItems: 'flex-start',
+        marginRight: moderateScale(10),
+    },
+
+    label: {
+        fontSize: moderateScale(14),
+        fontWeight: '600',
+        color: '#555',
+        marginBottom: verticalScale(5),
+    },
+
     datePicker: {
-        paddingVertical: verticalScale(12),
-        paddingHorizontal: moderateScale(15),
-        backgroundColor: '#fff',
-        borderRadius: moderateScale(8),
         borderWidth: 1,
         borderColor: '#ccc',
-        minWidth: scale(140),
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: moderateScale(3),
-        shadowOffset: { width: 0, height: verticalScale(2) },
+        borderRadius: 6,
+        paddingVertical: moderateScale(10),
+        paddingHorizontal: moderateScale(12),
+        width: '100%',
+        color: '#000',  // Garante que o texto fique visível (não transparente)
+        ...Platform.select({
+            android: {
+                paddingVertical: moderateScale(6),
+            }
+        }),
     },
-    datePickerText: {
-        color: '#000', // texto normal preto
-        fontSize: moderateScale(16),
-    },
+
     placeholderText: {
         color: '#999', // placeholder cinza claro
         fontSize: moderateScale(16),
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: verticalScale(20),
+
+    // Estilo para o picker da hora (caso use Picker dentro do mesmo input)
+    pickerHora: {
+        width: '100%',
+        height: moderateScale(40),
+        color: '#000', // texto visível
     },
-    titulo: {
+    tituloRelatorio: {
         fontSize: moderateScale(20),
-        fontWeight: '700',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: verticalScale(20),
         color: '#333',
-        borderBottomWidth: moderateScale(2),
-        borderBottomColor: '#4a90e2',
-        paddingBottom: verticalScale(6),
-        marginBottom: verticalScale(10),
     },
-    item: {
-        backgroundColor: '#fff',
-        borderRadius: moderateScale(8),
-        padding: moderateScale(12),
-        marginVertical: verticalScale(6),
-        shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowRadius: moderateScale(5),
-        shadowOffset: { width: 0, height: verticalScale(2) },
-        elevation: 3,
-    },
-    negrito: {
-        fontWeight: '600',
-        color: '#222',
-    },
+
 });

@@ -97,7 +97,7 @@ const GerarPDF = async ({
         text-align: right;
         font-size: 11px;
         color: #555;
-        margin-top: 320px;
+        margin-top: 390px;
       }
     </style>
   </head>
@@ -142,8 +142,16 @@ const GerarPDF = async ({
 </html>
 `;
 
-    // Gera o PDF
-    const { uri } = await Print.printToFileAsync({ html: htmlContent });
+    // Gera nome do arquivo com data/hora
+    const now = new Date();
+    const dataHoraFormatada = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+    const nomeArquivo = `OrdemServico_${dataHoraFormatada}.pdf`;
+
+    // Gera o PDF com nome customizado
+    const { uri } = await Print.printToFileAsync({
+      html: htmlContent,
+      fileName: nomeArquivo,
+    });
 
     // Verifica disponibilidade de compartilhamento
     if (!(await Sharing.isAvailableAsync())) {

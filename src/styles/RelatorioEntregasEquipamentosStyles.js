@@ -56,12 +56,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 2,
+
     },
 
     negrito: {
         fontWeight: 'bold',
         color: '#222',
     },
+    // ... outros estilos
+
+    textoItem: {
+        color: '#000',
+    },
+
+    // ... estilos existentes
+
 });
 
 export default styles;

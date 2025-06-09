@@ -6,9 +6,9 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f7f7f7',
-        paddingHorizontal: width * 0.05, // 5% da largura nas laterais
-        paddingTop: height * 0.06,       // topo para título
-        paddingBottom: height * 0.1,     // espaço para navbar fixa
+        paddingHorizontal: width * 0.05,
+        paddingTop: height * 0.06,
+        paddingBottom: height * 0.1,
     },
     label: {
         fontSize: width > 350 ? 16 : 14,
@@ -44,31 +44,20 @@ export default StyleSheet.create({
         shadowRadius: 2,
         elevation: 2,
     },
+    textCard: {
+        fontSize: width > 350 ? 15 : 13,
+        color: '#333',
+        marginBottom: height * 0.005,
+    },
     negrito: {
         fontWeight: 'bold',
+        color: '#222',
     },
     titulo: {
-        fontSize: width > 350 ? 24 : 20,
+        fontSize: width > 350 ? 22 : 18,
         fontWeight: 'bold',
-        textAlign: 'center',
         marginBottom: height * 0.03,
-        color: '#333',
-    },
-    navbarContainer: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: '#fff',
-        paddingVertical: height * 0.015,
-        paddingHorizontal: width * 0.04,
-        borderTopWidth: 1,
-        borderTopColor: '#ddd',
-        // para manter sombra na navbar, caso queira:
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 5,
+        color: '#222',
+        alignSelf: 'center',
     },
 });
