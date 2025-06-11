@@ -34,7 +34,7 @@ export default function WelcomeScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Animated.Image
-                source={require('../../assets/logo.png')}
+                source={require('../../assets/icone.png')}
                 style={[
                     styles.logo,
                     {
